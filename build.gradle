@@ -16,14 +16,6 @@ repositories {
         name = 'placeholderapi'
         url = 'http://repo.extendedclip.com/content/repositories/placeholderapi/'
     }
-/*    maven {
-        name = 'vault'
-        url = 'http://nexus.hc.to/content/repositories/pub_releases/'
-    }*/
-/*    maven {
-        name = 'dakani'
-        url = 'https://repo.dakanilabs.com/repository/public/'
-    }*/
     maven {
         name = 'spigot'
         url = 'https://hub.spigotmc.org/nexus/content/groups/public/'
@@ -32,19 +24,19 @@ repositories {
 
 dependencies {
     compile 'com.google.code.findbugs:jsr305:3.0.2'
-    //compile 'org.spigotmc:spigot-api:1.8-R0.1-SNAPSHOT'
-
     compile 'me.clip:placeholderapi:2.8.5'
-    //compile 'net.milkbowl.vault:Vault:1.4.1'
-    //compile 'org.black_ixx:PlayerPoints:2.1.3'
-
     compile files('lib/Vault-1.4.1.jar')
     compile files('lib/Essentials.jar')
     compile files('lib/spigot-1.7.10.jar')
     compile files('lib/Violet-1.7.10-1.0.6.jar')
-    //compile files('lib/FlansMod-1.7.10-4.10.0.jar')
 }
 
 tasks.withType(JavaCompile) {
     options.encoding = "UTF-8"
+}
+
+task release(type: Jar) {
+    from(sourceSets.main.output) {
+        exclude 'com'
+    }
 }
