@@ -1,0 +1,42 @@
+apply plugin: 'java'
+
+group = 'org.soraworld.guild'
+version = '1.7.10-0.0.1'
+description = 'TeamGuild Plugin'
+archivesBaseName = "TeamGuild"
+
+sourceCompatibility = targetCompatibility = '1.7'
+compileJava {
+    sourceCompatibility = targetCompatibility = '1.7'
+}
+
+repositories {
+    jcenter()
+    maven {
+        name = 'placeholderapi'
+        url = 'http://repo.extendedclip.com/content/repositories/placeholderapi/'
+    }
+    maven {
+        name = 'vault'
+        url = 'http://nexus.hc.to/content/repositories/pub_releases/'
+    }
+    maven {
+        name = 'dakani'
+        url = 'https://repo.dakanilabs.com/repository/public/'
+    }
+    maven {
+        name = 'spigot'
+        url = 'https://hub.spigotmc.org/nexus/content/groups/public/'
+    }
+}
+
+dependencies {
+    compile 'org.spigotmc:spigot-api:1.8-R0.1-SNAPSHOT'
+    compile 'com.google.code.findbugs:jsr305:3.0.2'
+    compile files('lib/Violet-1.7.10-1.0.5.jar')
+    //compile files('lib/spigot-1.7.10.jar')
+    compile files('lib/Essentials.jar')
+    compile 'net.milkbowl.vault:VaultAPI:1.6'
+    compile 'me.clip:placeholderapi:2.8.5'
+    compile 'org.black_ixx:PlayerPoints:2.1.3'
+}
