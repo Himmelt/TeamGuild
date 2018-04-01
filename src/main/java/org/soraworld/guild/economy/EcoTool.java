@@ -18,4 +18,9 @@ public class EcoTool {
         this.iEconomy = essEco;
     }
 
+
+    public IEconomy getEconomy() {
+        return iEconomy;
+    }
+
 }

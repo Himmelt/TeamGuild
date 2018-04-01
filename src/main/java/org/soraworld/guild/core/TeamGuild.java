@@ -6,19 +6,13 @@ import java.util.HashSet;
 public class TeamGuild {
 
     private int size = 5;
-    private String leader;
     private String display;
     private String description;
-    private final String name;
+    private final String leader;
     private final HashSet<String> members = new HashSet<>();
 
-    public TeamGuild(@Nonnull String name, @Nonnull String leader) {
-        this.name = name;
+    public TeamGuild(@Nonnull String leader) {
         this.leader = leader;
-    }
-
-    public String getName() {
-        return name;
     }
 
     public boolean isLeader(String player) {
@@ -28,10 +22,6 @@ public class TeamGuild {
     @Nonnull
     public String getLeader() {
         return leader;
-    }
-
-    public void setLeader(@Nonnull String leader) {
-        this.leader = leader;
     }
 
     @Nonnull
