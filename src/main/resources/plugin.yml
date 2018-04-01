@@ -9,7 +9,7 @@ description: TeamGuild Plugin.
 
 commands:
   guild:
-    aliases: [tg,team]
+    aliases: [team]
     description: "TeamGuild - https://github.com/Himmelt/TeamGuild"
     usage: "/guild ..."
 permissions:
