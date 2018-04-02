@@ -6,6 +6,7 @@ import org.soraworld.guild.constant.Constant;
 import org.soraworld.guild.core.TeamGuild;
 import org.soraworld.guild.economy.EcoTool;
 import org.soraworld.guild.economy.IEconomy;
+import org.soraworld.guild.flans.Flans;
 import org.soraworld.violet.config.IIConfig;
 
 import javax.annotation.Nonnull;
@@ -18,8 +19,9 @@ public class Config extends IIConfig {
     private int createCost = 0;
     private int createSize = 5;
 
-    private final IEconomy iEconomy;
+    private Flans flans;
 
+    private final IEconomy iEconomy;
     private final HashMap<String, TeamGuild> guilds = new HashMap<>();
 
     public Config(File path, Plugin plugin) {
@@ -41,7 +43,7 @@ public class Config extends IIConfig {
     }
 
     protected void loadOptions() {
-
+        getFlans();
     }
 
     protected void saveOptions() {
@@ -80,6 +82,11 @@ public class Config extends IIConfig {
 
     public Set<String> getGuilds() {
         return guilds.keySet();
+    }
+
+    public Flans getFlans() {
+        if (flans == null) flans = new Flans(this);
+        return flans;
     }
 
 }
