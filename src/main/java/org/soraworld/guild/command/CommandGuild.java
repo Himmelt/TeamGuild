@@ -19,8 +19,8 @@ public class CommandGuild extends CommandViolet {
         addSub(new IICommand("create", null, config, true) {
             @Override
             public boolean execute(Player player, ArrayList<String> args) {
-                TeamGuild guild = config.getGuild(player.getName());
-                if (guild == null) {
+                TeamGuild team = config.getTeam(player.getName());
+                if (team == null) {
                     config.createGuild(player.getName());
                 } else {
 
@@ -28,18 +28,18 @@ public class CommandGuild extends CommandViolet {
                 return true;
             }
         });
-        addSub(new IICommand("join", null, config) {
+        addSub(new IICommand("join", null, config, true) {
             @Override
             public boolean execute(Player player, ArrayList<String> args) {
                 if (args.isEmpty()) {
                     System.out.println("参数为空");
                 } else {
-                    TeamGuild guild = config.getGuild(player.getName());
-                    if (guild != null) {
+                    TeamGuild team = config.getTeam(player.getName());
+                    if (team != null) {
                         // 已加入队伍
                     } else {
-                        TeamGuild team = config.getTheGuild(args.get(0));
-                        if (team != null) {
+                        TeamGuild guild = config.getGuild(args.get(0));
+                        if (guild != null) {
                             // 处理申请
                         } else {
                             // 队伍不存在
@@ -54,22 +54,28 @@ public class CommandGuild extends CommandViolet {
                 return new ArrayList<>(config.getGuilds());
             }
         });
-        addSub(new IICommand("leave", null, config) {
+        addSub(new IICommand("leave", null, config, true) {
             @Override
             public boolean execute(CommandSender sender, ArrayList<String> args) {
                 return super.execute(sender, args);
             }
         });
-        addSub(new IICommand("kick", null, config) {
+        addSub(new IICommand("kick", null, config, true) {
             @Override
             public boolean execute(CommandSender sender, ArrayList<String> args) {
                 return super.execute(sender, args);
             }
         });
-        addSub(new IICommand("list", null, config) {
+        addSub(new IICommand("list", null, config, true) {
             @Override
             public boolean execute(CommandSender sender, ArrayList<String> args) {
                 return super.execute(sender, args);
+            }
+        });
+        addSub(new IICommand("upgrade", null, config, true) {
+            @Override
+            public boolean execute(Player player, ArrayList<String> args) {
+                return super.execute(player, args);
             }
         });
     }

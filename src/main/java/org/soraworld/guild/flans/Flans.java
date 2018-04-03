@@ -8,21 +8,19 @@ import org.soraworld.guild.config.Config;
 
 public class Flans {
 
-    private final Config config;
     private final boolean support;
 
     public Flans(Config config) {
-        this.config = config;
         boolean temp;
         try {
-            config.iiChat.console(config.iiLang.format("flanCheck", CraftEntity.class.getName()));
-            config.iiChat.console(config.iiLang.format("flanCheck", net.minecraft.server.v1_7_R4.Entity.class.getName()));
-            config.iiChat.console(config.iiLang.format("flanCheck", EntityBullet.class.getName()));
+            config.console("flanCheck", CraftEntity.class.getName());
+            config.console("flanCheck", net.minecraft.server.v1_7_R4.Entity.class.getName());
+            config.console("flanCheck", EntityBullet.class.getName());
             temp = true;
-            config.iiChat.console(config.iiLang.format("flanSupport"));
+            config.console("flanSupport");
         } catch (Throwable ignored) {
             temp = false;
-            config.iiChat.console(config.iiLang.format("flanNotSupport"));
+            config.console("flanNotSupport");
         }
         this.support = temp;
     }

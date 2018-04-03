@@ -22,6 +22,7 @@ public class Config extends IIConfig {
     private Flans flans;
 
     private final IEconomy iEconomy;
+    private final HashMap<String, TeamGuild> teams = new HashMap<>();
     private final HashMap<String, TeamGuild> guilds = new HashMap<>();
 
     public Config(File path, Plugin plugin) {
@@ -29,21 +30,17 @@ public class Config extends IIConfig {
         iEconomy = new EcoTool().getEconomy();
     }
 
-    public TeamGuild getTheGuild(String leader) {
+    public TeamGuild getGuild(String leader) {
         return guilds.get(leader);
     }
 
-    public TeamGuild getGuild(String player) {
-        TeamGuild team = guilds.get(player);
-        if (team != null) return team;
-        for (TeamGuild guild : guilds.values()) {
-            if (guild.hasMember(player)) return guild;
-        }
-        return null;
+    public TeamGuild getTeam(String player) {
+        return teams.get(player);
     }
 
     protected void loadOptions() {
         getFlans();
+        TeamGuild.setConfig(this);
     }
 
     protected void saveOptions() {
@@ -65,19 +62,29 @@ public class Config extends IIConfig {
     }
 
     public void createGuild(@Nonnull String player) {
-        TeamGuild guild = getGuild(player);
+        TeamGuild guild = getTeam(player);
         if (guild != null) {
             System.out.println("你已在一个队伍中");
         } else {
             guild = new TeamGuild(player);
             if (iEconomy != null && iEconomy.takeEco(player, 1000)) {
                 System.out.println("付款成功");
+                teams.put(player, guild);
                 guilds.put(player, guild);
             } else {
                 System.out.println("资金不足或其他错误");
             }
         }
         save();
+    }
+
+    public boolean joinGuild(String player, TeamGuild guild) {
+        return guild.addMember(player);
+    }
+
+    public void leaveGuild(String player, TeamGuild guild) {
+        guild.delMember(player);
+        teams.remove(player);
     }
 
     public Set<String> getGuilds() {
