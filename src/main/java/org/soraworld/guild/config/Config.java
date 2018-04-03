@@ -4,7 +4,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.plugin.Plugin;
 import org.soraworld.guild.constant.Constant;
 import org.soraworld.guild.core.TeamGuild;
-import org.soraworld.guild.economy.EcoTool;
+import org.soraworld.guild.economy.Economy;
 import org.soraworld.guild.economy.IEconomy;
 import org.soraworld.guild.flans.Flans;
 import org.soraworld.violet.config.IIConfig;
@@ -18,16 +18,15 @@ public class Config extends IIConfig {
 
     private int createCost = 0;
     private int createSize = 5;
+    private String ecoType;
 
     private Flans flans;
-
-    private final IEconomy iEconomy;
+    private IEconomy iEconomy;
     private final HashMap<String, TeamGuild> teams = new HashMap<>();
     private final HashMap<String, TeamGuild> guilds = new HashMap<>();
 
     public Config(File path, Plugin plugin) {
         super(path, plugin);
-        iEconomy = new EcoTool().getEconomy();
     }
 
     public TeamGuild getGuild(String leader) {
@@ -39,12 +38,19 @@ public class Config extends IIConfig {
     }
 
     protected void loadOptions() {
-        getFlans();
-        TeamGuild.setConfig(this);
     }
 
     protected void saveOptions() {
+    }
 
+    public void afterLoad() {
+        getFlans();
+        getEconomy();
+        TeamGuild.setConfig(this);
+        ecoType = "Vault";
+        new Economy(this);
+        ecoType = "Essentials";
+        new Economy(this);
     }
 
     @Nonnull
@@ -94,6 +100,15 @@ public class Config extends IIConfig {
     public Flans getFlans() {
         if (flans == null) flans = new Flans(this);
         return flans;
+    }
+
+    public IEconomy getEconomy() {
+        if (iEconomy == null) iEconomy = new Economy(this);
+        return iEconomy;
+    }
+
+    public boolean checkEcoType(String type) {
+        return type.equals(ecoType);
     }
 
 }

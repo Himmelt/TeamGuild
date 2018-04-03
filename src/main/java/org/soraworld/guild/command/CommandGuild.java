@@ -68,14 +68,30 @@ public class CommandGuild extends CommandViolet {
         });
         addSub(new IICommand("list", null, config, true) {
             @Override
-            public boolean execute(CommandSender sender, ArrayList<String> args) {
-                return super.execute(sender, args);
+            public boolean execute(Player player, ArrayList<String> args) {
+                TeamGuild team = TeamGuild.getTeam(player.getName());
+                if (team != null) {
+                    team.showMembers(player);
+                } else {
+                    config.send(player, "notInTeam");
+                }
+                return true;
             }
         });
         addSub(new IICommand("upgrade", null, config, true) {
             @Override
             public boolean execute(Player player, ArrayList<String> args) {
-                return super.execute(player, args);
+                TeamGuild guild = config.getGuild(player.getName());
+                if (guild != null) {
+                    if (!guild.isGuild()) {
+
+                    } else {
+                        config.send(player, "guildCantUpgrade");
+                    }
+                } else {
+                    config.send(player, "ownNoGuild");
+                }
+                return true;
             }
         });
     }

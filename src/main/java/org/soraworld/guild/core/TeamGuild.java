@@ -1,5 +1,6 @@
 package org.soraworld.guild.core;
 
+import org.bukkit.command.CommandSender;
 import org.soraworld.guild.config.Config;
 
 import javax.annotation.Nonnull;
@@ -37,7 +38,7 @@ public class TeamGuild {
     }
 
     public boolean hasManager(String player) {
-        return managers.contains(player);
+        return isLeader(player) || managers.contains(player);
     }
 
     public void delManager(String player) {
@@ -69,7 +70,7 @@ public class TeamGuild {
     }
 
     public boolean hasMember(String player) {
-        return members.contains(player);
+        return isLeader(player) || hasManager(player) || members.contains(player);
     }
 
     public void delMember(String player) {
@@ -97,16 +98,28 @@ public class TeamGuild {
         return teams.get(player);
     }
 
-    public static void setTeam(String player, TeamGuild team) {
-        teams.put(player, team);
-    }
-
     public static void clearPlayer(String player) {
         teams.remove(player);
     }
 
     public void upgrade() {
 
+    }
+
+    public void showMembers(CommandSender sender) {
+        config.send(sender, "listHead");
+        config.send(sender, "listLeader", leader);
+        for (String manager : managers) {
+            config.send(sender, "listManager", manager);
+        }
+        for (String member : members) {
+            config.send(sender, "listMember", member);
+        }
+        config.send(sender, "listFoot");
+    }
+
+    public boolean isGuild() {
+        return size >= 30;
     }
 
 }

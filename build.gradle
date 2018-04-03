@@ -28,7 +28,7 @@ dependencies {
     compile files('lib/Vault-1.4.1.jar')
     compile files('lib/Essentials.jar')
     compile files('lib/spigot-1.7.10.jar')
-    compile files('lib/Violet-1.7.10-1.0.7.jar')
+    compile files('lib/Violet-1.7.10-1.0.8.jar')
 }
 
 tasks.withType(JavaCompile) {

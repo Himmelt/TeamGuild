@@ -5,9 +5,9 @@ import net.ess3.api.Economy;
 
 import java.math.BigDecimal;
 
-public class EssEco implements IEconomy {
+public class EssEconomy implements IEconomy {
 
-    public EssEco() {
+    public EssEconomy() {
         Essentials.class.getName();
         Economy.class.getName();
     }

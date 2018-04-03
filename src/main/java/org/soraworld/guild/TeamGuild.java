@@ -37,4 +37,12 @@ public class TeamGuild extends VioletPlugin {
         return null;
     }
 
+    protected void afterEnable() {
+
+    }
+
+    protected void beforeDisable() {
+
+    }
+
 }
