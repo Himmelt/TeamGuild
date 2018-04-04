@@ -28,15 +28,14 @@ dependencies {
     compile files('lib/Vault-1.4.1.jar')
     compile files('lib/Essentials.jar')
     compile files('lib/spigot-1.7.10.jar')
-    compile files('lib/Violet-1.7.10-1.0.8.jar')
+    compile files('lib/Violet-1.7.10-1.1.0.jar')
 }
 
 tasks.withType(JavaCompile) {
     options.encoding = "UTF-8"
 }
 
-task release(type: Jar) {
-    from(sourceSets.main.output) {
-        exclude 'com'
-    }
+jar {
+    includeEmptyDirs = false
+    exclude 'com/flansmod/common/guns'
 }
