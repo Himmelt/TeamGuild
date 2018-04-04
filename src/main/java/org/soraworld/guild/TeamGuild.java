@@ -26,7 +26,9 @@ public class TeamGuild extends VioletPlugin {
     protected List<Listener> registerEvents(IIConfig config) {
         ArrayList<Listener> listeners = new ArrayList<>();
         if (config instanceof Config) {
-            listeners.add(new EventListener((Config) config));
+            Config cfg = (Config) config;
+            listeners.add(new EventListener(cfg));
+            if (!cfg.isTeamPvP()) listeners.add(new EventListener(cfg));
         }
         return listeners;
     }

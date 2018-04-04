@@ -1,10 +1,13 @@
-chatHead: "[Ğ¡¶Ó] "
+# ä¸­æ–‡è¯­è¨€æ–‡ä»¶(Chinese Language File)
+# è¯·ä½¿ç”¨ UTF-8 ç¼–ç 
 
-flanCheck: "ÕıÔÚ¼ì²éÇ¹Ğµ(Flans)Ö§³ÖÀà : %s"
+chatHead: "[å°  é˜Ÿ] "
 
-flanSupport: "ÒÑ¼ì²âµ½Ç¹Ğµ(Flans)±ØĞëÀà , ½«ÆôÓÃÇ¹ĞµÖ§³Ö."
-flanNotSupport: "Î´¼ì²âµ½Ç¹Ğµ(Flans)±ØĞëÀà , ½«½ûÓÃÇ¹ĞµÖ§³Ö."
-vaultSupport: "ÒÑ¼ì²âµ½ Vault ¾­¼ÃÏµÍ³ , ¶Ô½ÓÍê³É."
-vaultNotSupport: "Î´¼ì²âµ½ Vault ¾­¼ÃÏµÍ³ , ¶Ô½ÓÊ§°Ü."
-essSupport: "ÒÑ¼ì²âµ½ Essentials ¾­¼ÃÏµÍ³ , ¶Ô½ÓÍê³É."
-essNotSupport: "Î´¼ì²âµ½ Essentials ¾­¼ÃÏµÍ³ , ¶Ô½ÓÊ§°Ü."
+flanCheck: "æ­£åœ¨æ£€æŸ¥æªæ¢°(Flans)æ”¯æŒç±» : %s"
+
+flanSupport: "å·²æ£€æµ‹åˆ°æªæ¢°(Flans)å¿…é¡»ç±» , å°†å¯ç”¨æªæ¢°æ”¯æŒ."
+flanNotSupport: "æœªæ£€æµ‹åˆ°æªæ¢°(Flans)å¿…é¡»ç±» , å°†ç¦ç”¨æªæ¢°æ”¯æŒ."
+vaultSupport: "å·²æ£€æµ‹åˆ° Vault ç»æµç³»ç»Ÿ , å¯¹æ¥å®Œæˆ."
+vaultNotSupport: "æœªæ£€æµ‹åˆ° Vault ç»æµç³»ç»Ÿ , å¯¹æ¥å¤±è´¥."
+essSupport: "å·²æ£€æµ‹åˆ° Essentials ç»æµç³»ç»Ÿ , å¯¹æ¥å®Œæˆ."
+essNotSupport: "æœªæ£€æµ‹åˆ° Essentials ç»æµç³»ç»Ÿ , å¯¹æ¥å¤±è´¥."

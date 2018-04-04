@@ -4,28 +4,21 @@ import org.bukkit.command.CommandSender;
 import org.soraworld.guild.config.Config;
 
 import javax.annotation.Nonnull;
-import java.util.HashMap;
 import java.util.HashSet;
 
 public class TeamGuild {
 
-    private int size = 5;
     private int balance = 0;
     private String display;
     private String description;
+    private TeamLevel level;
     private final String leader;
     private final HashSet<String> members = new HashSet<>();
     private final HashSet<String> managers = new HashSet<>();
 
-    private static Config config;
-    private static final HashMap<String, TeamGuild> teams = new HashMap<>();
-
-    public TeamGuild(@Nonnull String leader) {
+    public TeamGuild(@Nonnull String leader, @Nonnull TeamLevel level) {
         this.leader = leader;
-    }
-
-    public static void setConfig(Config config) {
-        TeamGuild.config = config;
+        this.level = level;
     }
 
     public boolean isLeader(String player) {
@@ -34,7 +27,6 @@ public class TeamGuild {
 
     public void addManager(String player) {
         managers.add(player);
-        teams.put(player, this);
     }
 
     public boolean hasManager(String player) {
@@ -43,7 +35,6 @@ public class TeamGuild {
 
     public void delManager(String player) {
         managers.remove(player);
-        teams.remove(player);
     }
 
     @Nonnull
@@ -61,9 +52,8 @@ public class TeamGuild {
     }
 
     public boolean addMember(String player) {
-        if (members.size() < this.size) {
+        if (members.size() + managers.size() < level.size) {
             members.add(player);
-            teams.put(player, this);
             return true;
         }
         return false;
@@ -75,15 +65,10 @@ public class TeamGuild {
 
     public void delMember(String player) {
         members.remove(player);
-        teams.remove(player);
     }
 
-    public int getSize() {
-        return size < 1 ? 1 : size;
-    }
-
-    public void setSize(int size) {
-        this.size = size < 1 ? 1 : size;
+    public int getCount() {
+        return members.size() + managers.size();
     }
 
     public String getDescription() {
@@ -94,19 +79,7 @@ public class TeamGuild {
         this.description = description;
     }
 
-    public static TeamGuild getTeam(String player) {
-        return teams.get(player);
-    }
-
-    public static void clearPlayer(String player) {
-        teams.remove(player);
-    }
-
-    public void upgrade() {
-
-    }
-
-    public void showMembers(CommandSender sender) {
+    public void showMemberList(CommandSender sender, Config config) {
         config.send(sender, "listHead");
         config.send(sender, "listLeader", leader);
         for (String manager : managers) {
@@ -118,8 +91,8 @@ public class TeamGuild {
         config.send(sender, "listFoot");
     }
 
-    public boolean isGuild() {
-        return size >= 30;
+    public TeamLevel getLevel() {
+        return level;
     }
 
 }
