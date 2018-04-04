@@ -10,7 +10,7 @@ public class Economy implements IEconomy {
         IEconomy economy = null;
         if (config.checkEcoType("Vault")) {
             try {
-                economy = new VaultEconomy();
+                economy = new VaultEconomy(config);
                 config.console("vaultSupport");
             } catch (Throwable e) {
                 if (e.getMessage().equals("noVaultImpl")) {

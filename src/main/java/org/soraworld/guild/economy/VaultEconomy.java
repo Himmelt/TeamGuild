@@ -4,18 +4,20 @@ import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.economy.EconomyResponse;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.RegisteredServiceProvider;
+import org.soraworld.guild.config.Config;
 
 public class VaultEconomy implements IEconomy {
 
     private final Economy vaultEco;
 
-    public VaultEconomy() throws Exception {
+    public VaultEconomy(Config config) throws Exception {
         Economy economy = null;
         RegisteredServiceProvider<Economy> provider = Bukkit.getServicesManager().getRegistration(Economy.class);
         if (provider != null) economy = provider.getProvider();
         if (economy == null) {
             throw new Exception("noVaultImpl");
         }
+        config.console("vaultImpl", provider.getPlugin().getName(), economy.getName());
         vaultEco = economy;
     }
 
