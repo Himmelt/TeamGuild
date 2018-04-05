@@ -5,6 +5,7 @@ import org.soraworld.guild.config.Config;
 
 import javax.annotation.Nonnull;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 
 public class TeamGuild {
 
@@ -15,6 +16,7 @@ public class TeamGuild {
     private final String leader;
     private final HashSet<String> members = new HashSet<>();
     private final HashSet<String> managers = new HashSet<>();
+    private final LinkedHashSet<String> applications = new LinkedHashSet<>();
 
     public TeamGuild(@Nonnull String leader, @Nonnull TeamLevel level) {
         this.leader = leader;
@@ -93,6 +95,10 @@ public class TeamGuild {
 
     public TeamLevel getLevel() {
         return level;
+    }
+
+    public void addJoinApplication(String username) {
+        applications.add(username);
     }
 
 }

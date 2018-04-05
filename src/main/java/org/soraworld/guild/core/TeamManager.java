@@ -1,5 +1,6 @@
 package org.soraworld.guild.core;
 
+import org.bukkit.entity.Player;
 import org.soraworld.guild.config.Config;
 
 import javax.annotation.Nonnull;
@@ -24,25 +25,43 @@ public class TeamManager {
         return new ArrayList<>(guilds.keySet());
     }
 
-    public void createGuild(@Nonnull String player) {
-        TeamGuild guild = getTeam(player);
+    public void createGuild(@Nonnull Player player) {
+        String username = player.getName();
+        TeamGuild guild = teams.get(username);
         if (guild != null) {
-            System.out.println("你已在一个队伍中");
-        } else {
-            guild = new TeamGuild(player, levels.first());
-            if (config.getEconomy().takeEco(player, 1000)) {
-                System.out.println("付款成功");
-                teams.put(player, guild);
-                guilds.put(player, guild);
-            } else {
-                System.out.println("资金不足或其他错误");
-            }
+            if (guild.isLeader(username)) config.send(player, "alreadyLeader");
+            else config.send(player, "alreadyInTeam");
+            return;
         }
-        config.save();
+        guild = new TeamGuild(username, levels.first());
+        if (config.getEconomy().takeEco(username, guild.getLevel().cost)) {
+            teams.put(username, guild);
+            guilds.put(username, guild);
+            config.save();
+            config.send(player, "createTeamSuccess", guild.getLevel().cost);
+        } else {
+            config.send(player, "createTeamFailed");
+        }
     }
 
-    public boolean joinGuild(String player, TeamGuild guild) {
-        return guild.addMember(player);
+    public void joinGuild(Player player, String leader) {
+        String username = player.getName();
+        TeamGuild guild = teams.get(username);
+        if (guild != null) {
+            config.send(player, "alreadyInTeam");
+            return;
+        }
+        guild = guilds.get(leader);
+        if (guild == null) {
+            config.send(player, "guildNotExist");
+        } else {
+            if (guild.hasMember(username)) {
+                config.send(player, "alreadyJoined");
+            } else {
+                guild.addJoinApplication(username);
+                config.send(player, "sendApplication");
+            }
+        }
     }
 
     public void leaveGuild(String player, TeamGuild guild) {
@@ -74,11 +93,11 @@ public class TeamManager {
                 }
             }
         }
-        defaultLevel();
+        if (levels.isEmpty()) levels.add(new TeamLevel(5, 50, false));
     }
 
     public List<?> writeLevels() {
-        defaultLevel();
+        if (levels.isEmpty()) levels.add(new TeamLevel(5, 50, false));
         List<Map> list = new ArrayList<>();
         for (TeamLevel level : levels) {
             Map<String, Object> sec = new LinkedHashMap<>();
@@ -88,12 +107,6 @@ public class TeamManager {
             list.add(sec);
         }
         return list;
-    }
-
-    private void defaultLevel() {
-        if (levels.isEmpty()) {
-            levels.add(new TeamLevel(5, 50, false));
-        }
     }
 
 }

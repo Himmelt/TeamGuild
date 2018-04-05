@@ -8,6 +8,7 @@ import org.soraworld.guild.core.TeamGuild;
 import org.soraworld.guild.core.TeamManager;
 import org.soraworld.violet.command.CommandViolet;
 import org.soraworld.violet.command.IICommand;
+import org.soraworld.violet.constant.Violets;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,33 +23,15 @@ public class CommandGuild extends CommandViolet {
         addSub(new IICommand("create", null, config, true) {
             @Override
             public boolean execute(Player player, ArrayList<String> args) {
-                TeamGuild team = manager.getTeam(player.getName());
-                if (team == null) {
-                    manager.createGuild(player.getName());
-                } else {
-
-                }
+                manager.createGuild(player);
                 return true;
             }
         });
         addSub(new IICommand("join", null, config, true) {
             @Override
             public boolean execute(Player player, ArrayList<String> args) {
-                if (args.isEmpty()) {
-                    System.out.println("参数为空");
-                } else {
-                    TeamGuild team = manager.getTeam(player.getName());
-                    if (team != null) {
-                        // 已加入队伍
-                    } else {
-                        TeamGuild guild = manager.getGuild(args.get(0));
-                        if (guild != null) {
-                            // 处理申请
-                        } else {
-                            // 队伍不存在
-                        }
-                    }
-                }
+                if (args.isEmpty()) config.sendV(player, Violets.KEY_INVALID_ARG);
+                else manager.joinGuild(player, args.get(0));
                 return true;
             }
 

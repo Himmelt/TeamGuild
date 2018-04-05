@@ -1,5 +1,9 @@
 package org.soraworld.guild;
 
+import net.minecraft.server.v1_7_R4.ChatClickable;
+import net.minecraft.server.v1_7_R4.ChatComponentText;
+import net.minecraft.server.v1_7_R4.ChatMessage;
+import net.minecraft.server.v1_7_R4.ChatModifier;
 import org.bukkit.event.Listener;
 import org.soraworld.guild.command.CommandGuild;
 import org.soraworld.guild.config.Config;
@@ -40,7 +44,17 @@ public class TeamGuild extends VioletPlugin {
     }
 
     protected void afterEnable() {
-
+        // TODO Click Chat
+        System.out.println(ChatModifier.class);
+        System.out.println(ChatMessage.class);
+        System.out.println(ChatComponentText.class);
+        System.out.println(ChatClickable.class);
+        /*
+        *  class net.minecraft.util.ChatStyle
+           class net.minecraft.util.ChatComponentTranslation
+           class net.minecraft.util.ChatComponentText
+           class net.minecraft.event.ClickEvent
+         */
     }
 
     protected void beforeDisable() {
