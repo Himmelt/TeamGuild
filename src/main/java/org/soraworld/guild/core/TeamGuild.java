@@ -59,7 +59,6 @@ public class TeamGuild {
     public boolean addMember(String player) {
         if (members.size() + managers.size() < level.size) {
             members.add(player);
-            applications.remove(player);
             return true;
         }
         return false;
@@ -127,6 +126,14 @@ public class TeamGuild {
                 return;
             }
         }
+    }
+
+    public boolean hasApplication(String applicant) {
+        return applications.contains(applicant);
+    }
+
+    public void closeApplication(String applicant) {
+        applications.remove(applicant);
     }
 
 }
