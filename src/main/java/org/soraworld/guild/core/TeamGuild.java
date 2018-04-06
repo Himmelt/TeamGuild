@@ -2,6 +2,8 @@ package org.soraworld.guild.core;
 
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
+import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.configuration.MemorySection;
 import org.bukkit.entity.Player;
 import org.soraworld.guild.config.Config;
 import org.soraworld.guild.event.JoinApplicationEvent;
@@ -12,18 +14,37 @@ import java.util.LinkedHashSet;
 
 public class TeamGuild {
 
+    private int size;
     private int balance = 0;
     private String display;
     private String description;
-    private TeamLevel level;
     private final String leader;
     private final HashSet<String> members = new HashSet<>();
     private final HashSet<String> managers = new HashSet<>();
     private final LinkedHashSet<String> applications = new LinkedHashSet<>();
 
-    public TeamGuild(@Nonnull String leader, @Nonnull TeamLevel level) {
+    public TeamGuild(String leader, int size) {
         this.leader = leader;
-        this.level = level;
+        this.size = size;
+    }
+
+    public TeamGuild(String leader, MemorySection section) {
+        this.leader = leader;
+        this.display = section.getString("display", leader);
+        this.size = section.getInt("size", 0);
+        this.balance = section.getInt("balance", 0);
+        this.description = section.getString("description", leader + "'s Team.");
+        this.managers.addAll(section.getStringList("managers"));
+        this.members.addAll(section.getStringList("members"));
+    }
+
+    public void write(ConfigurationSection section) {
+        section.set("display", display);
+        section.set("size", size);
+        section.set("balance", balance);
+        section.set("description", description);
+        section.set("managers", managers.toArray());
+        section.set("members", members.toArray());
     }
 
     public boolean isLeader(String player) {
@@ -32,6 +53,7 @@ public class TeamGuild {
 
     public void addManager(String player) {
         managers.add(player);
+        members.remove(player);
     }
 
     public boolean hasManager(String player) {
@@ -39,6 +61,7 @@ public class TeamGuild {
     }
 
     public void delManager(String player) {
+        members.add(player);
         managers.remove(player);
     }
 
@@ -57,7 +80,7 @@ public class TeamGuild {
     }
 
     public boolean addMember(String player) {
-        if (members.size() + managers.size() < level.size) {
+        if (members.size() + managers.size() < size) {
             members.add(player);
             return true;
         }
@@ -96,33 +119,33 @@ public class TeamGuild {
         config.send(sender, "listFoot");
     }
 
-    public TeamLevel getLevel() {
-        return level;
-    }
-
     public void addJoinApplication(String username) {
         applications.add(username);
         Bukkit.getPluginManager().callEvent(new JoinApplicationEvent(leader, username));
     }
 
-    public void notifyApplication(Config config) {
+    public void notifyApplication(Player player, Config config) {
         for (String applicant : applications) {
-            handleApplication(applicant, config);
+            handleApplication(player, applicant, config);
         }
     }
 
-    public void handleApplication(String applicant, Config config) {
-        Player handler = Bukkit.getPlayer(leader);
+    public void handleApplication(Player handler, String applicant, Config config) {
+        if (handler != null) {
+            config.send(handler, "1 handleApplication");
+            return;
+        }
+        handler = Bukkit.getPlayer(leader);
         if (handler != null) {
             /// send message
-            config.send(handler, "handleApplication");
+            config.send(handler, "2 handleApplication");
             return;
         }
         for (String manager : managers) {
             handler = Bukkit.getPlayer(manager);
             if (handler != null) {
                 /// send message
-                config.send(handler, "handleApplication");
+                config.send(handler, "3 handleApplication");
                 return;
             }
         }
@@ -134,6 +157,14 @@ public class TeamGuild {
 
     public void closeApplication(String applicant) {
         applications.remove(applicant);
+    }
+
+    public int size() {
+        return size;
+    }
+
+    public void setSize(int size) {
+        this.size = size;
     }
 
 }

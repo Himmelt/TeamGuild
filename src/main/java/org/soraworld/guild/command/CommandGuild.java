@@ -109,8 +109,8 @@ public class CommandGuild extends CommandViolet {
             public boolean execute(Player player, ArrayList<String> args) {
                 TeamGuild guild = manager.getGuild(player.getName());
                 if (guild != null) {
-                    if (!guild.getLevel().guild) {
-
+                    if (!manager.getLevel(guild).guild) {
+                        manager.upgrade(guild);
                     } else {
                         config.send(player, "guildCantUpgrade");
                     }

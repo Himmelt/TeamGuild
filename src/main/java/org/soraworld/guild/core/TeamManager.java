@@ -1,9 +1,13 @@
 package org.soraworld.guild.core;
 
+import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.configuration.MemorySection;
 import org.bukkit.entity.Player;
 import org.soraworld.guild.config.Config;
+import org.soraworld.violet.yaml.IYamlConfiguration;
 
 import javax.annotation.Nonnull;
+import java.io.File;
 import java.util.*;
 
 public class TeamManager {
@@ -13,8 +17,46 @@ public class TeamManager {
     private final HashMap<String, TeamGuild> teams = new HashMap<>();
     private final HashMap<String, TeamGuild> guilds = new HashMap<>();
 
-    public TeamManager(Config config) {
+    private final File guild_file;
+    private final IYamlConfiguration guild_yaml = new IYamlConfiguration();
+
+    public TeamManager(Config config, File path) {
         this.config = config;
+        this.guild_file = new File(path, "guild.yml");
+    }
+
+    public void saveGuild() {
+        try {
+            for (Map.Entry<String, TeamGuild> entry : guilds.entrySet()) {
+                ConfigurationSection sec = guild_yaml.createSection(entry.getKey());
+                entry.getValue().write(sec);
+            }
+            guild_yaml.save(guild_file);
+        } catch (Throwable e) {
+            if (config.debug()) e.printStackTrace();
+            config.console("&cGuild file save exception !!!");
+        }
+    }
+
+    public void loadGuild() {
+        if (!guild_file.exists()) {
+            saveGuild();
+            return;
+        }
+        try {
+            guilds.clear();
+            teams.clear();
+            guild_yaml.load(guild_file);
+            for (String key : guild_yaml.getKeys(false)) {
+                Object obj = guild_yaml.get(key);
+                if (obj instanceof MemorySection) {
+                    guilds.put(key, new TeamGuild(key, (MemorySection) obj));
+                }
+            }
+        } catch (Throwable e) {
+            if (config.debug()) e.printStackTrace();
+            config.console("&cGuild file load exception !!!");
+        }
     }
 
     public void clearPlayer(String player) {
@@ -33,15 +75,33 @@ public class TeamManager {
             else config.send(player, "alreadyInTeam");
             return;
         }
-        guild = new TeamGuild(username, levels.first());
-        if (config.getEconomy().takeEco(username, guild.getLevel().cost)) {
+        guild = new TeamGuild(username, levels.first().size);
+        if (config.getEconomy().takeEco(username, getLevel(guild).cost)) {
             teams.put(username, guild);
             guilds.put(username, guild);
             config.save();
-            config.send(player, "createTeamSuccess", guild.getLevel().cost);
+            config.send(player, "createTeamSuccess", getLevel(guild).cost);
         } else {
             config.send(player, "createTeamFailed");
         }
+    }
+
+    private TeamLevel getLevel(int size) {
+        for (TeamLevel level : levels) {
+            if (size <= level.size) return level;
+        }
+        return levels.last();
+    }
+
+    public TeamLevel getLevel(TeamGuild guild) {
+        for (TeamLevel level : levels) {
+            if (guild.size() <= level.size) {
+                guild.setSize(level.size);
+                return level;
+            }
+        }
+        guild.setSize(levels.last().size);
+        return levels.last();
     }
 
     public void joinGuild(Player player, String leader) {
@@ -121,6 +181,10 @@ public class TeamManager {
             list.add(sec);
         }
         return list;
+    }
+
+    public void upgrade(TeamGuild guild) {
+        System.out.println("upgrade");
     }
 
 }

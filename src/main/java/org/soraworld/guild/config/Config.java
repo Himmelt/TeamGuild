@@ -31,6 +31,7 @@ public class Config extends IIConfig {
         enableEco = config_yaml.getBoolean("enableEco", true);
         teamPvP = config_yaml.getBoolean("teamPvP", false);
         getTeamManager().readLevels(config_yaml.getList("levels"));
+        getTeamManager().loadGuild();
     }
 
     protected void saveOptions() {
@@ -38,6 +39,7 @@ public class Config extends IIConfig {
         config_yaml.set("enableEco", enableEco);
         config_yaml.set("teamPvP", teamPvP);
         config_yaml.set("levels", getTeamManager().writeLevels());
+        getTeamManager().saveGuild();
     }
 
     public void afterLoad() {
@@ -79,7 +81,7 @@ public class Config extends IIConfig {
     }
 
     public TeamManager getTeamManager() {
-        if (teamManager == null) teamManager = new TeamManager(this);
+        if (teamManager == null) teamManager = new TeamManager(this, config_file.getParentFile());
         return teamManager;
     }
 
