@@ -1,5 +1,7 @@
 package org.soraworld.guild.core;
 
+import net.minecraft.server.v1_7_R4.EnumClickAction;
+import net.minecraft.server.v1_7_R4.EnumHoverAction;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
@@ -7,6 +9,8 @@ import org.bukkit.configuration.MemorySection;
 import org.bukkit.entity.Player;
 import org.soraworld.guild.config.Config;
 import org.soraworld.guild.event.JoinApplicationEvent;
+import org.soraworld.violet.chat.IIChat;
+import org.soraworld.violet.chat.IILang;
 
 import javax.annotation.Nonnull;
 import java.util.HashSet;
@@ -36,6 +40,7 @@ public class TeamGuild {
         this.description = section.getString("description", leader + "'s Team.");
         this.managers.addAll(section.getStringList("managers"));
         this.members.addAll(section.getStringList("members"));
+        this.applications.addAll(section.getStringList("applications"));
     }
 
     public void write(ConfigurationSection section) {
@@ -45,13 +50,14 @@ public class TeamGuild {
         section.set("description", description);
         section.set("managers", managers.toArray());
         section.set("members", members.toArray());
+        section.set("applications", applications.toArray());
     }
 
     public boolean isLeader(String player) {
         return leader.equals(player);
     }
 
-    public void addManager(String player) {
+    public void setManager(String player) {
         managers.add(player);
         members.remove(player);
     }
@@ -60,7 +66,7 @@ public class TeamGuild {
         return isLeader(player) || managers.contains(player);
     }
 
-    public void delManager(String player) {
+    public void unsetManager(String player) {
         members.add(player);
         managers.remove(player);
     }
@@ -132,23 +138,34 @@ public class TeamGuild {
 
     public void handleApplication(Player handler, String applicant, Config config) {
         if (handler != null) {
-            config.send(handler, "1 handleApplication");
+            sendHandleMessage(handler, applicant, config);
             return;
         }
         handler = Bukkit.getPlayer(leader);
         if (handler != null) {
-            /// send message
-            config.send(handler, "2 handleApplication");
+            sendHandleMessage(handler, applicant, config);
             return;
         }
         for (String manager : managers) {
             handler = Bukkit.getPlayer(manager);
             if (handler != null) {
-                /// send message
-                config.send(handler, "3 handleApplication");
+                sendHandleMessage(handler, applicant, config);
                 return;
             }
         }
+    }
+
+    private void sendHandleMessage(Player handler, String applicant, Config config) {
+        IILang lang = config.iiLang;
+        config.iiChat.sendMessage(handler,
+                IIChat.format(lang.format("handleApplication", applicant)),
+                IIChat.format(lang.format("acceptApplication"),
+                        EnumClickAction.RUN_COMMAND, "/guild accept " + applicant,
+                        EnumHoverAction.SHOW_TEXT, lang.format("acceptHover")),
+                IIChat.format(lang.format("rejectApplication"),
+                        EnumClickAction.RUN_COMMAND, "/guild reject " + applicant,
+                        EnumHoverAction.SHOW_TEXT, lang.format("rejectHover"))
+        );
     }
 
     public boolean hasApplication(String applicant) {

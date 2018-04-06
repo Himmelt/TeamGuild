@@ -133,10 +133,6 @@ public class TeamManager {
         return guilds.get(leader);
     }
 
-    public TeamGuild getTeam(String player) {
-        return teams.get(player);
-    }
-
     public TeamGuild fetchTeam(String player) {
         TeamGuild team = teams.get(player);
         if (team == null) {

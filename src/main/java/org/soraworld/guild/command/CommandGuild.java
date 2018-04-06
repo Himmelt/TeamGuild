@@ -1,8 +1,6 @@
 package org.soraworld.guild.command;
 
-import net.minecraft.server.v1_7_R4.*;
 import org.bukkit.command.CommandSender;
-import org.bukkit.craftbukkit.v1_7_R4.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.soraworld.guild.config.Config;
@@ -45,13 +43,6 @@ public class CommandGuild extends CommandViolet {
         addSub(new IICommand("leave", null, config, true) {
             @Override
             public boolean execute(Player player, ArrayList<String> args) {
-                if (player instanceof CraftPlayer) {
-                    CraftPlayer craftPlayer = (CraftPlayer) player;
-                    ChatModifier style = new ChatModifier();
-                    style.setColor(EnumChatFormat.DARK_PURPLE).setBold(true);
-                    style.setChatClickable(new ChatClickable(EnumClickAction.RUN_COMMAND, "/guild accept Shiki"));
-                    craftPlayer.getHandle().b(new ChatComponentText("Click Me").setChatModifier(style));
-                }
                 return true;
             }
         });
@@ -64,12 +55,11 @@ public class CommandGuild extends CommandViolet {
         addSub(new IICommand("accept", null, config, true) {
             @Override
             public boolean execute(Player player, ArrayList<String> args) {
-                System.out.println("Command accept:" + player);
                 if (args.isEmpty()) {
-                    config.send(player, Violets.KEY_INVALID_ARG);
+                    config.sendV(player, Violets.KEY_INVALID_ARG);
                     return true;
                 }
-                TeamGuild guild = manager.getTeam(player.getName());
+                TeamGuild guild = manager.fetchTeam(player.getName());
                 if (guild == null) {
                     config.send(player, "notInAnyTeam");
                     return true;
@@ -95,7 +85,7 @@ public class CommandGuild extends CommandViolet {
         addSub(new IICommand("list", null, config, true) {
             @Override
             public boolean execute(Player player, ArrayList<String> args) {
-                TeamGuild team = manager.getTeam(player.getName());
+                TeamGuild team = manager.fetchTeam(player.getName());
                 if (team != null) {
                     team.showMemberList(player, config);
                 } else {
