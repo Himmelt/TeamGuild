@@ -2,7 +2,6 @@ package org.soraworld.guild.listener;
 
 import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
@@ -23,7 +22,7 @@ public class EventListener implements Listener {
         this.manager = config.getTeamManager();
     }
 
-    @EventHandler(priority = EventPriority.MONITOR)
+    @EventHandler
     public void onPlayerJoin(final PlayerJoinEvent event) {
         String player = event.getPlayer().getName();
         final TeamGuild guild = manager.fetchTeam(player);

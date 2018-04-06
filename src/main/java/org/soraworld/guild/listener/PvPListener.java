@@ -11,14 +11,12 @@ import org.soraworld.guild.config.Config;
 import org.soraworld.guild.core.TeamGuild;
 import org.soraworld.guild.core.TeamManager;
 
-import javax.annotation.Nonnull;
-
 public class PvPListener implements Listener {
 
     private final Config config;
     private final TeamManager manager;
 
-    public PvPListener(@Nonnull Config config) {
+    public PvPListener(Config config) {
         this.config = config;
         this.manager = config.getTeamManager();
     }

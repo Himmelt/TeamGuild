@@ -9,6 +9,7 @@ import org.soraworld.guild.command.CommandGuild;
 import org.soraworld.guild.config.Config;
 import org.soraworld.guild.constant.Constant;
 import org.soraworld.guild.listener.EventListener;
+import org.soraworld.guild.listener.PvPListener;
 import org.soraworld.violet.VioletPlugin;
 import org.soraworld.violet.command.IICommand;
 import org.soraworld.violet.config.IIConfig;
@@ -32,7 +33,7 @@ public class TeamGuild extends VioletPlugin {
         if (config instanceof Config) {
             Config cfg = (Config) config;
             listeners.add(new EventListener(cfg));
-            if (!cfg.isTeamPvP()) listeners.add(new EventListener(cfg));
+            if (!cfg.isTeamPvP()) listeners.add(new PvPListener(cfg));
         }
         return listeners;
     }
