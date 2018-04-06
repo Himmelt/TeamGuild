@@ -77,6 +77,20 @@ public class TeamManager {
         return teams.get(player);
     }
 
+    public TeamGuild fetchTeam(String player) {
+        TeamGuild team = teams.get(player);
+        if (team == null) {
+            for (TeamGuild guild : guilds.values()) {
+                if (guild.hasMember(player)) {
+                    team = guild;
+                    teams.put(player, team);
+                    break;
+                }
+            }
+        }
+        return team;
+    }
+
     public void readLevels(List<?> list) {
         levels.clear();
         if (list != null) {

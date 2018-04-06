@@ -52,7 +52,7 @@ public class Config extends IIConfig {
 
     @Nonnull
     protected String defaultChatHead() {
-        return "[" + Constant.PLUGIN_NAME + "]";
+        return "[" + Constant.PLUGIN_NAME + "] ";
     }
 
     public String defaultAdminPerm() {

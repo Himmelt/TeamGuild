@@ -1,7 +1,10 @@
 package org.soraworld.guild.core;
 
+import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 import org.soraworld.guild.config.Config;
+import org.soraworld.guild.event.JoinApplicationEvent;
 
 import javax.annotation.Nonnull;
 import java.util.HashSet;
@@ -56,6 +59,7 @@ public class TeamGuild {
     public boolean addMember(String player) {
         if (members.size() + managers.size() < level.size) {
             members.add(player);
+            applications.remove(player);
             return true;
         }
         return false;
@@ -99,6 +103,30 @@ public class TeamGuild {
 
     public void addJoinApplication(String username) {
         applications.add(username);
+        Bukkit.getPluginManager().callEvent(new JoinApplicationEvent(leader, username));
+    }
+
+    public void notifyApplication(Config config) {
+        for (String applicant : applications) {
+            handleApplication(applicant, config);
+        }
+    }
+
+    public void handleApplication(String applicant, Config config) {
+        Player handler = Bukkit.getPlayer(leader);
+        if (handler != null) {
+            /// send message
+            config.send(handler, "handleApplication");
+            return;
+        }
+        for (String manager : managers) {
+            handler = Bukkit.getPlayer(manager);
+            if (handler != null) {
+                /// send message
+                config.send(handler, "handleApplication");
+                return;
+            }
+        }
     }
 
 }

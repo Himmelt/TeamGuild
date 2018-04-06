@@ -52,6 +52,27 @@ public class CommandGuild extends CommandViolet {
                 return super.execute(sender, args);
             }
         });
+        addSub(new IICommand("accept", null, config, true) {
+            @Override
+            public boolean execute(Player player, ArrayList<String> args) {
+                if (args.isEmpty()) {
+                    config.send(player, Violets.KEY_INVALID_ARG);
+                    return true;
+                }
+                TeamGuild guild = manager.getTeam(player.getName());
+                if (guild == null) {
+                    config.send(player, "notInAnyTeam");
+                    return true;
+                }
+                if (guild.hasManager(player.getName())) {
+                    guild.addMember(args.get(0));
+                    config.send(player, "acceptMember", args.get(0));
+                } else {
+                    config.send(player, "notManager");
+                }
+                return true;
+            }
+        });
         addSub(new IICommand("list", null, config, true) {
             @Override
             public boolean execute(Player player, ArrayList<String> args) {
