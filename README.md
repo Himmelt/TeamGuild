@@ -9,11 +9,3 @@ v1_7_R4
 4. 当玩家同处于一个小队后，无视队友所有伤害(FlanMOD 枪械)
 5. 拥有小队公会排行榜，小队容量越大，排名靠前。
 6. 没有经济系统时是否仍然可以创建？
-7. build时将 net包和flans包排除
-
-```
-if(player instanceof CraftPlayer){
-    CraftPlayer mp = (CraftPlayer)player;
-    mp.getHandle().b(new ChatComponentText("xxx").setChatModifier(new ChatModifier().setChatClickable(new ChatClickable(EnumClickAction.RUN_COMMAND,"help"))));
-}
-```

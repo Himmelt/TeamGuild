@@ -73,11 +73,26 @@ public class CommandGuild extends CommandViolet {
                 }
                 if (guild.hasManager(player.getName())) {
                     String applicant = args.get(0);
+                    TeamGuild team = manager.fetchTeam(applicant);
+                    if (team != null) {
+                        config.send(player, "alreadyJoinedTeam", applicant, team.getDisplay());
+                        guild.closeApplication(applicant);
+                        manager.saveGuild();
+                        return true;
+                    }
                     if (guild.hasApplication(applicant)) {
                         if (guild.addMember(applicant)) {
                             config.send(player, "acceptMember", applicant);
+                            Player app = Bukkit.getPlayer(applicant);
+                            if (app != null) {
+                                config.send(app, "joinAccepted", player.getName(), guild.getDisplay());
+                            }
                         } else {
                             config.send(player, "acceptFailed");
+                            Player app = Bukkit.getPlayer(applicant);
+                            if (app != null) {
+                                config.send(app, "joinAcceptFailed", player.getName(), guild.getDisplay());
+                            }
                         }
                         guild.closeApplication(applicant);
                         manager.saveGuild();
@@ -105,7 +120,7 @@ public class CommandGuild extends CommandViolet {
                 if (guild.hasManager(player.getName())) {
                     String applicant = args.get(0);
                     if (guild.hasApplication(applicant)) {
-                        config.send(player, "rejectApplication");
+                        config.send(player, "rejectApplication", applicant);
                         guild.closeApplication(applicant);
                         manager.saveGuild();
                         Player app = Bukkit.getPlayer(applicant);
@@ -113,7 +128,7 @@ public class CommandGuild extends CommandViolet {
                             config.send(app, "applicationRejected");
                         }
                     } else {
-                        config.send(player, "noJoinApplication", applicant);
+                        config.send(player, "noJoinApplication");
                     }
                 } else {
                     config.send(player, "notManager");
