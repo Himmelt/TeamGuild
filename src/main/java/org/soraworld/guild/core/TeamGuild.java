@@ -103,6 +103,7 @@ public class TeamGuild {
     }
 
     public void delMember(String player) {
+        managers.remove(player);
         members.remove(player);
     }
 
@@ -149,13 +150,11 @@ public class TeamGuild {
         handler = Bukkit.getPlayer(leader);
         if (handler != null) {
             sendHandleMessage(handler, applicant, config);
-            return;
         }
         for (String manager : managers) {
             handler = Bukkit.getPlayer(manager);
             if (handler != null) {
                 sendHandleMessage(handler, applicant, config);
-                return;
             }
         }
     }
@@ -187,6 +186,19 @@ public class TeamGuild {
 
     public void setSize(int size) {
         this.size = size;
+    }
+
+    public void notifyLeave(String username, final Config config) {
+        Player handler = Bukkit.getPlayer(leader);
+        if (handler != null) {
+            config.send(handler, "notifyLeave", username);
+        }
+        for (String manager : managers) {
+            handler = Bukkit.getPlayer(manager);
+            if (handler != null) {
+                config.send(handler, "notifyLeave", username);
+            }
+        }
     }
 
 }

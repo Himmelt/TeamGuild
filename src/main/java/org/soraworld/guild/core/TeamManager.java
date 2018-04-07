@@ -128,6 +128,7 @@ public class TeamManager {
     public void leaveGuild(String player, TeamGuild guild) {
         guild.delMember(player);
         teams.remove(player);
+        saveGuild();
     }
 
     public TeamGuild getGuild(String leader) {

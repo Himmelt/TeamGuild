@@ -50,13 +50,46 @@ public class CommandGuild extends CommandViolet {
         addSub(new IICommand("leave", null, config, true) {
             @Override
             public boolean execute(Player player, ArrayList<String> args) {
+                String username = player.getName();
+                TeamGuild guild = manager.fetchTeam(username);
+                if (guild != null) {
+                    manager.leaveGuild(username, guild);
+                    config.send(player, "leaveGuild", guild.getDisplay());
+                    guild.notifyLeave(username, config);
+                } else {
+                    config.send(player, "notInAnyTeam");
+                }
                 return true;
             }
         });
         addSub(new IICommand("kick", null, config, true) {
             @Override
-            public boolean execute(CommandSender sender, ArrayList<String> args) {
-                return super.execute(sender, args);
+            public boolean execute(Player player, ArrayList<String> args) {
+                if (args.isEmpty()) {
+                    config.sendV(player, Violets.KEY_INVALID_ARG);
+                    return true;
+                }
+                TeamGuild guild = manager.fetchTeam(player.getName());
+                if (guild == null) {
+                    config.send(player, "notInAnyTeam");
+                    return true;
+                }
+                if (guild.hasManager(player.getName())) {
+                    String member = args.get(0);
+                    if (guild.hasMember(member)) {
+                        manager.leaveGuild(member, guild);
+                        config.send(player, "kickSuccess", member);
+                        Player mmp = Bukkit.getPlayer(member);
+                        if (mmp != null) {
+                            config.send(mmp, "beKicked", guild.getDisplay());
+                        }
+                    } else {
+                        config.send(player, "noThisMember", member);
+                    }
+                } else {
+                    config.send(player, "notManager");
+                }
+                return true;
             }
         });
         addSub(new IICommand("accept", null, config, true) {
