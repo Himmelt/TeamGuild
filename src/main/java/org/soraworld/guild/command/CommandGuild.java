@@ -165,17 +165,7 @@ public class CommandGuild extends CommandViolet {
         addSub(new IICommand("upgrade", null, config, true) {
             @Override
             public boolean execute(Player player, ArrayList<String> args) {
-                TeamGuild guild = manager.getGuild(player.getName());
-                if (guild != null) {
-                    if (manager.upgrade(guild)) {
-                        config.send(player, "guildUpgraded");
-                        manager.saveGuild();
-                    } else {
-                        config.send(player, "guildIsTopLevel");
-                    }
-                } else {
-                    config.send(player, "ownNoGuild");
-                }
+                manager.upgrade(player);
                 return true;
             }
         });

@@ -79,11 +79,10 @@ public class TeamManager {
         if (config.getEconomy().takeEco(username, getLevel(guild).cost)) {
             teams.put(username, guild);
             guilds.put(username, guild);
-            config.save();
             config.send(player, "createTeamSuccess", getLevel(guild).cost);
             saveGuild();
         } else {
-            config.send(player, "createTeamFailed");
+            config.send(player, "noEnoughEco");
         }
     }
 
@@ -183,9 +182,28 @@ public class TeamManager {
         return list;
     }
 
-    public boolean upgrade(TeamGuild guild) {
-        System.out.println("upgrade");
-        return true;
+    public void upgrade(Player player) {
+        TeamGuild guild = fetchTeam(player.getName());
+        if (guild == null) {
+            config.send(player, "notInAnyTeam");
+            return;
+        }
+        if (guild.isLeader(player.getName())) {
+            TeamLevel next = levels.higher(getLevel(guild));
+            if (next != null) {
+                if (config.getEconomy().takeEco(player.getName(), next.cost)) {
+                    guild.setSize(next.size);
+                    config.send(player, "upgradeSuccess", next.cost);
+                    saveGuild();
+                } else {
+                    config.send(player, "noEnoughEco");
+                }
+            } else {
+                config.send(player, "guildIsTopLevel");
+            }
+        } else {
+            config.send(player, "notLeader");
+        }
     }
 
 }
