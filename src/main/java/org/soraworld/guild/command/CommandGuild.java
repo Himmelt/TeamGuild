@@ -23,8 +23,16 @@ public class CommandGuild extends CommandViolet {
         addSub(new IICommand("rank", config) {
             @Override
             public boolean execute(CommandSender sender, ArrayList<String> args) {
-                System.out.println("rank");
-                return super.execute(sender, args);
+                if (args.isEmpty()) {
+                    manager.showRank(sender, 1);
+                } else {
+                    try {
+                        manager.showRank(sender, Integer.valueOf(args.get(0)));
+                    } catch (Throwable ignored) {
+                        config.sendV(sender, Violets.KEY_INVALID_INT);
+                    }
+                }
+                return true;
             }
         });
         addSub(new IICommand("info", config) {
@@ -58,6 +66,12 @@ public class CommandGuild extends CommandViolet {
                 if (args.isEmpty()) manager.createGuild(player, "Team_" + player.getName());
                 else manager.createGuild(player, args.get(0));
                 return true;
+            }
+        });
+        addSub(new IICommand("disband", null, config, true) {
+            @Override
+            public boolean execute(Player player, ArrayList<String> args) {
+                return super.execute(player, args);
             }
         });
         addSub(new IICommand("join", null, config, true) {
@@ -210,7 +224,20 @@ public class CommandGuild extends CommandViolet {
                 return true;
             }
         });
-        // TODO describe
+        addSub(new IICommand("describe", null, config, true) {
+            @Override
+            public boolean execute(Player player, ArrayList<String> args) {
+                TeamGuild team = manager.fetchTeam(player.getName());
+                if (args.isEmpty()) {
+                    config.send(player, "getDescription", team.getDescription());
+                } else {
+                    team.setDescription(args.get(0));
+                    config.send(player, "setDescription", args.get(0));
+                    manager.saveGuild();
+                }
+                return true;
+            }
+        });
         addSub(new IICommand("list", null, config, true) {
             @Override
             public boolean execute(Player player, ArrayList<String> args) {

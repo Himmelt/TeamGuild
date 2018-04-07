@@ -1,5 +1,6 @@
 package org.soraworld.guild.core;
 
+import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.MemorySection;
 import org.bukkit.entity.Player;
@@ -15,6 +16,7 @@ public class TeamManager {
     private final TreeSet<TeamLevel> levels = new TreeSet<>();
     private final HashMap<String, TeamGuild> teams = new HashMap<>();
     private final HashMap<String, TeamGuild> guilds = new HashMap<>();
+    private final TreeSet<TeamGuild> rank = new TreeSet<>();
 
     private final File guild_file;
     private final IYamlConfiguration guild_yaml = new IYamlConfiguration();
@@ -43,13 +45,17 @@ public class TeamManager {
             return;
         }
         try {
-            guilds.clear();
+            rank.clear();
             teams.clear();
+            guilds.clear();
             guild_yaml.load(guild_file);
             for (String key : guild_yaml.getKeys(false)) {
                 Object obj = guild_yaml.get(key);
                 if (obj instanceof MemorySection) {
-                    guilds.put(key, new TeamGuild(key, (MemorySection) obj));
+                    TeamGuild guild = new TeamGuild(key, (MemorySection) obj);
+                    getLevel(guild);
+                    rank.add(guild);
+                    guilds.put(key, guild);
                 }
             }
         } catch (Throwable e) {
@@ -77,6 +83,7 @@ public class TeamManager {
         guild = new TeamGuild(username, levels.first().size);
         guild.setDisplay(display);
         if (config.getEconomy().takeEco(username, getLevel(guild).cost)) {
+            rank.add(guild);
             teams.put(username, guild);
             guilds.put(username, guild);
             config.send(player, "createTeamSuccess", getLevel(guild).cost);
@@ -205,6 +212,19 @@ public class TeamManager {
         } else {
             config.send(player, "notLeader");
         }
+    }
+
+    public void showRank(CommandSender sender, int page) {
+        if (page < 1) page = 1;
+        config.send(sender, "rankHead");
+        Iterator<TeamGuild> it = rank.iterator();
+        for (int i = 1; i <= page * 10 && it.hasNext(); i++) {
+            TeamGuild guild = it.next();
+            if (i >= page * 10 - 9) {
+                config.send(sender, "rankLine", i, guild.getDisplay(), guild.getLeader());
+            }
+        }
+        config.send(sender, "rankFoot", page, rank.size() / 10 + 1);
     }
 
 }
