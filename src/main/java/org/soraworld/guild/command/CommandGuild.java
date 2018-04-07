@@ -10,6 +10,7 @@ import org.soraworld.guild.core.TeamManager;
 import org.soraworld.violet.command.CommandViolet;
 import org.soraworld.violet.command.IICommand;
 import org.soraworld.violet.constant.Violets;
+import org.soraworld.violet.util.ListUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,6 +25,31 @@ public class CommandGuild extends CommandViolet {
             public boolean execute(CommandSender sender, ArrayList<String> args) {
                 System.out.println("rank");
                 return super.execute(sender, args);
+            }
+        });
+        addSub(new IICommand("info", config) {
+            @Override
+            public boolean execute(CommandSender sender, ArrayList<String> args) {
+                if (args.isEmpty()) {
+                    if (sender instanceof Player) {
+                        TeamGuild guild = manager.fetchTeam(sender.getName());
+                        if (guild != null) guild.showGuildInfo(sender, config, manager);
+                        else config.send(sender, "notInAnyTeam");
+                    } else {
+                        config.sendV(sender, Violets.KEY_ONLY_PLAYER_OR_INVALID_ARG);
+                    }
+                } else {
+                    TeamGuild guild = manager.getGuild(args.get(0));
+                    if (guild != null) guild.showGuildInfo(sender, config, manager);
+                    else config.send(sender, "teamNotExist");
+                }
+                return true;
+            }
+
+            @Override
+            public List<String> getTabCompletions(ArrayList<String> args) {
+                if (args.isEmpty()) return manager.getGuilds();
+                else return ListUtil.getMatchList(args.get(0), manager.getGuilds());
             }
         });
         addSub(new IICommand("create", null, config, true) {
@@ -44,7 +70,8 @@ public class CommandGuild extends CommandViolet {
 
             @Override
             public List<String> getTabCompletions(ArrayList<String> args) {
-                return config.getTeamManager().getGuilds();
+                if (args.isEmpty()) return manager.getGuilds();
+                else return ListUtil.getMatchList(args.get(0), manager.getGuilds());
             }
         });
         addSub(new IICommand("leave", null, config, true) {
@@ -183,6 +210,7 @@ public class CommandGuild extends CommandViolet {
                 return true;
             }
         });
+        // TODO describe
         addSub(new IICommand("list", null, config, true) {
             @Override
             public boolean execute(Player player, ArrayList<String> args) {

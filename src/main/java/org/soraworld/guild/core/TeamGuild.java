@@ -4,6 +4,7 @@ import net.minecraft.server.v1_7_R4.EnumClickAction;
 import net.minecraft.server.v1_7_R4.EnumHoverAction;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
+import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.MemorySection;
 import org.bukkit.entity.Player;
@@ -119,18 +120,6 @@ public class TeamGuild {
         this.description = description;
     }
 
-    public void showMemberList(CommandSender sender, Config config) {
-        config.send(sender, "listHead", display);
-        config.send(sender, "listLeader", leader);
-        for (String manager : managers) {
-            config.send(sender, "listManager", manager);
-        }
-        for (String member : members) {
-            config.send(sender, "listMember", member);
-        }
-        config.send(sender, "listFoot");
-    }
-
     public void addJoinApplication(String username) {
         applications.add(username);
         Bukkit.getPluginManager().callEvent(new JoinApplicationEvent(leader, username));
@@ -199,6 +188,29 @@ public class TeamGuild {
                 config.send(handler, "notifyLeave", username);
             }
         }
+    }
+
+    public void showMemberList(CommandSender sender, Config config) {
+        config.send(sender, "listHead", display);
+        config.send(sender, "listLeader", leader);
+        for (String manager : managers) {
+            config.send(sender, "listManager", manager);
+        }
+        for (String member : members) {
+            config.send(sender, "listMember", member);
+        }
+        config.send(sender, "listFoot");
+    }
+
+    public void showGuildInfo(CommandSender sender, Config config, TeamManager manager) {
+        config.send(sender, "infoDisplay", display);
+        config.send(sender, "infoLeader", leader);
+        config.send(sender, "infoMembers", getCount(), size);
+        if (sender instanceof Player && hasMember(sender.getName()) || sender instanceof ConsoleCommandSender) {
+            config.send(sender, "maxManagers", manager.getLevel(this).mans);
+            config.send(sender, "infoBalance", balance);
+        }
+        config.send(sender, "infoDescription", description);
     }
 
 }
