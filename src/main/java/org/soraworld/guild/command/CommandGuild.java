@@ -128,7 +128,7 @@ public class CommandGuild extends CommandViolet {
                             config.send(app, "applicationRejected");
                         }
                     } else {
-                        config.send(player, "noJoinApplication");
+                        config.send(player, "noJoinApplication", applicant);
                     }
                 } else {
                     config.send(player, "notManager");
