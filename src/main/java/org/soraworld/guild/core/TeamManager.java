@@ -155,24 +155,26 @@ public class TeamManager {
                     Map map = (Map) obj;
                     Object size = map.get("size");
                     Object cost = map.get("cost");
+                    Object mans = map.get("mans");
                     Object guild = map.get("guild");
-                    if (size instanceof Integer && cost instanceof Integer && guild instanceof Boolean) {
-                        TeamLevel level = new TeamLevel((Integer) size, (Integer) cost, (Boolean) guild);
+                    if (size instanceof Integer && cost instanceof Integer && mans instanceof Integer && guild instanceof Boolean) {
+                        TeamLevel level = new TeamLevel((Integer) size, (Integer) cost, (Integer) mans, (Boolean) guild);
                         levels.add(level);
                     }
                 }
             }
         }
-        if (levels.isEmpty()) levels.add(new TeamLevel(5, 50, false));
+        if (levels.isEmpty()) levels.add(new TeamLevel(5, 50, 1, false));
     }
 
     public List<?> writeLevels() {
-        if (levels.isEmpty()) levels.add(new TeamLevel(5, 50, false));
+        if (levels.isEmpty()) levels.add(new TeamLevel(5, 50, 1, false));
         List<Map> list = new ArrayList<>();
         for (TeamLevel level : levels) {
             Map<String, Object> sec = new LinkedHashMap<>();
             sec.put("size", level.size);
             sec.put("cost", level.cost);
+            sec.put("mans", level.mans);
             sec.put("guild", level.guild);
             list.add(sec);
         }

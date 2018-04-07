@@ -57,9 +57,12 @@ public class TeamGuild {
         return leader.equals(player);
     }
 
-    public void setManager(String player) {
-        managers.add(player);
-        members.remove(player);
+    // TODO 外界设置，以输出超过管理员数量的提示信息
+    public void setManager(String player, TeamManager manager) {
+        if (managers.size() < manager.getLevel(this).mans) {
+            managers.add(player);
+            members.remove(player);
+        }
     }
 
     public boolean hasManager(String player) {
