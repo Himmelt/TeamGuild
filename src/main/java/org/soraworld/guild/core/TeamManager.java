@@ -200,7 +200,9 @@ public class TeamManager {
             TeamLevel next = levels.higher(getLevel(guild));
             if (next != null) {
                 if (config.getEconomy().takeEco(player.getName(), next.cost)) {
+                    rank.remove(guild);
                     guild.setSize(next.size);
+                    rank.add(guild);
                     config.send(player, "upgradeSuccess", next.cost);
                     saveGuild();
                 } else {

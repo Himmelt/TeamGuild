@@ -17,7 +17,7 @@ import javax.annotation.Nonnull;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 
-public class TeamGuild {
+public class TeamGuild implements Comparable<TeamGuild> {
 
     private int size;
     private int balance = 0;
@@ -211,6 +211,18 @@ public class TeamGuild {
             config.send(sender, "infoBalance", balance);
         }
         config.send(sender, "infoDescription", description);
+    }
+
+    @Override
+    public int compareTo(@Nonnull TeamGuild other) {
+        // Descending
+        if (this.leader.equals(other.leader)) return 0;
+        return this.size > other.size ? -1 : 1;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        return this == obj || obj instanceof TeamGuild && this.leader.equals(((TeamGuild) obj).leader);
     }
 
 }
