@@ -82,7 +82,7 @@ public class TeamManager {
             config.send(player, "createTeamSuccess", getLevel(guild).cost);
             saveGuild();
         } else {
-            config.send(player, "noEnoughEco");
+            config.send(player, "noEnoughEco", getLevel(guild).cost);
         }
     }
 
@@ -197,7 +197,7 @@ public class TeamManager {
                     config.send(player, "upgradeSuccess", next.cost);
                     saveGuild();
                 } else {
-                    config.send(player, "noEnoughEco");
+                    config.send(player, "noEnoughEco", next.cost);
                 }
             } else {
                 config.send(player, "guildIsTopLevel");
