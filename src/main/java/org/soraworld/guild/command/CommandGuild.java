@@ -19,12 +19,18 @@ public class CommandGuild extends CommandViolet {
     public CommandGuild(String name, String perm, final Config config, Plugin plugin) {
         super(name, perm, config, plugin);
         final TeamManager manager = config.getTeamManager();
-
-        addSub(new CommandTeam("team", null, config));
+        addSub(new IICommand("rank", config) {
+            @Override
+            public boolean execute(CommandSender sender, ArrayList<String> args) {
+                System.out.println("rank");
+                return super.execute(sender, args);
+            }
+        });
         addSub(new IICommand("create", null, config, true) {
             @Override
             public boolean execute(Player player, ArrayList<String> args) {
-                manager.createGuild(player);
+                if (args.isEmpty()) manager.createGuild(player, "Team_" + player.getName());
+                else manager.createGuild(player, args.get(0));
                 return true;
             }
         });
@@ -74,6 +80,7 @@ public class CommandGuild extends CommandViolet {
                             config.send(player, "acceptFailed");
                         }
                         guild.closeApplication(applicant);
+                        manager.saveGuild();
                     } else {
                         config.send(player, "noJoinApplication", applicant);
                     }
@@ -100,6 +107,7 @@ public class CommandGuild extends CommandViolet {
                     if (guild.hasApplication(applicant)) {
                         config.send(player, "rejectApplication");
                         guild.closeApplication(applicant);
+                        manager.saveGuild();
                         Player app = Bukkit.getPlayer(applicant);
                         if (app != null) {
                             config.send(app, "applicationRejected");
@@ -113,6 +121,20 @@ public class CommandGuild extends CommandViolet {
                 return true;
             }
         });
+        addSub(new IICommand("display", null, config, true) {
+            @Override
+            public boolean execute(Player player, ArrayList<String> args) {
+                TeamGuild team = manager.fetchTeam(player.getName());
+                if (args.isEmpty()) {
+                    config.send(player, "getDisplay", team.getDisplay());
+                } else {
+                    team.setDisplay(args.get(0));
+                    config.send(player, "setDisplay", args.get(0));
+                    manager.saveGuild();
+                }
+                return true;
+            }
+        });
         addSub(new IICommand("list", null, config, true) {
             @Override
             public boolean execute(Player player, ArrayList<String> args) {
@@ -120,7 +142,7 @@ public class CommandGuild extends CommandViolet {
                 if (team != null) {
                     team.showMemberList(player, config);
                 } else {
-                    config.send(player, "notInTeam");
+                    config.send(player, "notInAnyTeam");
                 }
                 return true;
             }
@@ -130,10 +152,11 @@ public class CommandGuild extends CommandViolet {
             public boolean execute(Player player, ArrayList<String> args) {
                 TeamGuild guild = manager.getGuild(player.getName());
                 if (guild != null) {
-                    if (!manager.getLevel(guild).guild) {
-                        manager.upgrade(guild);
+                    if (manager.upgrade(guild)) {
+                        config.send(player, "guildUpgraded");
+                        manager.saveGuild();
                     } else {
-                        config.send(player, "guildCantUpgrade");
+                        config.send(player, "guildIsTopLevel");
                     }
                 } else {
                     config.send(player, "ownNoGuild");

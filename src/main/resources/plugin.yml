@@ -1,5 +1,5 @@
 name: TeamGuild
-version: 1.7.10-0.2.0
+version: 1.7.10-0.3.0
 author: Himmelt
 main: org.soraworld.guild.TeamGuild
 depend: [Violet]

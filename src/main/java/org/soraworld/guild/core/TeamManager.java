@@ -6,7 +6,6 @@ import org.bukkit.entity.Player;
 import org.soraworld.guild.config.Config;
 import org.soraworld.violet.yaml.IYamlConfiguration;
 
-import javax.annotation.Nonnull;
 import java.io.File;
 import java.util.*;
 
@@ -67,7 +66,7 @@ public class TeamManager {
         return new ArrayList<>(guilds.keySet());
     }
 
-    public void createGuild(@Nonnull Player player) {
+    public void createGuild(Player player, String display) {
         String username = player.getName();
         TeamGuild guild = teams.get(username);
         if (guild != null) {
@@ -76,11 +75,13 @@ public class TeamManager {
             return;
         }
         guild = new TeamGuild(username, levels.first().size);
+        guild.setDisplay(display);
         if (config.getEconomy().takeEco(username, getLevel(guild).cost)) {
             teams.put(username, guild);
             guilds.put(username, guild);
             config.save();
             config.send(player, "createTeamSuccess", getLevel(guild).cost);
+            saveGuild();
         } else {
             config.send(player, "createTeamFailed");
         }
@@ -120,6 +121,7 @@ public class TeamManager {
             } else {
                 guild.addJoinApplication(username);
                 config.send(player, "sendApplication");
+                saveGuild();
             }
         }
     }
@@ -164,11 +166,11 @@ public class TeamManager {
                 }
             }
         }
-        if (levels.isEmpty()) levels.add(new TeamLevel(5, 50, 1, false));
+        if (levels.isEmpty()) levels.add(new TeamLevel(5, 10, 1, false));
     }
 
     public List<?> writeLevels() {
-        if (levels.isEmpty()) levels.add(new TeamLevel(5, 50, 1, false));
+        if (levels.isEmpty()) levels.add(new TeamLevel(5, 10, 1, false));
         List<Map> list = new ArrayList<>();
         for (TeamLevel level : levels) {
             Map<String, Object> sec = new LinkedHashMap<>();
@@ -181,8 +183,9 @@ public class TeamManager {
         return list;
     }
 
-    public void upgrade(TeamGuild guild) {
+    public boolean upgrade(TeamGuild guild) {
         System.out.println("upgrade");
+        return true;
     }
 
 }

@@ -35,6 +35,7 @@ public class TeamGuild {
     public TeamGuild(String leader, MemorySection section) {
         this.leader = leader;
         this.display = section.getString("display", leader);
+        if (!display.endsWith("&r")) display += "&r";
         this.size = section.getInt("size", 0);
         this.balance = section.getInt("balance", 0);
         this.description = section.getString("description", leader + "'s Team.");
@@ -85,6 +86,7 @@ public class TeamGuild {
     }
 
     public void setDisplay(String display) {
+        if (!display.endsWith("&r")) display += "&r";
         this.display = display;
     }
 
@@ -117,7 +119,7 @@ public class TeamGuild {
     }
 
     public void showMemberList(CommandSender sender, Config config) {
-        config.send(sender, "listHead");
+        config.send(sender, "listHead", display);
         config.send(sender, "listLeader", leader);
         for (String manager : managers) {
             config.send(sender, "listManager", manager);
