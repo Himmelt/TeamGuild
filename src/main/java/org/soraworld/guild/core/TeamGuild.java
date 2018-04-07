@@ -161,11 +161,11 @@ public class TeamGuild {
     private void sendHandleMessage(Player handler, String applicant, Config config) {
         IILang lang = config.iiLang;
         config.iiChat.sendMessage(handler,
-                IIChat.format(lang.format("handleApplication", applicant)),
-                IIChat.format(lang.format("acceptApplication"),
+                IIChat.format(lang.format("handleText", applicant)),
+                IIChat.format(lang.format("acceptText"),
                         EnumClickAction.RUN_COMMAND, "/guild accept " + applicant,
                         EnumHoverAction.SHOW_TEXT, lang.format("acceptHover")),
-                IIChat.format(lang.format("rejectApplication"),
+                IIChat.format(lang.format("rejectText"),
                         EnumClickAction.RUN_COMMAND, "/guild reject " + applicant,
                         EnumHoverAction.SHOW_TEXT, lang.format("rejectHover"))
         );

@@ -1,5 +1,6 @@
 package org.soraworld.guild.command;
 
+import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
@@ -73,6 +74,36 @@ public class CommandGuild extends CommandViolet {
                             config.send(player, "acceptFailed");
                         }
                         guild.closeApplication(applicant);
+                    } else {
+                        config.send(player, "noJoinApplication", applicant);
+                    }
+                } else {
+                    config.send(player, "notManager");
+                }
+                return true;
+            }
+        });
+        addSub(new IICommand("reject", null, config, true) {
+            @Override
+            public boolean execute(Player player, ArrayList<String> args) {
+                if (args.isEmpty()) {
+                    config.sendV(player, Violets.KEY_INVALID_ARG);
+                    return true;
+                }
+                TeamGuild guild = manager.fetchTeam(player.getName());
+                if (guild == null) {
+                    config.send(player, "notInAnyTeam");
+                    return true;
+                }
+                if (guild.hasManager(player.getName())) {
+                    String applicant = args.get(0);
+                    if (guild.hasApplication(applicant)) {
+                        config.send(player, "rejectApplication");
+                        guild.closeApplication(applicant);
+                        Player app = Bukkit.getPlayer(applicant);
+                        if (app != null) {
+                            config.send(app, "applicationRejected");
+                        }
                     } else {
                         config.send(player, "noJoinApplication", applicant);
                     }
