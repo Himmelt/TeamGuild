@@ -227,4 +227,16 @@ public class TeamManager {
         config.send(sender, "rankFoot", page, rank.size() / 10 + 1);
     }
 
+    public void disband(final TeamGuild guild, String leader) {
+        rank.remove(guild);
+        guilds.remove(leader);
+        Iterator<Map.Entry<String, TeamGuild>> it = teams.entrySet().iterator();
+        while (it.hasNext()) {
+            if (guild == it.next().getValue()) {
+                it.remove();
+            }
+        }
+        saveGuild();
+    }
+
 }

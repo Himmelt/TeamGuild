@@ -5,6 +5,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.soraworld.guild.config.Config;
+import org.soraworld.guild.constant.Constant;
 import org.soraworld.guild.core.TeamGuild;
 import org.soraworld.guild.core.TeamManager;
 import org.soraworld.violet.command.CommandViolet;
@@ -60,18 +61,51 @@ public class CommandGuild extends CommandViolet {
                 else return ListUtil.getMatchList(args.get(0), manager.getGuilds());
             }
         });
+        addSub(new IICommand("disband", config) {
+            @Override
+            public boolean execute(CommandSender sender, ArrayList<String> args) {
+                if (args.isEmpty()) {
+                    if (sender instanceof Player) {
+                        TeamGuild guild = manager.fetchTeam(sender.getName());
+                        if (guild != null) {
+                            if (guild.isLeader(sender.getName())) {
+                                manager.disband(guild, sender.getName());
+                                config.send(sender, "disbandGuild", guild.getDisplay());
+                            } else {
+                                config.send(sender, "notLeader");
+                            }
+                        } else {
+                            config.send(sender, "notInAnyTeam");
+                        }
+                    } else {
+                        config.sendV(sender, Violets.KEY_ONLY_PLAYER_OR_INVALID_ARG);
+                    }
+                } else {
+                    TeamGuild guild = manager.getGuild(args.get(0));
+                    if (guild != null) {
+                        if (sender.hasPermission(Constant.PERM_ADMIN) || guild.isLeader(sender.getName())) {
+                            manager.disband(guild, sender.getName());
+                            config.send(sender, "disbandGuild", guild.getDisplay());
+                        }
+                    } else {
+                        config.send(sender, "teamNotExist");
+                    }
+                }
+                return true;
+            }
+
+            @Override
+            public List<String> getTabCompletions(ArrayList<String> args) {
+                if (args.isEmpty()) return manager.getGuilds();
+                else return ListUtil.getMatchList(args.get(0), manager.getGuilds());
+            }
+        });
         addSub(new IICommand("create", null, config, true) {
             @Override
             public boolean execute(Player player, ArrayList<String> args) {
                 if (args.isEmpty()) manager.createGuild(player, "Team_" + player.getName());
                 else manager.createGuild(player, args.get(0));
                 return true;
-            }
-        });
-        addSub(new IICommand("disband", null, config, true) {
-            @Override
-            public boolean execute(Player player, ArrayList<String> args) {
-                return super.execute(player, args);
             }
         });
         addSub(new IICommand("join", null, config, true) {
