@@ -108,6 +108,49 @@ public class CommandGuild extends CommandViolet {
                 return true;
             }
         });
+        addSub(new IICommand("attorn", null, config, true) {
+            {
+                addSub(new IICommand("to", null, config, true) {
+                    @Override
+                    public boolean execute(Player player, ArrayList<String> args) {
+                        if (args.isEmpty()) {
+                            config.sendV(player, Violets.KEY_INVALID_ARG);
+                        } else {
+                            TeamGuild guild = manager.getGuild(player.getName());
+                            if (guild != null) {
+                                Player target = Bukkit.getPlayer(args.get(0));
+                                if (target != null) {
+                                    // TODO 发送转让请求
+                                    config.send(player, "sendAttorn");
+                                    config.send(target, "receiveAttorn");
+                                } else {
+                                    config.send(player, "playerIsOffline", args.get(0));
+                                }
+                            } else {
+                                config.send(player, "noCreateTeam");
+                            }
+                        }
+                        return true;
+                    }
+                });
+                addSub(new IICommand("accept", null, config, true) {
+                    @Override
+                    public boolean execute(Player player, ArrayList<String> args) {
+                        // TODO accept
+                        config.send(player, "accept");
+                        return true;
+                    }
+                });
+                addSub(new IICommand("reject", null, config, true) {
+                    @Override
+                    public boolean execute(Player player, ArrayList<String> args) {
+                        // TODO reject
+                        config.send(player, "reject");
+                        return true;
+                    }
+                });
+            }
+        });
         addSub(new IICommand("join", null, config, true) {
             @Override
             public boolean execute(Player player, ArrayList<String> args) {
@@ -120,6 +163,14 @@ public class CommandGuild extends CommandViolet {
             public List<String> getTabCompletions(ArrayList<String> args) {
                 if (args.isEmpty()) return manager.getGuilds();
                 else return ListUtil.getMatchList(args.get(0), manager.getGuilds());
+            }
+        });
+        addSub(new IICommand("recruit", null, config, true) {
+            @Override
+            public boolean execute(Player player, ArrayList<String> args) {
+                // TODO recruit
+                config.send(player, "recruit");
+                return true;
             }
         });
         addSub(new IICommand("leave", null, config, true) {
