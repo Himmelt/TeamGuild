@@ -14,9 +14,7 @@ import java.io.File;
 public class Config extends IIConfig {
 
     private String ecoType = "Vault";
-    private boolean enableEco = true;
     private boolean teamPvP = false;
-
     private TeamManager teamManager;
 
     public Config(File path, Plugin plugin) {
@@ -26,7 +24,6 @@ public class Config extends IIConfig {
     protected void loadOptions() {
         ecoType = config_yaml.getString("ecoType", "Vault");
         if (ecoType == null || ecoType.isEmpty()) ecoType = "Vault";
-        enableEco = config_yaml.getBoolean("enableEco", true);
         teamPvP = config_yaml.getBoolean("teamPvP", false);
         getTeamManager().readLevels(config_yaml.getList("levels"));
         getTeamManager().loadGuild();
@@ -34,7 +31,6 @@ public class Config extends IIConfig {
 
     protected void saveOptions() {
         config_yaml.set("ecoType", ecoType);
-        config_yaml.set("enableEco", enableEco);
         config_yaml.set("teamPvP", teamPvP);
         config_yaml.set("levels", getTeamManager().writeLevels());
         getTeamManager().saveGuild();

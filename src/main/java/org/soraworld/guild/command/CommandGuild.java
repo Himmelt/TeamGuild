@@ -48,7 +48,7 @@ public class CommandGuild extends CommandViolet {
                         config.sendV(sender, Violets.KEY_ONLY_PLAYER_OR_INVALID_ARG);
                     }
                 } else {
-                    TeamGuild guild = manager.getGuild(args.get(0));
+                    TeamGuild guild = manager.fetchTeam(args.get(0));
                     if (guild != null) guild.showGuildInfo(sender, config, manager);
                     else config.send(sender, "teamNotExist");
                 }

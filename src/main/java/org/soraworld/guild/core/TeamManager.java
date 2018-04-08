@@ -83,6 +83,7 @@ public class TeamManager {
         }
         guild = new TeamGuild(username, levels.first().size);
         guild.setDisplay(display);
+        guild.setDescription(username + "'s Team.");
         if (Economy.takeEco(username, getLevel(guild).cost)) {
             rank.add(guild);
             teams.put(username, guild);
