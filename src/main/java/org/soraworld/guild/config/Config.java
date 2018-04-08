@@ -47,7 +47,7 @@ public class Config extends IIConfig {
 
     @Nonnull
     protected ChatColor defaultChatColor() {
-        return ChatColor.BLUE;
+        return ChatColor.AQUA;
     }
 
     @Nonnull
