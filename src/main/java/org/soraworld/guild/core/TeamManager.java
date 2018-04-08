@@ -5,6 +5,7 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.MemorySection;
 import org.bukkit.entity.Player;
 import org.soraworld.guild.config.Config;
+import org.soraworld.guild.economy.IEconomy;
 import org.soraworld.violet.yaml.IYamlConfiguration;
 
 import java.io.File;
@@ -13,6 +14,7 @@ import java.util.*;
 public class TeamManager {
 
     private final Config config;
+    private final IEconomy iEconomy;
     private final TreeSet<TeamLevel> levels = new TreeSet<>();
     private final HashMap<String, TeamGuild> teams = new HashMap<>();
     private final HashMap<String, TeamGuild> guilds = new HashMap<>();
@@ -23,6 +25,7 @@ public class TeamManager {
 
     public TeamManager(Config config, File path) {
         this.config = config;
+        this.iEconomy = config.getEconomy();
         this.guild_file = new File(path, "guild.yml");
     }
 
@@ -82,7 +85,7 @@ public class TeamManager {
         }
         guild = new TeamGuild(username, levels.first().size);
         guild.setDisplay(display);
-        if (config.getEconomy().takeEco(username, getLevel(guild).cost)) {
+        if (iEconomy.takeEco(username, getLevel(guild).cost)) {
             rank.add(guild);
             teams.put(username, guild);
             guilds.put(username, guild);
@@ -199,7 +202,7 @@ public class TeamManager {
         if (guild.isLeader(player.getName())) {
             TeamLevel next = levels.higher(getLevel(guild));
             if (next != null) {
-                if (config.getEconomy().takeEco(player.getName(), next.cost)) {
+                if (iEconomy.takeEco(player.getName(), next.cost)) {
                     rank.remove(guild);
                     guild.setSize(next.size);
                     rank.add(guild);

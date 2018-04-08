@@ -28,6 +28,7 @@ public class Config extends IIConfig {
 
     protected void loadOptions() {
         ecoType = config_yaml.getString("ecoType", "Vault");
+        if (ecoType == null || ecoType.isEmpty()) ecoType = "Vault";
         enableEco = config_yaml.getBoolean("enableEco", true);
         teamPvP = config_yaml.getBoolean("teamPvP", false);
         getTeamManager().readLevels(config_yaml.getList("levels"));
@@ -43,8 +44,8 @@ public class Config extends IIConfig {
     }
 
     public void afterLoad() {
-        getFlans();
-        getEconomy();
+        if (flans == null) flans = new Flans(this);
+        iEconomy = new Economy(this);
     }
 
     @Nonnull
@@ -66,14 +67,13 @@ public class Config extends IIConfig {
         return flans;
     }
 
-    @Nonnull
     public IEconomy getEconomy() {
         if (iEconomy == null) iEconomy = new Economy(this);
         return iEconomy;
     }
 
     public boolean checkEcoType(String type) {
-        return type.equals(ecoType);
+        return ecoType.equals(type);
     }
 
     public boolean isTeamPvP() {

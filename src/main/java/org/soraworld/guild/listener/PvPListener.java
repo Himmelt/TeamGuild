@@ -10,14 +10,15 @@ import org.bukkit.projectiles.ProjectileSource;
 import org.soraworld.guild.config.Config;
 import org.soraworld.guild.core.TeamGuild;
 import org.soraworld.guild.core.TeamManager;
+import org.soraworld.guild.flans.Flans;
 
 public class PvPListener implements Listener {
 
-    private final Config config;
+    private final Flans flans;
     private final TeamManager manager;
 
     public PvPListener(Config config) {
-        this.config = config;
+        this.flans = config.getFlans();
         this.manager = config.getTeamManager();
     }
 
@@ -40,7 +41,7 @@ public class PvPListener implements Listener {
                 return;
             }
             // Flans support
-            Player shooter = config.getFlans().getShooter(damager);
+            Player shooter = flans.getShooter(damager);
             if (shooter != null && guild.hasMember(shooter.getName())) {
                 event.setCancelled(true);
             }
