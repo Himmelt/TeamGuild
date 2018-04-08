@@ -120,7 +120,7 @@ public class CommandGuild extends CommandViolet {
                             if (guild != null) {
                                 Player target = Bukkit.getPlayer(args.get(0));
                                 if (target != null) {
-                                    // TODO 发送转让请求
+                                    // TODO sendAttorn
                                     config.send(player, "sendAttorn");
                                     config.send(target, "receiveAttorn");
                                 } else {
