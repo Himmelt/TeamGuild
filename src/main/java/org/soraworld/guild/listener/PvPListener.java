@@ -14,11 +14,9 @@ import org.soraworld.guild.flans.Flans;
 
 public class PvPListener implements Listener {
 
-    private final Flans flans;
     private final TeamManager manager;
 
     public PvPListener(Config config) {
-        this.flans = config.getFlans();
         this.manager = config.getTeamManager();
     }
 
@@ -41,7 +39,7 @@ public class PvPListener implements Listener {
                 return;
             }
             // Flans support
-            Player shooter = flans.getShooter(damager);
+            Player shooter = Flans.getShooter(damager);
             if (shooter != null && guild.hasMember(shooter.getName())) {
                 event.setCancelled(true);
             }

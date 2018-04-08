@@ -2,12 +2,11 @@ package org.soraworld.guild.economy;
 
 import org.soraworld.guild.config.Config;
 
-public class Economy implements IEconomy {
+public class Economy {
 
-    private final IEconomy economy;
+    private static IEconomy economy;
 
-    public Economy(Config config) {
-        IEconomy economy = null;
+    public static void checkEconomy(final Config config) {
         if (config.checkEcoType("Vault")) {
             try {
                 economy = new VaultEconomy(config);
@@ -36,26 +35,25 @@ public class Economy implements IEconomy {
         } else {
             config.console("InvalidEcoSupport");
         }
-        this.economy = economy;
     }
 
-    public boolean setEco(String player, double amount) {
+    public static boolean setEco(String player, double amount) {
         return economy == null || economy.setEco(player, amount);
     }
 
-    public boolean addEco(String player, double amount) {
+    public static boolean addEco(String player, double amount) {
         return economy == null || economy.addEco(player, amount);
     }
 
-    public double getEco(String player) {
+    public static double getEco(String player) {
         return economy == null ? 0 : economy.getEco(player);
     }
 
-    public boolean hasEnough(String player, double amount) {
+    public static boolean hasEnough(String player, double amount) {
         return economy == null || economy.hasEnough(player, amount);
     }
 
-    public boolean takeEco(String player, double amount) {
+    public static boolean takeEco(String player, double amount) {
         return economy == null || economy.takeEco(player, amount);
     }
 

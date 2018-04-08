@@ -8,23 +8,21 @@ import org.soraworld.guild.config.Config;
 
 public class Flans {
 
-    private final boolean support;
+    private static boolean support = false;
 
-    public Flans(Config config) {
-        boolean temp = false;
+    public static void checkFlans(final Config config) {
         try {
             CraftEntity.class.getName();
             net.minecraft.server.v1_7_R4.Entity.class.getName();
             EntityBullet.class.getName();
-            temp = true;
+            support = true;
             config.console("flanSupport");
         } catch (Throwable ignored) {
             config.console("flanNotSupport");
         }
-        this.support = temp;
     }
 
-    public Player getShooter(Entity craftBullet) {
+    public static Player getShooter(Entity craftBullet) {
         if (support && craftBullet instanceof CraftEntity) {
             net.minecraft.server.v1_7_R4.Entity entity = ((CraftEntity) craftBullet).getHandle();
             if (entity instanceof EntityBullet) {

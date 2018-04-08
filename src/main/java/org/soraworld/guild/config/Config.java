@@ -5,7 +5,6 @@ import org.bukkit.plugin.Plugin;
 import org.soraworld.guild.constant.Constant;
 import org.soraworld.guild.core.TeamManager;
 import org.soraworld.guild.economy.Economy;
-import org.soraworld.guild.economy.IEconomy;
 import org.soraworld.guild.flans.Flans;
 import org.soraworld.violet.config.IIConfig;
 
@@ -18,8 +17,6 @@ public class Config extends IIConfig {
     private boolean enableEco = true;
     private boolean teamPvP = false;
 
-    private Flans flans;
-    private IEconomy iEconomy;
     private TeamManager teamManager;
 
     public Config(File path, Plugin plugin) {
@@ -44,8 +41,8 @@ public class Config extends IIConfig {
     }
 
     public void afterLoad() {
-        if (flans == null) flans = new Flans(this);
-        iEconomy = new Economy(this);
+        Economy.checkEconomy(this);
+        Flans.checkFlans(this);
     }
 
     @Nonnull
@@ -60,16 +57,6 @@ public class Config extends IIConfig {
 
     public String defaultAdminPerm() {
         return Constant.PERM_ADMIN;
-    }
-
-    public Flans getFlans() {
-        if (flans == null) flans = new Flans(this);
-        return flans;
-    }
-
-    public IEconomy getEconomy() {
-        if (iEconomy == null) iEconomy = new Economy(this);
-        return iEconomy;
     }
 
     public boolean checkEcoType(String type) {
