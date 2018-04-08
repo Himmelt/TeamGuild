@@ -25,7 +25,7 @@ public class ChatListener implements Listener {
                 TeamGuild guild = manager.fetchTeam(player);
                 if (guild != null) {
                     StringBuilder build = new StringBuilder(event.getFormat());
-                    build.insert(build.indexOf("%1$s") + 4, guild.getDisplay().replace('&', ChatColor.COLOR_CHAR));
+                    build.insert(build.indexOf("%1$s") + 4, '[' + guild.getDisplay().replace('&', ChatColor.COLOR_CHAR) + ']');
                     event.setFormat(build.toString());
                 }
             }
