@@ -1,9 +1,9 @@
 name: TeamGuild
-version: 1.7.10-0.3.0
+version: 1.7.10-1.0.0
 author: Himmelt
 main: org.soraworld.guild.TeamGuild
 depend: [Violet]
-softdepend: [Vault,Essentials,PlaceholderAPI]
+softdepend: [Vault,Essentials,PlayerPoints,PlaceholderAPI]
 website: https://github.com/Himmelt/TeamGuild
 description: TeamGuild Plugin.
 
