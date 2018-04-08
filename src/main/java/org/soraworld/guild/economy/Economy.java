@@ -11,21 +11,30 @@ public class Economy implements IEconomy {
         if (config.checkEcoType("Vault")) {
             try {
                 economy = new VaultEconomy(config);
-                config.console("vaultSupport");
+                config.console("EcoSupport", "Vault");
             } catch (Throwable e) {
                 if (e.getMessage().equals("noVaultImpl")) {
                     config.console("noVaultImpl");
+                } else {
+                    config.console("EcoNotSupport", "Vault");
                 }
-                config.console("vaultNotSupport");
             }
         } else if (config.checkEcoType("Essentials")) {
             try {
                 economy = new EssEconomy();
-                config.console("essSupport");
+                config.console("EcoSupport", "Essentials");
             } catch (Throwable ignored) {
-                ignored.printStackTrace();
-                config.console("essNotSupport");
+                config.console("EcoNotSupport", "Essentials");
             }
+        } else if (config.checkEcoType("PlayerPoints")) {
+            try {
+                economy = new PointsEconomy();
+                config.console("EcoSupport", "PlayerPoints");
+            } catch (Throwable ignored) {
+                config.console("EcoNotSupport", "PlayerPoints");
+            }
+        } else {
+            config.console("InvalidEcoSupport");
         }
         this.economy = economy;
     }

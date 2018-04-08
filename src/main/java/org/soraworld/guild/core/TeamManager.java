@@ -203,7 +203,7 @@ public class TeamManager {
                     rank.remove(guild);
                     guild.setSize(next.size);
                     rank.add(guild);
-                    config.send(player, "upgradeSuccess", next.cost);
+                    config.send(player, "guildUpgraded", next.cost);
                     saveGuild();
                 } else {
                     config.send(player, "noEnoughEco", next.cost);

@@ -7,7 +7,7 @@ import java.math.BigDecimal;
 
 public class EssEconomy implements IEconomy {
 
-    public EssEconomy() {
+    EssEconomy() {
         Essentials.class.getName();
         Economy.class.getName();
     }

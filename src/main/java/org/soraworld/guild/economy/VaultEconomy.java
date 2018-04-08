@@ -10,7 +10,7 @@ public class VaultEconomy implements IEconomy {
 
     private final Economy vaultEco;
 
-    public VaultEconomy(Config config) throws Exception {
+    VaultEconomy(Config config) throws Exception {
         Economy economy = null;
         RegisteredServiceProvider<Economy> provider = Bukkit.getServicesManager().getRegistration(Economy.class);
         if (provider != null) economy = provider.getProvider();

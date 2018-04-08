@@ -205,11 +205,11 @@ public class TeamGuild implements Comparable<TeamGuild> {
     public void showGuildInfo(CommandSender sender, Config config, TeamManager manager) {
         config.send(sender, "infoDisplay", display);
         config.send(sender, "infoLeader", leader);
-        config.send(sender, "infoMembers", getCount(), size);
         if (sender instanceof Player && hasMember(sender.getName()) || sender instanceof ConsoleCommandSender) {
-            config.send(sender, "maxManagers", manager.getLevel(this).mans);
             config.send(sender, "infoBalance", balance);
+            config.send(sender, "maxManagers", manager.getLevel(this).mans);
         }
+        config.send(sender, "infoMembers", getCount(), size);
         config.send(sender, "infoDescription", description);
     }
 

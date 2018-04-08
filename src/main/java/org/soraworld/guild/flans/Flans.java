@@ -11,15 +11,14 @@ public class Flans {
     private final boolean support;
 
     public Flans(Config config) {
-        boolean temp;
+        boolean temp = false;
         try {
-            config.console("flanCheck", CraftEntity.class.getName());
-            config.console("flanCheck", net.minecraft.server.v1_7_R4.Entity.class.getName());
-            config.console("flanCheck", EntityBullet.class.getName());
+            CraftEntity.class.getName();
+            net.minecraft.server.v1_7_R4.Entity.class.getName();
+            EntityBullet.class.getName();
             temp = true;
             config.console("flanSupport");
         } catch (Throwable ignored) {
-            temp = false;
             config.console("flanNotSupport");
         }
         this.support = temp;

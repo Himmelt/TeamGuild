@@ -137,7 +137,7 @@ public class CommandGuild extends CommandViolet {
                     @Override
                     public boolean execute(Player player, ArrayList<String> args) {
                         // TODO accept
-                        config.send(player, "accept");
+                        config.send(player, "attornAccept");
                         return true;
                     }
                 });
@@ -145,7 +145,7 @@ public class CommandGuild extends CommandViolet {
                     @Override
                     public boolean execute(Player player, ArrayList<String> args) {
                         // TODO reject
-                        config.send(player, "reject");
+                        config.send(player, "attornReject");
                         return true;
                     }
                 });
