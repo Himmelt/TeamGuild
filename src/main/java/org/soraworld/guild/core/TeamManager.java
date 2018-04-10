@@ -1,8 +1,8 @@
 package org.soraworld.guild.core;
 
 import org.bukkit.command.CommandSender;
+import org.bukkit.configuration.Configuration;
 import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.configuration.MemorySection;
 import org.bukkit.entity.Player;
 import org.soraworld.guild.config.Config;
 import org.soraworld.guild.economy.Economy;
@@ -29,6 +29,7 @@ public class TeamManager {
 
     public void saveGuild() {
         try {
+            guild_yaml.clear();
             for (Map.Entry<String, TeamGuild> entry : guilds.entrySet()) {
                 ConfigurationSection sec = guild_yaml.createSection(entry.getKey());
                 entry.getValue().write(sec);
@@ -50,13 +51,14 @@ public class TeamManager {
             teams.clear();
             guilds.clear();
             guild_yaml.load(guild_file);
-            for (String key : guild_yaml.getKeys(false)) {
-                Object obj = guild_yaml.get(key);
-                if (obj instanceof MemorySection) {
-                    TeamGuild guild = new TeamGuild(key, (MemorySection) obj);
+            Configuration root = guild_yaml.getRoot();
+            for (String leader : root.getKeys(false)) {
+                Object obj = root.get(leader);
+                if (obj instanceof ConfigurationSection) {
+                    TeamGuild guild = new TeamGuild(leader, (ConfigurationSection) obj);
                     getLevel(guild);
                     rank.add(guild);
-                    guilds.put(key, guild);
+                    guilds.put(leader, guild);
                 }
             }
         } catch (Throwable e) {
@@ -93,13 +95,6 @@ public class TeamManager {
         } else {
             config.send(player, "noEnoughEco", getLevel(guild).cost);
         }
-    }
-
-    private TeamLevel getLevel(int size) {
-        for (TeamLevel level : levels) {
-            if (size <= level.size) return level;
-        }
-        return levels.last();
     }
 
     public TeamLevel getLevel(TeamGuild guild) {
@@ -193,28 +188,24 @@ public class TeamManager {
     }
 
     public void upgrade(Player player) {
-        TeamGuild guild = fetchTeam(player.getName());
+        TeamGuild guild = guilds.get(player.getName());
         if (guild == null) {
-            config.send(player, "notInAnyTeam");
+            config.send(player, "ownNoGuild");
             return;
         }
-        if (guild.isLeader(player.getName())) {
-            TeamLevel next = levels.higher(getLevel(guild));
-            if (next != null) {
-                if (Economy.takeEco(player.getName(), next.cost)) {
-                    rank.remove(guild);
-                    guild.setSize(next.size);
-                    rank.add(guild);
-                    config.send(player, "guildUpgraded", next.cost);
-                    saveGuild();
-                } else {
-                    config.send(player, "noEnoughEco", next.cost);
-                }
+        TeamLevel next = levels.higher(getLevel(guild));
+        if (next != null) {
+            if (Economy.takeEco(player.getName(), next.cost)) {
+                rank.remove(guild);
+                guild.setSize(next.size);
+                rank.add(guild);
+                config.send(player, "guildUpgraded", next.cost);
+                saveGuild();
             } else {
-                config.send(player, "guildIsTopLevel");
+                config.send(player, "noEnoughEco", next.cost);
             }
         } else {
-            config.send(player, "notLeader");
+            config.send(player, "guildIsTopLevel");
         }
     }
 
@@ -236,7 +227,9 @@ public class TeamManager {
         guilds.remove(leader);
         Iterator<Map.Entry<String, TeamGuild>> it = teams.entrySet().iterator();
         while (it.hasNext()) {
-            if (guild == it.next().getValue()) {
+            Map.Entry<String, TeamGuild> next = it.next();
+            if (guild == next.getValue()) {
+                // TODO 通知在线的成员
                 it.remove();
             }
         }

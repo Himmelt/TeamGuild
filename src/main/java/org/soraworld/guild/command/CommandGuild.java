@@ -50,7 +50,7 @@ public class CommandGuild extends CommandViolet {
                 } else {
                     TeamGuild guild = manager.fetchTeam(args.get(0));
                     if (guild != null) guild.showGuildInfo(sender, config, manager);
-                    else config.send(sender, "teamNotExist");
+                    else config.send(sender, "guildNotExist");
                 }
                 return true;
             }
@@ -66,16 +66,12 @@ public class CommandGuild extends CommandViolet {
             public boolean execute(CommandSender sender, ArrayList<String> args) {
                 if (args.isEmpty()) {
                     if (sender instanceof Player) {
-                        TeamGuild guild = manager.fetchTeam(sender.getName());
+                        TeamGuild guild = manager.getGuild(sender.getName());
                         if (guild != null) {
-                            if (guild.isLeader(sender.getName())) {
-                                manager.disband(guild, sender.getName());
-                                config.send(sender, "disbandGuild", guild.getDisplay());
-                            } else {
-                                config.send(sender, "notLeader");
-                            }
+                            manager.disband(guild, sender.getName());
+                            config.send(sender, "disbandGuild", guild.getDisplay());
                         } else {
-                            config.send(sender, "notInAnyTeam");
+                            config.send(sender, "ownNoGuild");
                         }
                     } else {
                         config.sendV(sender, Violets.KEY_ONLY_PLAYER_OR_INVALID_ARG);
@@ -84,11 +80,13 @@ public class CommandGuild extends CommandViolet {
                     TeamGuild guild = manager.getGuild(args.get(0));
                     if (guild != null) {
                         if (sender.hasPermission(Constant.PERM_ADMIN) || guild.isLeader(sender.getName())) {
-                            manager.disband(guild, sender.getName());
+                            manager.disband(guild, args.get(0));
                             config.send(sender, "disbandGuild", guild.getDisplay());
+                        } else {
+                            config.send(sender, "noOpPermOrNotLeader");
                         }
                     } else {
-                        config.send(sender, "teamNotExist");
+                        config.send(sender, "guildNotExist");
                     }
                 }
                 return true;
@@ -179,9 +177,13 @@ public class CommandGuild extends CommandViolet {
                 String username = player.getName();
                 TeamGuild guild = manager.fetchTeam(username);
                 if (guild != null) {
-                    manager.leaveGuild(username, guild);
-                    config.send(player, "leaveGuild", guild.getDisplay());
-                    guild.notifyLeave(username, config);
+                    if (guild.isLeader(username)) {
+                        config.send(player, "leaderCantLeave");
+                    } else {
+                        manager.leaveGuild(username, guild);
+                        config.send(player, "leaveGuild", guild.getDisplay());
+                        guild.notifyLeave(username, config);
+                    }
                 } else {
                     config.send(player, "notInAnyTeam");
                 }
@@ -210,7 +212,7 @@ public class CommandGuild extends CommandViolet {
                             config.send(mmp, "beKicked", guild.getDisplay());
                         }
                     } else {
-                        config.send(player, "noThisMember", member);
+                        config.send(player, "noSuchMember", member);
                     }
                 } else {
                     config.send(player, "notManager");
@@ -298,13 +300,27 @@ public class CommandGuild extends CommandViolet {
         addSub(new IICommand("display", null, config, true) {
             @Override
             public boolean execute(Player player, ArrayList<String> args) {
-                TeamGuild team = manager.fetchTeam(player.getName());
+                TeamGuild guild = manager.getGuild(player.getName());
+                if (guild == null) {
+                    config.send(player, "ownNoGuild");
+                    return true;
+                }
                 if (args.isEmpty()) {
-                    config.send(player, "getDisplay", team.getDisplay());
+                    config.send(player, "getDisplay", guild.getDisplay());
                 } else {
-                    team.setDisplay(args.get(0));
-                    config.send(player, "setDisplay", args.get(0));
-                    manager.saveGuild();
+                    String text = args.get(0);
+                    try {
+                        if (text.getBytes("GB2312").length <= config.maxDisplay()) {
+                            guild.setDisplay(text);
+                            config.send(player, "setDisplay", text);
+                            manager.saveGuild();
+                        } else {
+                            config.send(player, "textTooLong", config.maxDisplay());
+                        }
+                    } catch (Throwable e) {
+                        if (config.debug()) e.printStackTrace();
+                        config.send(player, "EncodingException");
+                    }
                 }
                 return true;
             }
@@ -312,13 +328,81 @@ public class CommandGuild extends CommandViolet {
         addSub(new IICommand("describe", null, config, true) {
             @Override
             public boolean execute(Player player, ArrayList<String> args) {
-                TeamGuild team = manager.fetchTeam(player.getName());
+                TeamGuild guild = manager.getGuild(player.getName());
+                if (guild == null) {
+                    config.send(player, "ownNoGuild");
+                    return true;
+                }
                 if (args.isEmpty()) {
-                    config.send(player, "getDescription", team.getDescription());
+                    config.send(player, "getDescription", guild.getDescription());
                 } else {
-                    team.setDescription(args.get(0));
-                    config.send(player, "setDescription", args.get(0));
-                    manager.saveGuild();
+                    String text = args.get(0);
+                    try {
+                        if (text.getBytes("GB2312").length <= config.maxDescription()) {
+                            guild.setDescription(text);
+                            config.send(player, "setDescription", text);
+                            manager.saveGuild();
+                        } else {
+                            config.send(player, "textTooLong", config.maxDescription());
+                        }
+                    } catch (Throwable e) {
+                        if (config.debug()) e.printStackTrace();
+                        config.send(player, "EncodingException");
+                    }
+                }
+                return true;
+            }
+        });
+        addSub(new IICommand("setma", null, config, true) {
+            @Override
+            public boolean execute(Player player, ArrayList<String> args) {
+                TeamGuild guild = manager.getGuild(player.getName());
+                if (guild == null) {
+                    config.send(player, "ownNoGuild");
+                    return true;
+                }
+                if (args.isEmpty()) {
+                    config.sendV(player, Violets.KEY_INVALID_ARG);
+                } else {
+                    String name = args.get(0);
+                    if (guild.hasMember(name)) {
+                        if (guild.getManSize() < manager.getLevel(guild).mans) {
+                            guild.setManager(name);
+                            manager.saveGuild();
+                            config.send(player, "setManager", name);
+                        } else {
+                            config.send(player, "maxManagers");
+                        }
+                    } else {
+                        config.send(player, "noSuchMember", name);
+                    }
+                }
+                return true;
+            }
+        });
+        addSub(new IICommand("unsetma", null, config, true) {
+            @Override
+            public boolean execute(Player player, ArrayList<String> args) {
+                TeamGuild guild = manager.getGuild(player.getName());
+                if (guild == null) {
+                    config.send(player, "ownNoGuild");
+                    return true;
+                }
+                if (args.isEmpty()) {
+                    config.sendV(player, Violets.KEY_INVALID_ARG);
+                } else {
+                    String name = args.get(0);
+                    if (guild.hasManager(name)) {
+                        if (guild.isLeader(name)) {
+                            config.send(player, "cantUnsetLeader");
+                        } else {
+                            guild.unsetManager(name);
+                            manager.saveGuild();
+                            config.send(player, "unsetManager", name);
+                        }
+                    } else {
+                        config.send(player, "isNotManager", name);
+                    }
                 }
                 return true;
             }

@@ -3,6 +3,7 @@ TeamGuild
 
 ### 指令
 ```
+/guild|team                        主命令( 也可以使用/team )
 /guild rank                        查看公会排行榜
 /guild info [player]               查看自己公会或<player>公会的基本信息
 /guild disband [leader]            会长解散公会,或由OP解散会长<leader>的公会,需要权限<guild.admin>
@@ -15,9 +16,11 @@ TeamGuild
 /guild reject <player>             拒绝<player>的加入申请（会长副会长可执行）
 /guild display [name]              查看/设置公会显示名（仅会长可执行）
 /guild describe [description]      查看/设置公会简介（仅会长可执行）
-/guild upgarde                     升级公会（仅会长可执行）
+/guild upgrade                     升级公会（仅会长可执行）
 /guild attorn ...                  转让公会（未实现）
 /guild recruit ...                 招募会员（未实现）
+/guild setma <member>              将成员<member>设为公会管理员
+/guild unsetma <manager>           移除公会管理员<manager>的管理权限变为普通成员
 ```
 
 ### 配置
@@ -32,6 +35,10 @@ lang: zh_cn
 ecoType: Vault
 # 是否允许小队内PVP（重启生效）
 teamPvP: false
+# 公会显示名最大长度，每个中文占2个长度，颜色代码也算在长度内
+maxDisplay: 10
+# 公会简介最大长度，每个中文占2个长度
+maxDescription: 100
 # 小队(公会)等级设置
 # 等级列表，插件会从低到高自动排序，不必手动排序
 levels: 

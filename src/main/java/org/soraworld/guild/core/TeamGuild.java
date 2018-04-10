@@ -6,7 +6,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.configuration.MemorySection;
 import org.bukkit.entity.Player;
 import org.soraworld.guild.config.Config;
 import org.soraworld.guild.event.JoinApplicationEvent;
@@ -33,7 +32,7 @@ public class TeamGuild implements Comparable<TeamGuild> {
         this.size = size;
     }
 
-    public TeamGuild(String leader, MemorySection section) {
+    public TeamGuild(String leader, ConfigurationSection section) {
         this.leader = leader;
         this.display = section.getString("display", leader);
         if (!display.endsWith("&r")) display += "&r";
@@ -59,12 +58,9 @@ public class TeamGuild implements Comparable<TeamGuild> {
         return leader.equals(player);
     }
 
-    // TODO 外界设置，以输出超过管理员数量的提示信息
-    public void setManager(String player, TeamManager manager) {
-        if (managers.size() < manager.getLevel(this).mans) {
-            managers.add(player);
-            members.remove(player);
-        }
+    public void setManager(String player) {
+        managers.add(player);
+        members.remove(player);
     }
 
     public boolean hasManager(String player) {
@@ -223,6 +219,10 @@ public class TeamGuild implements Comparable<TeamGuild> {
     @Override
     public boolean equals(Object obj) {
         return this == obj || obj instanceof TeamGuild && this.leader.equals(((TeamGuild) obj).leader);
+    }
+
+    public int getManSize() {
+        return managers.size();
     }
 
 }
