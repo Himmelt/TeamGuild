@@ -102,7 +102,19 @@ public class CommandGuild extends CommandViolet {
             @Override
             public boolean execute(Player player, ArrayList<String> args) {
                 if (args.isEmpty()) manager.createGuild(player, "Team_" + player.getName());
-                else manager.createGuild(player, args.get(0));
+                else {
+                    String text = args.get(0);
+                    try {
+                        if (text.getBytes("GB2312").length <= config.maxDisplay()) {
+                            manager.createGuild(player, text);
+                        } else {
+                            config.send(player, "textTooLong", config.maxDisplay());
+                        }
+                    } catch (Throwable e) {
+                        if (config.debug()) e.printStackTrace();
+                        config.send(player, "EncodingException");
+                    }
+                }
                 return true;
             }
         });
