@@ -2,12 +2,11 @@ apply plugin: 'java'
 
 group = 'org.soraworld.guild'
 version = '1.7.10-1.0.2'
-description = 'TeamGuild Plugin'
 archivesBaseName = "TeamGuild"
 
-sourceCompatibility = targetCompatibility = '1.7'
+sourceCompatibility = targetCompatibility = '1.8'
 compileJava {
-    sourceCompatibility = targetCompatibility = '1.7'
+    sourceCompatibility = targetCompatibility = '1.8'
 }
 
 repositories {
@@ -29,7 +28,7 @@ dependencies {
     compile files('lib/Vault-1.4.1.jar')
     compile files('lib/Essentials.jar')
     compile files('lib/spigot-1.7.10.jar')
-    compile files('lib/Violet-1.7.10-1.1.6.jar')
+    compile files('lib/Violet-1.7.10-1.1.7.jar')
 }
 
 tasks.withType(JavaCompile) {
