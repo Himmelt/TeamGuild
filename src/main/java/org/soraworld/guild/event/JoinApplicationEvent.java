@@ -31,5 +31,4 @@ public class JoinApplicationEvent extends Event implements Cancellable {
     public static HandlerList getHandlerList() {
         return handlers;
     }
-
 }

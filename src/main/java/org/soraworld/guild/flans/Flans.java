@@ -4,21 +4,21 @@ import com.flansmod.common.guns.EntityBullet;
 import org.bukkit.craftbukkit.v1_7_R4.entity.CraftEntity;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
-import org.soraworld.guild.config.Config;
+import org.soraworld.guild.config.TeamManager;
 
 public class Flans {
 
     private static boolean support = false;
 
-    public static void checkFlans(final Config config) {
+    public static void checkFlans(final TeamManager config) {
         try {
             CraftEntity.class.getName();
             net.minecraft.server.v1_7_R4.Entity.class.getName();
             EntityBullet.class.getName();
             support = true;
-            config.console("flanSupport");
+            config.consoleKey("flanSupport");
         } catch (Throwable ignored) {
-            config.console("flanNotSupport");
+            config.consoleKey("flanNotSupport");
         }
     }
 

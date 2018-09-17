@@ -1,34 +1,26 @@
 apply plugin: 'java'
 
-group = 'org.soraworld.guild'
-version = '1.7.10-1.0.2'
+group = 'org.soraworld'
+version = '1.1.0'
 archivesBaseName = "TeamGuild"
 
-sourceCompatibility = targetCompatibility = '1.8'
-compileJava {
-    sourceCompatibility = targetCompatibility = '1.8'
-}
+sourceCompatibility = targetCompatibility = 1.8
 
 repositories {
     jcenter()
     maven {
-        name = 'placeholderapi'
-        url = 'http://repo.extendedclip.com/content/repositories/placeholderapi/'
-    }
-    maven {
-        name = 'spigot'
-        url = 'https://hub.spigotmc.org/nexus/content/groups/public/'
+        name = 'lss233'
+        url = 'https://www.lss233.com/artifactory/minecraft'
     }
 }
 
 dependencies {
     compile 'com.google.code.findbugs:jsr305:3.0.2'
-    compile 'me.clip:placeholderapi:2.8.5'
-    compile files('lib/PlayerPoints.jar')
-    compile files('lib/Vault-1.4.1.jar')
-    compile files('lib/Essentials.jar')
+    compile 'org.soraworld:violet-spigot:2.3.2'
+    compile 'org.black_ixx:PlayerPoints:2.1.3'
+    compile 'net.milkbowl.vault:VaultAPI:1.6'
+    compile 'net.ess3:Essentials:Pre2.14.1.3'
     compile files('lib/spigot-1.7.10.jar')
-    compile files('lib/Violet-1.7.10-1.1.7.jar')
 }
 
 tasks.withType(JavaCompile) {

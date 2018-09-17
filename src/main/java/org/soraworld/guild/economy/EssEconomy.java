@@ -6,7 +6,6 @@ import net.ess3.api.Economy;
 import java.math.BigDecimal;
 
 public class EssEconomy implements IEconomy {
-
     EssEconomy() {
         Essentials.class.getName();
         Economy.class.getName();
@@ -54,5 +53,4 @@ public class EssEconomy implements IEconomy {
             return false;
         }
     }
-
 }

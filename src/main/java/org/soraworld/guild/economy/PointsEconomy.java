@@ -38,5 +38,4 @@ public class PointsEconomy implements IEconomy {
     public boolean takeEco(String player, double amount) {
         return pointsAPI.take(player, (int) amount);
     }
-
 }

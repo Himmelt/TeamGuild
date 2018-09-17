@@ -5,16 +5,15 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
-import org.soraworld.guild.config.Config;
+import org.soraworld.guild.config.TeamManager;
 import org.soraworld.guild.core.TeamGuild;
-import org.soraworld.guild.core.TeamManager;
 
 public class ChatListener implements Listener {
 
     private final TeamManager manager;
 
-    public ChatListener(final Config config) {
-        this.manager = config.getTeamManager();
+    public ChatListener(final TeamManager manager) {
+        this.manager = manager;
     }
 
     @EventHandler(priority = EventPriority.HIGHEST)
@@ -31,5 +30,4 @@ public class ChatListener implements Listener {
             }
         }
     }
-
 }

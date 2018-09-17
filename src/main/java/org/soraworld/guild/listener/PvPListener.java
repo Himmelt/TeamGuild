@@ -7,17 +7,16 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.projectiles.ProjectileSource;
-import org.soraworld.guild.config.Config;
+import org.soraworld.guild.config.TeamManager;
 import org.soraworld.guild.core.TeamGuild;
-import org.soraworld.guild.core.TeamManager;
 import org.soraworld.guild.flans.Flans;
 
 public class PvPListener implements Listener {
 
     private final TeamManager manager;
 
-    public PvPListener(Config config) {
-        this.manager = config.getTeamManager();
+    public PvPListener(TeamManager manager) {
+        this.manager = manager;
     }
 
     @EventHandler
@@ -45,5 +44,4 @@ public class PvPListener implements Listener {
             }
         }
     }
-
 }

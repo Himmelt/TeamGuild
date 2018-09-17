@@ -1,36 +1,36 @@
 package org.soraworld.guild.economy;
 
-import org.soraworld.guild.config.Config;
+import org.soraworld.guild.config.TeamManager;
 
 public class Economy {
 
     private static IEconomy economy;
 
-    public static void checkEconomy(final Config config) {
+    public static void checkEconomy(final TeamManager config) {
         if (config.checkEcoType("Vault")) {
             try {
                 economy = new VaultEconomy(config);
-                config.console("EcoSupport", "Vault");
+                config.consoleKey("EcoSupport", "Vault");
             } catch (Throwable e) {
                 if (e.getMessage().equals("noVaultImpl")) {
                     config.console("noVaultImpl");
                 } else {
-                    config.console("EcoNotSupport", "Vault");
+                    config.consoleKey("EcoNotSupport", "Vault");
                 }
             }
         } else if (config.checkEcoType("Essentials")) {
             try {
                 economy = new EssEconomy();
-                config.console("EcoSupport", "Essentials");
+                config.consoleKey("EcoSupport", "Essentials");
             } catch (Throwable ignored) {
-                config.console("EcoNotSupport", "Essentials");
+                config.consoleKey("EcoNotSupport", "Essentials");
             }
         } else if (config.checkEcoType("PlayerPoints")) {
             try {
                 economy = new PointsEconomy();
-                config.console("EcoSupport", "PlayerPoints");
+                config.consoleKey("EcoSupport", "PlayerPoints");
             } catch (Throwable ignored) {
-                config.console("EcoNotSupport", "PlayerPoints");
+                config.consoleKey("EcoNotSupport", "PlayerPoints");
             }
         } else {
             config.console("InvalidEcoSupport");
@@ -56,5 +56,4 @@ public class Economy {
     public static boolean takeEco(String player, double amount) {
         return economy == null || economy.takeEco(player, amount);
     }
-
 }
