@@ -7,9 +7,9 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.projectiles.ProjectileSource;
-import org.soraworld.guild.config.TeamManager;
 import org.soraworld.guild.core.TeamGuild;
 import org.soraworld.guild.flans.Flans;
+import org.soraworld.guild.manager.TeamManager;
 
 public class PvPListener implements Listener {
 

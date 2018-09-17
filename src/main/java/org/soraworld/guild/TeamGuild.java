@@ -2,10 +2,10 @@ package org.soraworld.guild;
 
 import org.bukkit.event.Listener;
 import org.soraworld.guild.command.CommandGuild;
-import org.soraworld.guild.config.TeamManager;
 import org.soraworld.guild.listener.ChatListener;
 import org.soraworld.guild.listener.EventListener;
 import org.soraworld.guild.listener.PvPListener;
+import org.soraworld.guild.manager.TeamManager;
 import org.soraworld.violet.command.SpigotBaseSubs;
 import org.soraworld.violet.command.SpigotCommand;
 import org.soraworld.violet.manager.SpigotManager;

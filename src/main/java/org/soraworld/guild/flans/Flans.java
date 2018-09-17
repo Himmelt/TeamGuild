@@ -4,7 +4,7 @@ import com.flansmod.common.guns.EntityBullet;
 import org.bukkit.craftbukkit.v1_7_R4.entity.CraftEntity;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
-import org.soraworld.guild.config.TeamManager;
+import org.soraworld.guild.manager.TeamManager;
 
 public class Flans {
 

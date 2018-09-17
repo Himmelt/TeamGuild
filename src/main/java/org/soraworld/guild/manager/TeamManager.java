@@ -1,4 +1,4 @@
-package org.soraworld.guild.config;
+package org.soraworld.guild.manager;
 
 import net.minecraft.server.v1_7_R4.*;
 import org.bukkit.command.CommandSender;
@@ -25,15 +25,15 @@ import static org.soraworld.guild.core.TeamGuild.serialize;
 
 public class TeamManager extends SpigotManager {
 
-    @Setting
+    @Setting(comment = "comment.ecoType")
     private String ecoType = "Vault";
-    @Setting
+    @Setting(comment = "comment.teamPvP")
     private boolean teamPvP = false;
-    @Setting
+    @Setting(comment = "comment.maxDisplay")
     private int maxDisplay = 10;
-    @Setting
+    @Setting(comment = "comment.maxDescription")
     private int maxDescription = 100;
-    @Setting
+    @Setting(comment = "comment.levels")
     private TreeSet<TeamLevel> levels = new TreeSet<>();
 
     private final Path guildFile;
@@ -49,12 +49,8 @@ public class TeamManager extends SpigotManager {
         guildFile = path.resolve("guild.conf");
     }
 
-    public boolean load() {
-        loadGuild();
-        return super.load();
-    }
-
     public boolean save() {
+        if (levels.isEmpty()) levels.add(new TeamLevel(5, 10, 1, false));
         saveGuild();
         return super.save();
     }
@@ -65,6 +61,8 @@ public class TeamManager extends SpigotManager {
     }
 
     public void afterLoad() {
+        loadGuild();
+        if (levels.isEmpty()) levels.add(new TeamLevel(5, 10, 1, false));
         Economy.checkEconomy(this);
         Flans.checkFlans(this);
     }
@@ -203,40 +201,6 @@ public class TeamManager extends SpigotManager {
             }
         }
         return team;
-    }
-
-    public void readLevels(List<?> list) {
-        levels.clear();
-        if (list != null) {
-            for (Object obj : list) {
-                if (obj instanceof Map) {
-                    Map map = (Map) obj;
-                    Object size = map.get("size");
-                    Object cost = map.get("cost");
-                    Object mans = map.get("mans");
-                    Object guild = map.get("guild");
-                    if (size instanceof Integer && cost instanceof Integer && mans instanceof Integer && guild instanceof Boolean) {
-                        TeamLevel level = new TeamLevel((Integer) size, (Integer) cost, (Integer) mans, (Boolean) guild);
-                        levels.add(level);
-                    }
-                }
-            }
-        }
-        if (levels.isEmpty()) levels.add(new TeamLevel(5, 10, 1, false));
-    }
-
-    public List<?> writeLevels() {
-        if (levels.isEmpty()) levels.add(new TeamLevel(5, 10, 1, false));
-        List<Map> list = new ArrayList<>();
-        for (TeamLevel level : levels) {
-            Map<String, Object> sec = new LinkedHashMap<>();
-            sec.put("size", level.size);
-            sec.put("cost", level.cost);
-            sec.put("mans", level.mans);
-            sec.put("guild", level.guild);
-            list.add(sec);
-        }
-        return list;
     }
 
     public void upgrade(Player player) {

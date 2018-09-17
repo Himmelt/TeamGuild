@@ -5,8 +5,8 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
-import org.soraworld.guild.config.TeamManager;
 import org.soraworld.guild.core.TeamGuild;
+import org.soraworld.guild.manager.TeamManager;
 
 public class ChatListener implements Listener {
 

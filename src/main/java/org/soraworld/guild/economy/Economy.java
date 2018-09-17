@@ -1,6 +1,6 @@
 package org.soraworld.guild.economy;
 
-import org.soraworld.guild.config.TeamManager;
+import org.soraworld.guild.manager.TeamManager;
 
 public class Economy {
 

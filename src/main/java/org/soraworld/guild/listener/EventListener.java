@@ -5,9 +5,9 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
-import org.soraworld.guild.config.TeamManager;
 import org.soraworld.guild.core.TeamGuild;
 import org.soraworld.guild.event.JoinApplicationEvent;
+import org.soraworld.guild.manager.TeamManager;
 
 import javax.annotation.Nonnull;
 

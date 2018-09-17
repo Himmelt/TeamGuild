@@ -4,7 +4,7 @@ import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.economy.EconomyResponse;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.RegisteredServiceProvider;
-import org.soraworld.guild.config.TeamManager;
+import org.soraworld.guild.manager.TeamManager;
 
 public class VaultEconomy implements IEconomy {
 
