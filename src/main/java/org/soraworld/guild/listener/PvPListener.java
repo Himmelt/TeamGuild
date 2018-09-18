@@ -24,7 +24,7 @@ public class PvPListener implements Listener {
         Entity damager = event.getDamager();
         Entity damagee = event.getEntity();
         if (damagee instanceof Player) {
-            TeamGuild guild = manager.fetchTeam(((Player) damagee).getName());
+            TeamGuild guild = manager.fetchTeam((Player) damagee);
             if (guild == null) return;
             if (damager instanceof Player && guild.hasMember(((Player) damager).getName())) {
                 event.setCancelled(true);

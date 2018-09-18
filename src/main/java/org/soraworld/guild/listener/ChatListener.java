@@ -1,6 +1,5 @@
 package org.soraworld.guild.listener;
 
-import org.bukkit.ChatColor;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -20,11 +19,10 @@ public class ChatListener implements Listener {
     public void onAsyncPlayerChat(AsyncPlayerChatEvent event) {
         if (!event.isCancelled()) {
             if (event.getFormat().contains("%1$s")) {
-                String player = event.getPlayer().getName();
-                TeamGuild guild = manager.fetchTeam(player);
+                TeamGuild guild = manager.fetchTeam(event.getPlayer());
                 if (guild != null) {
                     StringBuilder build = new StringBuilder(event.getFormat());
-                    build.insert(build.indexOf("%1$s") + 4, '[' + guild.getDisplay().replace('&', ChatColor.COLOR_CHAR) + ']');
+                    build.insert(build.indexOf("%1$s") + 4, '[' + guild.getDisplay() + ']');
                     event.setFormat(build.toString());
                 }
             }

@@ -34,14 +34,14 @@ public class TeamGuild extends SpigotPlugin {
         if (manager instanceof TeamManager) {
             TeamManager manager = (TeamManager) this.manager;
             listeners.add(new EventListener(manager));
-            if (!manager.isTeamPvP()) listeners.add(new PvPListener(manager));
+            if (!manager.teamPvP) listeners.add(new PvPListener(manager));
             listeners.add(new ChatListener(manager));
         }
         return listeners;
     }
 
     protected void registerCommands() {
-        SpigotCommand command = new SpigotCommand(getId(), manager.defAdminPerm(), false, manager, "team");
+        SpigotCommand command = new SpigotCommand(getId(), null, false, manager, "team");
         command.extractSub(SpigotBaseSubs.class, "lang");
         command.extractSub(SpigotBaseSubs.class, "debug");
         command.extractSub(SpigotBaseSubs.class, "save");

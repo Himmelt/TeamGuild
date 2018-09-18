@@ -21,23 +21,22 @@ public class EventListener implements Listener {
 
     @EventHandler
     public void onPlayerJoin(final PlayerJoinEvent event) {
-        String player = event.getPlayer().getName();
-        final TeamGuild guild = manager.fetchTeam(player);
-        if (guild != null && guild.hasManager(player)) {
-            Bukkit.getScheduler().runTaskLaterAsynchronously(manager.getPlugin(), () -> guild.notifyApplication(event.getPlayer(), manager), 20);
+        final TeamGuild guild = manager.fetchTeam(event.getPlayer());
+        if (guild != null && guild.hasManager(event.getPlayer())) {
+            Bukkit.getScheduler().runTaskLater(manager.getPlugin(), () -> guild.notifyApplication(event.getPlayer()), 20);
         }
     }
 
     @EventHandler
     public void onPlayerQuit(PlayerQuitEvent event) {
-        manager.clearPlayer(event.getPlayer().getName());
+        manager.clearPlayer(event.getPlayer());
     }
 
     @EventHandler
     public void onJoinApplication(JoinApplicationEvent event) {
         TeamGuild guild = manager.getGuild(event.guild);
         if (guild != null) {
-            guild.handleApplication(null, event.applicant, manager);
+            guild.handleApplication(null, event.applicant);
         }
     }
 }

@@ -11,31 +11,31 @@ import java.lang.reflect.Type;
 
 public class TeamLevel implements Comparable<TeamLevel>, TypeSerializer<TeamLevel> {
 
-    @Setting
+    @Setting(comment = "comment.level.size")
     public final int size;
-    @Setting
+    @Setting(comment = "comment.level.cost")
     public final int cost;
-    @Setting
+    @Setting(comment = "comment.level.mans")
     public final int mans;
-    @Setting
-    public final boolean guild;
 
-    public TeamLevel(int size, int cost, int mans, boolean guild) {
-        this.size = size < 0 ? 0 : size;
-        this.cost = cost < 0 ? 0 : cost;
-        this.mans = mans > 0 ? mans < size ? mans : size : 0;
-        this.guild = guild;
-    }
-
-    public TeamLevel() {
+    private TeamLevel() {
         this.size = 0;
         this.cost = 0;
         this.mans = 0;
-        this.guild = false;
     }
 
-    public int compareTo(@Nonnull TeamLevel level) {
-        return this.size - level.size;
+    public int hashCode() {
+        return size + cost + mans;
+    }
+
+    public boolean equals(Object obj) {
+        return obj instanceof TeamLevel && (size == ((TeamLevel) obj).size && cost == ((TeamLevel) obj).cost && mans == ((TeamLevel) obj).mans);
+    }
+
+    public TeamLevel(int size, int cost, int mans) {
+        this.size = size < 1 ? 1 : size;
+        this.cost = cost < 0 ? 0 : cost;
+        this.mans = mans < 0 ? 0 : mans > size ? size : mans;
     }
 
     public TeamLevel deserialize(@Nonnull Type type, @Nonnull Node node) {
@@ -56,5 +56,9 @@ public class TeamLevel implements Comparable<TeamLevel>, TypeSerializer<TeamLeve
     @Nonnull
     public Type getRegType() {
         return TeamLevel.class;
+    }
+
+    public int compareTo(@Nonnull TeamLevel level) {
+        return this.size - level.size;
     }
 }

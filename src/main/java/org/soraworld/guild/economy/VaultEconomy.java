@@ -3,6 +3,7 @@ package org.soraworld.guild.economy;
 import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.economy.EconomyResponse;
 import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.soraworld.guild.manager.TeamManager;
 
@@ -21,26 +22,26 @@ public class VaultEconomy implements IEconomy {
         vaultEco = economy;
     }
 
-    public boolean setEco(String player, double amount) {
+    public boolean setEco(OfflinePlayer player, double amount) {
         if (takeEco(player, getEco(player))) {
             return addEco(player, amount);
         }
         return false;
     }
 
-    public boolean addEco(String player, double amount) {
-        return vaultEco.depositPlayer(Bukkit.getOfflinePlayer(player), amount).type == EconomyResponse.ResponseType.SUCCESS;
+    public boolean addEco(OfflinePlayer player, double amount) {
+        return vaultEco.depositPlayer(player, amount).type == EconomyResponse.ResponseType.SUCCESS;
     }
 
-    public double getEco(String player) {
-        return vaultEco.getBalance(Bukkit.getOfflinePlayer(player));
+    public double getEco(OfflinePlayer player) {
+        return vaultEco.getBalance(player);
     }
 
-    public boolean hasEnough(String player, double amount) {
-        return vaultEco.has(Bukkit.getOfflinePlayer(player), amount);
+    public boolean hasEnough(OfflinePlayer player, double amount) {
+        return vaultEco.has(player, amount);
     }
 
-    public boolean takeEco(String player, double amount) {
-        return vaultEco.withdrawPlayer(Bukkit.getOfflinePlayer(player), amount).type == EconomyResponse.ResponseType.SUCCESS;
+    public boolean takeEco(OfflinePlayer player, double amount) {
+        return vaultEco.withdrawPlayer(player, amount).type == EconomyResponse.ResponseType.SUCCESS;
     }
 }

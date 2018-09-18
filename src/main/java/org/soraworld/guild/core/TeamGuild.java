@@ -1,6 +1,8 @@
 package org.soraworld.guild.core;
 
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
@@ -15,13 +17,19 @@ import javax.annotation.Nonnull;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 
+import static org.soraworld.violet.util.ChatColor.COLOR_CHAR;
+
 public class TeamGuild implements Comparable<TeamGuild> {
 
-    private String leader;
+    private OfflinePlayer leader;
     @Setting
-    private int size;
+    private int frame = 0;
+    @Setting
+    private int level;
     @Setting
     private int balance = 0;
+    @Setting
+    private boolean showRankJoin = true;
     @Setting
     private String display;
     @Setting
@@ -33,18 +41,29 @@ public class TeamGuild implements Comparable<TeamGuild> {
     @Setting
     private LinkedHashSet<String> applications = new LinkedHashSet<>();
 
-    public TeamGuild(String leader, int size) {
+    private final TeamManager manager;
+
+    public TeamGuild(OfflinePlayer leader, int level, TeamManager manager) {
         this.leader = leader;
-        this.size = size;
+        this.level = level;
+        this.manager = manager;
+    }
+
+    public boolean isLeader(Player player) {
+        return player.getUniqueId().equals(leader.getUniqueId());
     }
 
     public boolean isLeader(String player) {
-        return leader.equals(player);
+        return player.equals(leader.getName());
     }
 
     public void setManager(String player) {
         managers.add(player);
         members.remove(player);
+    }
+
+    public boolean hasManager(Player player) {
+        return isLeader(player) || managers.contains(player.getName());
     }
 
     public boolean hasManager(String player) {
@@ -58,12 +77,12 @@ public class TeamGuild implements Comparable<TeamGuild> {
 
     @Nonnull
     public String getLeader() {
-        return leader;
+        return leader.getName();
     }
 
     @Nonnull
     public String getDisplay() {
-        return display == null ? "" : display;
+        return display == null ? "" : display.replace('&', ChatColor.COLOR_CHAR);
     }
 
     public void setDisplay(String display) {
@@ -72,7 +91,7 @@ public class TeamGuild implements Comparable<TeamGuild> {
     }
 
     public boolean addMember(String player) {
-        if (members.size() + managers.size() < size) {
+        if (members.size() + managers.size() < level) {
             members.add(player);
             return true;
         }
@@ -81,6 +100,10 @@ public class TeamGuild implements Comparable<TeamGuild> {
 
     public boolean hasMember(String player) {
         return isLeader(player) || hasManager(player) || members.contains(player);
+    }
+
+    public boolean hasMember(Player player) {
+        return isLeader(player) || hasManager(player) || members.contains(player.getName());
     }
 
     public void delMember(String player) {
@@ -93,7 +116,7 @@ public class TeamGuild implements Comparable<TeamGuild> {
     }
 
     public String getDescription() {
-        return description == null ? "" : description;
+        return description == null ? "" : description.replace('&', COLOR_CHAR);
     }
 
     public void setDescription(String description) {
@@ -102,21 +125,21 @@ public class TeamGuild implements Comparable<TeamGuild> {
 
     public void addJoinApplication(String username) {
         applications.add(username);
-        Bukkit.getPluginManager().callEvent(new JoinApplicationEvent(leader, username));
+        Bukkit.getPluginManager().callEvent(new JoinApplicationEvent(leader.getName(), username));
     }
 
-    public void notifyApplication(Player player, TeamManager config) {
+    public void notifyApplication(Player player) {
         for (String applicant : applications) {
-            handleApplication(player, applicant, config);
+            handleApplication(player, applicant);
         }
     }
 
-    public void handleApplication(Player handler, String applicant, TeamManager manager) {
+    public void handleApplication(Player handler, String applicant) {
         if (handler != null) {
             manager.sendHandleMessage(handler, applicant);
             return;
         }
-        handler = Bukkit.getPlayer(leader);
+        handler = leader.getPlayer();
         if (handler != null) {
             manager.sendHandleMessage(handler, applicant);
         }
@@ -136,58 +159,59 @@ public class TeamGuild implements Comparable<TeamGuild> {
         applications.remove(applicant);
     }
 
-    public int size() {
-        return size;
+    public TeamLevel getTeamLevel() {
+        return manager.getLevel(level);
     }
 
-    public void setSize(int size) {
-        this.size = size;
+    public int getLevel() {
+        return level;
     }
 
-    public void notifyLeave(String username, final TeamManager config) {
-        Player handler = Bukkit.getPlayer(leader);
+    public void setLevel(int level) {
+        this.level = level;
+    }
+
+    public void notifyLeave(String username) {
+        Player handler = leader.getPlayer();
         if (handler != null) {
-            config.sendKey(handler, "notifyLeave", username);
+            manager.sendKey(handler, "notifyLeave", username);
         }
-        for (String manager : managers) {
-            handler = Bukkit.getPlayer(manager);
+        for (String man : managers) {
+            handler = Bukkit.getPlayer(man);
             if (handler != null) {
-                config.sendKey(handler, "notifyLeave", username);
+                manager.sendKey(handler, "notifyLeave", username);
             }
         }
     }
 
-    public void showMemberList(CommandSender sender, TeamManager config) {
-        config.sendKey(sender, "listHead", display);
-        config.sendKey(sender, "listLeader", leader);
-        for (String manager : managers) {
-            config.sendKey(sender, "listManager", manager);
+    public void showMemberList(CommandSender sender) {
+        manager.sendKey(sender, "listHead", display);
+        manager.sendKey(sender, "listLeader", leader);
+        for (String man : managers) {
+            manager.sendKey(sender, "listManager", man);
         }
         for (String member : members) {
-            config.sendKey(sender, "listMember", member);
+            manager.sendKey(sender, "listMember", member);
         }
-        config.send(sender, "listFoot");
+        manager.send(sender, "listFoot");
     }
 
-    public void showGuildInfo(CommandSender sender, TeamManager manager) {
+    public void showGuildInfo(CommandSender sender) {
         manager.sendKey(sender, "infoDisplay", display);
         manager.sendKey(sender, "infoLeader", leader);
         if (sender instanceof Player && hasMember(sender.getName()) || sender instanceof ConsoleCommandSender) {
             manager.sendKey(sender, "infoBalance", balance);
-            manager.sendKey(sender, "maxManagers", manager.getLevel(this).mans);
+            manager.sendKey(sender, "maxManagers", manager.getLevel(level).mans);
         }
-        manager.sendKey(sender, "infoMembers", getCount(), size);
+        manager.sendKey(sender, "infoMembers", getCount(), level);
         manager.sendKey(sender, "infoDescription", description);
     }
 
-    @Override
     public int compareTo(@Nonnull TeamGuild other) {
-        // Descending
-        if (this.leader.equals(other.leader)) return 0;
-        return this.size > other.size ? -1 : 1;
+        if (other.frame == this.frame) return other.level - this.level;
+        return other.frame - this.frame;
     }
 
-    @Override
     public boolean equals(Object obj) {
         return this == obj || obj instanceof TeamGuild && this.leader.equals(((TeamGuild) obj).leader);
     }
@@ -196,9 +220,9 @@ public class TeamGuild implements Comparable<TeamGuild> {
         return managers.size();
     }
 
-    public static TeamGuild deserialize(Node node, String leader) {
+    public static TeamGuild deserialize(Node node, String leader, TeamManager manager) {
         if (node instanceof NodeMap) {
-            TeamGuild guild = new TeamGuild(leader, 0);
+            TeamGuild guild = new TeamGuild(Bukkit.getOfflinePlayer(leader), 0, manager);
             ((NodeMap) node).modify(guild);
             if (!guild.display.endsWith("&r")) guild.display += "&r";
             return guild;
@@ -210,5 +234,21 @@ public class TeamGuild implements Comparable<TeamGuild> {
         NodeMap node = new NodeMap(options);
         if (guild != null) node.extract(guild);
         return node;
+    }
+
+    public void addFrame(int frame) {
+        this.frame += frame;
+    }
+
+    public boolean isShowRankJoin() {
+        return showRankJoin;
+    }
+
+    public void setShowRankJoin(boolean show) {
+        this.showRankJoin = show;
+    }
+
+    public int getFrame() {
+        return frame;
     }
 }

@@ -1,13 +1,15 @@
 package org.soraworld.guild.economy;
 
+import org.bukkit.OfflinePlayer;
+
 public interface IEconomy {
-    boolean setEco(String player, double amount);
+    boolean setEco(OfflinePlayer player, double amount);
 
-    boolean addEco(String player, double amount);
+    boolean addEco(OfflinePlayer player, double amount);
 
-    double getEco(String player);
+    double getEco(OfflinePlayer player);
 
-    boolean hasEnough(String player, double amount);
+    boolean hasEnough(OfflinePlayer player, double amount);
 
-    boolean takeEco(String player, double amount);
+    boolean takeEco(OfflinePlayer player, double amount);
 }

@@ -1,6 +1,7 @@
 package org.soraworld.guild.manager;
 
 import net.minecraft.server.v1_7_R4.*;
+import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.craftbukkit.v1_7_R4.entity.CraftPlayer;
 import org.bukkit.entity.Player;
@@ -17,6 +18,7 @@ import org.soraworld.violet.util.ChatColor;
 import javax.annotation.Nonnull;
 import java.nio.file.Path;
 import java.util.*;
+import java.util.function.Consumer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -27,30 +29,33 @@ public class TeamManager extends SpigotManager {
 
     @Setting(comment = "comment.ecoType")
     private String ecoType = "Vault";
+    @Setting(comment = "comment.ignoreNoEco")
+    private boolean ignoreNoEco = false;
     @Setting(comment = "comment.teamPvP")
-    private boolean teamPvP = false;
+    public final boolean teamPvP = false;
     @Setting(comment = "comment.maxDisplay")
-    private int maxDisplay = 10;
+    public final int maxDisplay = 10;
     @Setting(comment = "comment.maxDescription")
-    private int maxDescription = 100;
+    public final int maxDescription = 100;
     @Setting(comment = "comment.levels")
-    private TreeSet<TeamLevel> levels = new TreeSet<>();
+    private TreeMap<Integer, TeamLevel> levels = new TreeMap<>();
 
     private final Path guildFile;
-    private final HashMap<String, TeamGuild> teams = new HashMap<>();
+    private final HashMap<UUID, TeamGuild> teams = new HashMap<>();
     private final HashMap<String, TeamGuild> guilds = new HashMap<>();
     private final TreeSet<TeamGuild> rank = new TreeSet<>();
 
     private static final Pattern FORMAT = Pattern.compile("((?<![&|\\u00A7])[&|\\u00A7][0-9a-fk-or])+");
+    private static final TeamLevel defaultLevel = new TeamLevel(5, 10, 1);
 
     public TeamManager(SpigotPlugin plugin, Path path) {
         super(plugin, path);
-        options.registerType(new TeamLevel());
+        options.registerType(defaultLevel);
         guildFile = path.resolve("guild.conf");
     }
 
     public boolean save() {
-        if (levels.isEmpty()) levels.add(new TeamLevel(5, 10, 1, false));
+        if (!levels.containsKey(0)) levels.put(0, defaultLevel);
         saveGuild();
         return super.save();
     }
@@ -62,25 +67,9 @@ public class TeamManager extends SpigotManager {
 
     public void afterLoad() {
         loadGuild();
-        if (levels.isEmpty()) levels.add(new TeamLevel(5, 10, 1, false));
-        Economy.checkEconomy(this);
+        if (!levels.containsKey(0)) levels.put(0, defaultLevel);
+        Economy.checkEconomy(this, ecoType, ignoreNoEco);
         Flans.checkFlans(this);
-    }
-
-    public boolean checkEcoType(String type) {
-        return ecoType.equals(type);
-    }
-
-    public boolean isTeamPvP() {
-        return teamPvP;
-    }
-
-    public int maxDisplay() {
-        return maxDisplay;
-    }
-
-    public int maxDescription() {
-        return maxDescription;
     }
 
     public void saveGuild() {
@@ -104,9 +93,8 @@ public class TeamManager extends SpigotManager {
             teams.clear();
             guilds.clear();
             for (String leader : node.keys()) {
-                TeamGuild guild = deserialize(node.get(leader), leader);
+                TeamGuild guild = deserialize(node.get(leader), leader, this);
                 if (guild != null) {
-                    getLevel(guild);
                     rank.add(guild);
                     guilds.put(leader, guild);
                 }
@@ -117,50 +105,40 @@ public class TeamManager extends SpigotManager {
         }
     }
 
-    public void clearPlayer(String player) {
-        teams.remove(player);
-    }
-
-    public List<String> getGuilds() {
-        return new ArrayList<>(guilds.keySet());
+    public void clearPlayer(Player player) {
+        teams.remove(player.getUniqueId());
     }
 
     public void createGuild(Player player, String display) {
         String username = player.getName();
-        TeamGuild guild = teams.get(username);
+        TeamGuild guild = teams.get(player.getUniqueId());
         if (guild != null) {
             if (guild.isLeader(username)) sendKey(player, "alreadyLeader");
             else sendKey(player, "alreadyInTeam");
             return;
         }
-        guild = new TeamGuild(username, levels.first().size);
+        guild = new TeamGuild(player, 0, this);
         guild.setDisplay(display);
         guild.setDescription(username + "'s Team.");
-        if (Economy.takeEco(username, getLevel(guild).cost)) {
+        int cost = levels.firstEntry().getValue().cost;
+        if (Economy.takeEco(player, cost)) {
             rank.add(guild);
-            teams.put(username, guild);
+            teams.put(player.getUniqueId(), guild);
             guilds.put(username, guild);
-            sendKey(player, "createTeamSuccess", getLevel(guild).cost);
+            sendKey(player, "createTeamSuccess", cost);
             saveGuild();
         } else {
-            sendKey(player, "noEnoughEco", getLevel(guild).cost);
+            sendKey(player, "noEnoughEco", cost);
         }
     }
 
-    public TeamLevel getLevel(TeamGuild guild) {
-        for (TeamLevel level : levels) {
-            if (guild.size() <= level.size) {
-                guild.setSize(level.size);
-                return level;
-            }
-        }
-        guild.setSize(levels.last().size);
-        return levels.last();
+    public TeamLevel getLevel(int level) {
+        return levels.getOrDefault(level, levels.firstEntry().getValue());
     }
 
     public void joinGuild(Player player, String leader) {
         String username = player.getName();
-        TeamGuild guild = teams.get(username);
+        TeamGuild guild = teams.get(player.getUniqueId());
         if (guild != null) {
             sendKey(player, "alreadyInTeam");
             return;
@@ -179,9 +157,15 @@ public class TeamManager extends SpigotManager {
         }
     }
 
+    public void leaveGuild(Player player, TeamGuild guild) {
+        guild.delMember(player.getName());
+        teams.remove(player.getUniqueId());
+        saveGuild();
+    }
+
     public void leaveGuild(String player, TeamGuild guild) {
         guild.delMember(player);
-        teams.remove(player);
+        teams.remove(Bukkit.getOfflinePlayer(player).getUniqueId());
         saveGuild();
     }
 
@@ -189,13 +173,27 @@ public class TeamManager extends SpigotManager {
         return guilds.get(leader);
     }
 
-    public TeamGuild fetchTeam(String player) {
-        TeamGuild team = teams.get(player);
+    public TeamGuild fetchTeam(Player player) {
+        TeamGuild team = teams.get(player.getUniqueId());
         if (team == null) {
             for (TeamGuild guild : guilds.values()) {
                 if (guild.hasMember(player)) {
                     team = guild;
-                    teams.put(player, team);
+                    teams.put(player.getUniqueId(), team);
+                    break;
+                }
+            }
+        }
+        return team;
+    }
+
+    public TeamGuild fetchTeam(String player) {
+        TeamGuild team = teams.get(Bukkit.getOfflinePlayer(player).getUniqueId());
+        if (team == null) {
+            for (TeamGuild guild : guilds.values()) {
+                if (guild.hasMember(player)) {
+                    team = guild;
+                    teams.put(Bukkit.getOfflinePlayer(player).getUniqueId(), team);
                     break;
                 }
             }
@@ -209,12 +207,11 @@ public class TeamManager extends SpigotManager {
             sendKey(player, "ownNoGuild");
             return;
         }
-        TeamLevel next = levels.higher(getLevel(guild));
-        if (next != null) {
-            if (Economy.takeEco(player.getName(), next.cost)) {
-                rank.remove(guild);
-                guild.setSize(next.size);
-                rank.add(guild);
+        Map.Entry<Integer, TeamLevel> entry = levels.higherEntry(guild.getLevel());
+        if (entry != null) {
+            TeamLevel next = entry.getValue();
+            if (Economy.takeEco(player, next.cost)) {
+                updateGuild(guild, g -> g.setLevel(entry.getKey()));
                 sendKey(player, "guildUpgraded", next.cost);
                 saveGuild();
             } else sendKey(player, "noEnoughEco", next.cost);
@@ -224,11 +221,16 @@ public class TeamManager extends SpigotManager {
     public void showRank(CommandSender sender, int page) {
         if (page < 1) page = 1;
         sendKey(sender, "rankHead");
+        sendKey(sender, "rankHint");
         Iterator<TeamGuild> it = rank.iterator();
         for (int i = 1; i <= page * 10 && it.hasNext(); i++) {
             TeamGuild guild = it.next();
             if (i >= page * 10 - 9) {
-                sendKey(sender, "rankLine", i, guild.getDisplay(), guild.getLeader());
+                if (sender instanceof Player && guild.isShowRankJoin()) {
+                    sendMessage((Player) sender,
+                            format(trans("rankLine", i, guild.getDisplay(), guild.getFrame(), guild.getLeader())),
+                            format(trans("clickJoin"), EnumClickAction.RUN_COMMAND, "/team join " + guild.getLeader(), null, null));
+                } else sendKey(sender, "rankLine", i, guild.getDisplay(), guild.getFrame(), guild.getLeader());
             }
         }
         sendKey(sender, "rankFoot", page, rank.size() / 10 + 1);
@@ -358,5 +360,11 @@ public class TeamManager extends SpigotManager {
                         EnumClickAction.RUN_COMMAND, "/guild reject " + applicant,
                         EnumHoverAction.SHOW_TEXT, trans("rejectHover"))
         );
+    }
+
+    public void updateGuild(TeamGuild guild, Consumer<TeamGuild> consumer) {
+        rank.remove(guild);
+        consumer.accept(guild);
+        rank.add(guild);
     }
 }

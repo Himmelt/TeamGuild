@@ -1,59 +1,62 @@
 package org.soraworld.guild.economy;
 
+import org.bukkit.OfflinePlayer;
 import org.soraworld.guild.manager.TeamManager;
 
 public class Economy {
 
-    private static IEconomy economy;
+    private static IEconomy eco;
+    private static boolean ignore = false;
 
-    public static void checkEconomy(final TeamManager config) {
-        if (config.checkEcoType("Vault")) {
+    public static void checkEconomy(final TeamManager manager, final String ecoType, boolean ignore) {
+        Economy.ignore = ignore;
+        if ("Vault".equalsIgnoreCase(ecoType)) {
             try {
-                economy = new VaultEconomy(config);
-                config.consoleKey("EcoSupport", "Vault");
+                eco = new VaultEconomy(manager);
+                manager.consoleKey("EcoSupport", "Vault");
             } catch (Throwable e) {
                 if (e.getMessage().equals("noVaultImpl")) {
-                    config.console("noVaultImpl");
+                    manager.console("noVaultImpl");
                 } else {
-                    config.consoleKey("EcoNotSupport", "Vault");
+                    manager.consoleKey("EcoNotSupport", "Vault");
                 }
             }
-        } else if (config.checkEcoType("Essentials")) {
+        } else if ("Essentials".equalsIgnoreCase(ecoType)) {
             try {
-                economy = new EssEconomy();
-                config.consoleKey("EcoSupport", "Essentials");
+                eco = new EssEconomy();
+                manager.consoleKey("EcoSupport", "Essentials");
             } catch (Throwable ignored) {
-                config.consoleKey("EcoNotSupport", "Essentials");
+                manager.consoleKey("EcoNotSupport", "Essentials");
             }
-        } else if (config.checkEcoType("PlayerPoints")) {
+        } else if ("PlayerPoints".equalsIgnoreCase(ecoType)) {
             try {
-                economy = new PointsEconomy();
-                config.consoleKey("EcoSupport", "PlayerPoints");
+                eco = new PointsEconomy();
+                manager.consoleKey("EcoSupport", "PlayerPoints");
             } catch (Throwable ignored) {
-                config.consoleKey("EcoNotSupport", "PlayerPoints");
+                manager.consoleKey("EcoNotSupport", "PlayerPoints");
             }
         } else {
-            config.console("InvalidEcoSupport");
+            manager.console("InvalidEcoSupport");
         }
     }
 
-    public static boolean setEco(String player, double amount) {
-        return economy == null || economy.setEco(player, amount);
+    public static boolean setEco(OfflinePlayer player, double amount) {
+        return eco == null ? ignore : eco.setEco(player, amount);
     }
 
-    public static boolean addEco(String player, double amount) {
-        return economy == null || economy.addEco(player, amount);
+    public static boolean addEco(OfflinePlayer player, double amount) {
+        return eco == null ? ignore : eco.addEco(player, amount);
     }
 
-    public static double getEco(String player) {
-        return economy == null ? 0 : economy.getEco(player);
+    public static double getEco(OfflinePlayer player) {
+        return eco == null ? 0 : eco.getEco(player);
     }
 
-    public static boolean hasEnough(String player, double amount) {
-        return economy == null || economy.hasEnough(player, amount);
+    public static boolean hasEnough(OfflinePlayer player, double amount) {
+        return eco == null ? ignore : eco.hasEnough(player, amount);
     }
 
-    public static boolean takeEco(String player, double amount) {
-        return economy == null || economy.takeEco(player, amount);
+    public static boolean takeEco(OfflinePlayer player, double amount) {
+        return eco == null ? ignore : eco.takeEco(player, amount);
     }
 }

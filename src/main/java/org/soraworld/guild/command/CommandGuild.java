@@ -29,13 +29,13 @@ public final class CommandGuild {
         TeamManager manager = (TeamManager) self.manager;
         if (args.empty()) {
             if (sender instanceof Player) {
-                TeamGuild guild = manager.fetchTeam(sender.getName());
-                if (guild != null) guild.showGuildInfo(sender, manager);
+                TeamGuild guild = manager.fetchTeam((Player) sender);
+                if (guild != null) guild.showGuildInfo(sender);
                 else manager.sendKey(sender, "notInAnyTeam");
             } else manager.sendKey(sender, "invalidArgs");
         } else {
             TeamGuild guild = manager.fetchTeam(args.get(0));
-            if (guild != null) guild.showGuildInfo(sender, manager);
+            if (guild != null) guild.showGuildInfo(sender);
             else manager.sendKey(sender, "guildNotExist");
         }
     }
@@ -66,6 +66,57 @@ public final class CommandGuild {
         }
     }
 
+    @Sub(paths = {"frame", "give"}, perm = "admin")
+    public static void frame_give(SpigotCommand self, CommandSender sender, Paths args) {
+        TeamManager manager = (TeamManager) self.manager;
+        if (args.notEmpty()) {
+            if (args.size() == 2) {
+                TeamGuild guild = manager.getGuild(args.first());
+                if (guild != null) {
+                    try {
+                        int frame = Integer.valueOf(args.get(1));
+                        manager.updateGuild(guild, g -> g.addFrame(frame));
+                        manager.sendKey(sender, "addFrame");
+                    } catch (Throwable ignored) {
+                        manager.sendKey(sender, "invalidInt");
+                    }
+                } else manager.sendKey(sender, "guildNotExist");
+            } else manager.sendKey(sender, "invalidArgs");
+        } else manager.sendKey(sender, "emptyArgs");
+    }
+
+    @Sub(paths = {"frame", "take"}, perm = "admin")
+    public static void frame_take(SpigotCommand self, CommandSender sender, Paths args) {
+        TeamManager manager = (TeamManager) self.manager;
+        if (args.notEmpty()) {
+            if (args.size() == 2) {
+                TeamGuild guild = manager.getGuild(args.first());
+                if (guild != null) {
+                    try {
+                        int frame = Integer.valueOf(args.get(1));
+                        manager.updateGuild(guild, g -> g.addFrame(-1 * frame));
+                        manager.sendKey(sender, "takeFrame");
+                    } catch (Throwable ignored) {
+                        manager.sendKey(sender, "invalidInt");
+                    }
+                } else manager.sendKey(sender, "guildNotExist");
+            } else manager.sendKey(sender, "invalidArgs");
+        } else manager.sendKey(sender, "emptyArgs");
+    }
+
+    @Sub(paths = {"rankjoin"}, onlyPlayer = true)
+    public static void showRankJoin(SpigotCommand self, CommandSender sender, Paths args) {
+        if (args.notEmpty()) {
+            TeamManager manager = (TeamManager) self.manager;
+            Player player = (Player) sender;
+            TeamGuild guild = manager.getGuild(player.getName());
+            if (guild != null) {
+                guild.setShowRankJoin(Boolean.valueOf(args.first()));
+                manager.sendKey(player, guild.isShowRankJoin() ? "showRankJoin" : "notShowRankJoin");
+            } else manager.sendKey(player, "guildNotExist");
+        } else self.manager.sendKey(sender, "emptyArgs");
+    }
+
     @Sub(onlyPlayer = true)
     public static void create(SpigotCommand self, CommandSender sender, Paths args) {
         TeamManager manager = (TeamManager) self.manager;
@@ -73,9 +124,9 @@ public final class CommandGuild {
         if (args.notEmpty()) {
             String text = args.first();
             try {
-                if (text.getBytes("GB2312").length <= manager.maxDisplay()) {
+                if (text.getBytes("GB2312").length <= manager.maxDisplay) {
                     manager.createGuild(player, text);
-                } else manager.sendKey(player, "textTooLong", manager.maxDisplay());
+                } else manager.sendKey(player, "textTooLong", manager.maxDisplay);
             } catch (Throwable e) {
                 if (manager.isDebug()) e.printStackTrace();
                 manager.sendKey(player, "EncodingException");
@@ -137,14 +188,14 @@ public final class CommandGuild {
         TeamManager manager = (TeamManager) self.manager;
         Player player = (Player) sender;
         String username = player.getName();
-        TeamGuild guild = manager.fetchTeam(username);
+        TeamGuild guild = manager.fetchTeam(player);
         if (guild != null) {
             if (guild.isLeader(username)) {
                 manager.sendKey(player, "leaderCantLeave");
             } else {
-                manager.leaveGuild(username, guild);
+                manager.leaveGuild(player, guild);
                 manager.sendKey(player, "leaveGuild", guild.getDisplay());
-                guild.notifyLeave(username, manager);
+                guild.notifyLeave(username);
             }
         } else manager.sendKey(player, "notInAnyTeam");
     }
@@ -157,7 +208,7 @@ public final class CommandGuild {
             manager.sendKey(player, "emptyArgs");
             return;
         }
-        TeamGuild guild = manager.fetchTeam(player.getName());
+        TeamGuild guild = manager.fetchTeam(player);
         if (guild == null) {
             manager.sendKey(player, "notInAnyTeam");
             return;
@@ -183,7 +234,7 @@ public final class CommandGuild {
             manager.sendKey(player, "emptyArgs");
             return;
         }
-        TeamGuild guild = manager.fetchTeam(player.getName());
+        TeamGuild guild = manager.fetchTeam(player);
         if (guild == null) {
             manager.sendKey(player, "notInAnyTeam");
             return;
@@ -225,12 +276,12 @@ public final class CommandGuild {
             manager.sendKey(player, "emptyArgs");
             return;
         }
-        TeamGuild guild = manager.fetchTeam(player.getName());
+        TeamGuild guild = manager.fetchTeam(player);
         if (guild == null) {
             manager.sendKey(player, "notInAnyTeam");
             return;
         }
-        if (guild.hasManager(player.getName())) {
+        if (guild.hasManager(player)) {
             String applicant = args.get(0);
             if (guild.hasApplication(applicant)) {
                 manager.sendKey(player, "rejectApplication", applicant);
@@ -256,12 +307,12 @@ public final class CommandGuild {
         } else {
             String text = args.get(0);
             try {
-                if (text.getBytes("GB2312").length <= manager.maxDisplay()) {
+                if (text.getBytes("GB2312").length <= manager.maxDisplay) {
                     guild.setDisplay(text);
                     manager.sendKey(player, "setDisplay", text);
                     manager.saveGuild();
                 } else {
-                    manager.sendKey(player, "textTooLong", manager.maxDisplay());
+                    manager.sendKey(player, "textTooLong", manager.maxDisplay);
                 }
             } catch (Throwable e) {
                 if (manager.isDebug()) e.printStackTrace();
@@ -284,12 +335,12 @@ public final class CommandGuild {
         } else {
             String text = args.get(0);
             try {
-                if (text.getBytes("GB2312").length <= manager.maxDescription()) {
+                if (text.getBytes("GB2312").length <= manager.maxDescription) {
                     guild.setDescription(text);
                     manager.sendKey(player, "setDescription", text);
                     manager.saveGuild();
                 } else {
-                    manager.sendKey(player, "textTooLong", manager.maxDescription());
+                    manager.sendKey(player, "textTooLong", manager.maxDescription);
                 }
             } catch (Throwable e) {
                 if (manager.isDebug()) e.printStackTrace();
@@ -310,7 +361,7 @@ public final class CommandGuild {
         if (args.notEmpty()) {
             String name = args.get(0);
             if (guild.hasMember(name)) {
-                if (guild.getManSize() < manager.getLevel(guild).mans) {
+                if (guild.getManSize() < guild.getTeamLevel().mans) {
                     guild.setManager(name);
                     manager.saveGuild();
                     manager.sendKey(player, "setManager", name);
@@ -346,9 +397,9 @@ public final class CommandGuild {
     public static void list(SpigotCommand self, CommandSender sender, Paths args) {
         TeamManager manager = (TeamManager) self.manager;
         Player player = (Player) sender;
-        TeamGuild team = manager.fetchTeam(player.getName());
+        TeamGuild team = manager.fetchTeam(player);
         if (team != null) {
-            team.showMemberList(player, manager);
+            team.showMemberList(player);
         } else manager.sendKey(player, "notInAnyTeam");
     }
 
