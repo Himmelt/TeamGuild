@@ -47,6 +47,7 @@ public class TeamGuild extends SpigotPlugin {
         command.extractSub(SpigotBaseSubs.class, "save");
         command.extractSub(SpigotBaseSubs.class, "reload");
         command.extractSub(SpigotBaseSubs.class, "help");
+        command.extractSub(SpigotBaseSubs.class, "rextract");
         command.extractSub(CommandGuild.class);
         register(this, command);
     }
