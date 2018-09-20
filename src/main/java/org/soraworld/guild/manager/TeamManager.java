@@ -157,7 +157,7 @@ public class TeamManager extends SpigotManager {
                 sendKey(player, "alreadyJoined");
             } else {
                 guild.addJoinApplication(username);
-                sendKey(player, "sendApplication");
+                sendKey(player, "sendApplication", guild.getDisplay());
                 saveGuild();
             }
         }

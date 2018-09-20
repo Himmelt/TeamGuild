@@ -16,6 +16,7 @@ import org.soraworld.hocon.node.Setting;
 import javax.annotation.Nonnull;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
+import java.util.UUID;
 
 import static org.soraworld.violet.util.ChatColor.COLOR_CHAR;
 
@@ -41,10 +42,10 @@ public class TeamGuild implements Comparable<TeamGuild> {
     @Setting
     private LinkedHashSet<String> applications = new LinkedHashSet<>();
 
-    private Player attorn;
+    private UUID attorn;
     private OfflinePlayer leader;
     private final TeamManager manager;
-    private final HashSet<OfflinePlayer> invites = new HashSet<>();
+    private final HashSet<UUID> invites = new HashSet<>();
 
     public TeamGuild(OfflinePlayer leader, int level, TeamManager manager) {
         this.leader = leader;
@@ -98,7 +99,7 @@ public class TeamGuild implements Comparable<TeamGuild> {
     }
 
     public boolean addMember(String player) {
-        if (members.size() + managers.size() < level) {
+        if (members.size() + managers.size() < manager.getLevel(level).size) {
             members.add(player);
             return true;
         }
@@ -260,12 +261,12 @@ public class TeamGuild implements Comparable<TeamGuild> {
     }
 
     public void sendAttorn(Player target) {
-        this.attorn = target;
+        this.attorn = target.getUniqueId();
         manager.sendAttornMessage(target, this);
     }
 
     public boolean isAttorn(Player player) {
-        return attorn != null && attorn.getUniqueId().equals(player.getUniqueId());
+        return attorn != null && player.getUniqueId().equals(attorn);
     }
 
     public void setLeader(Player player) {
@@ -287,7 +288,26 @@ public class TeamGuild implements Comparable<TeamGuild> {
     }
 
     public void sendInvite(Player man, Player target) {
-        invites.add(target);
+        invites.add(target.getUniqueId());
         manager.sendInviteMessage(man, target, this);
+    }
+
+    public boolean acceptInvite(Player player) {
+        if (invites.contains(player.getUniqueId())) {
+            invites.remove(player.getUniqueId());
+            return addMember(player.getName());
+        } else return false;
+    }
+
+    public boolean isInvited(Player player) {
+        return invites.contains(player.getUniqueId());
+    }
+
+    public void unInvite(UUID uuid) {
+        invites.remove(uuid);
+    }
+
+    public void unInviteAll() {
+        invites.clear();
     }
 }

@@ -9,6 +9,8 @@ import org.soraworld.violet.command.Paths;
 import org.soraworld.violet.command.SpigotCommand;
 import org.soraworld.violet.command.Sub;
 
+import java.util.UUID;
+
 public final class CommandGuild {
     @Sub
     public static void top(SpigotCommand self, CommandSender sender, Paths args) {
@@ -133,11 +135,13 @@ public final class CommandGuild {
     @Sub(onlyPlayer = true)
     public static void home(SpigotCommand self, CommandSender sender, Paths args) {
         // TODO home
+        self.manager.sendKey(sender, "notImpl");
     }
 
     @Sub(onlyPlayer = true)
     public static void sethome(SpigotCommand self, CommandSender sender, Paths args) {
         // TODO sethome
+        self.manager.sendKey(sender, "notImpl");
     }
 
     @Sub(onlyPlayer = true)
@@ -225,7 +229,7 @@ public final class CommandGuild {
                 Player target = Bukkit.getPlayer(args.first());
                 if (target != null) {
                     guild.sendAttorn(target);
-                    manager.sendKey(player, "sendAttorn");
+                    manager.sendKey(player, "sendAttorn", target.getName());
                 } else manager.sendKey(player, "playerIsOffline", args.first());
             } else manager.sendKey(player, "noCreateTeam");
         } else manager.sendKey(player, "emptyArgs");
@@ -284,12 +288,60 @@ public final class CommandGuild {
         } else manager.sendKey(player, "emptyArgs");
     }
 
+    @Sub(onlyPlayer = true)
+    public static void uninvite(SpigotCommand self, CommandSender sender, Paths args) {
+        TeamManager manager = (TeamManager) self.manager;
+        Player player = (Player) sender;
+        if (args.notEmpty()) {
+            TeamGuild guild = manager.fetchTeam(player);
+            if (guild != null) {
+                if (guild.isManager(player)) {
+                    if (args.first().equals("@ALL") && guild.isLeader(player)) {
+                        guild.unInviteAll();
+                        manager.sendKey(player, "unInvitedAll");
+                        return;
+                    }
+                    UUID target = Bukkit.getOfflinePlayer(args.first()).getUniqueId();
+                    guild.unInvite(target);
+                    manager.sendKey(player, "unInvited", args.first());
+                } else manager.sendKey(player, "notManager");
+            } else manager.sendKey(player, "guildNotExist");
+        } else manager.sendKey(player, "emptyArgs");
+    }
+
     @Sub(paths = {"accept", "invite"}, onlyPlayer = true)
     public static void accept_invite(SpigotCommand self, CommandSender sender, Paths args) {
+        TeamManager manager = (TeamManager) self.manager;
+        Player player = (Player) sender;
+        if (args.notEmpty()) {
+            TeamGuild team = manager.fetchTeam(player);
+            TeamGuild guild = manager.getGuild(args.first());
+            if (team == null) {
+                if (guild != null) {
+                    if (guild.isInvited(player)) {
+                        if (guild.acceptInvite(player)) {
+                            manager.sendKey(player, "inviteAccepted");
+                        } else manager.sendKey(player, "upMaxMembers");
+                    } else manager.sendKey(player, "notInvited");
+                } else manager.sendKey(player, "guildNotExist");
+            } else if (team.equals(guild)) {
+                guild.acceptInvite(player);
+                manager.sendKey(player, "alreadyJoined");
+            } else manager.sendKey(player, "inAnotherGuild");
+        } else manager.sendKey(player, "emptyArgs");
     }
 
     @Sub(paths = {"reject", "invite"}, onlyPlayer = true)
     public static void reject_invite(SpigotCommand self, CommandSender sender, Paths args) {
+        TeamManager manager = (TeamManager) self.manager;
+        Player player = (Player) sender;
+        if (args.notEmpty()) {
+            TeamGuild guild = manager.getGuild(args.first());
+            if (guild != null) {
+                guild.unInvite(player.getUniqueId());
+                manager.sendKey(player, "rejectInvite");
+            } else manager.sendKey(player, "guildNotExist");
+        } else manager.sendKey(player, "emptyArgs");
     }
 
     @Sub(onlyPlayer = true)
@@ -379,7 +431,7 @@ public final class CommandGuild {
             try {
                 if (text.getBytes("GB2312").length <= manager.maxDescription) {
                     guild.setDescription(text);
-                    manager.sendKey(player, "setDescription", text);
+                    manager.sendKey(player, "setDescription", guild.getDisplay());
                     manager.saveGuild();
                 } else {
                     manager.sendKey(player, "textTooLong", manager.maxDescription);
@@ -407,7 +459,7 @@ public final class CommandGuild {
                     guild.setManager(name);
                     manager.saveGuild();
                     manager.sendKey(player, "setManager", name);
-                } else manager.sendKey(player, "maxManagers");
+                } else manager.sendKey(player, "upMaxManagers");
             } else manager.sendKey(player, "noSuchMember", name);
         } else manager.sendKey(player, "emptyArgs");
     }
