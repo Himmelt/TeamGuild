@@ -22,6 +22,8 @@ import java.util.function.Consumer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static net.minecraft.server.v1_7_R4.EnumClickAction.RUN_COMMAND;
+import static net.minecraft.server.v1_7_R4.EnumHoverAction.SHOW_TEXT;
 import static org.soraworld.guild.core.TeamGuild.deserialize;
 import static org.soraworld.guild.core.TeamGuild.serialize;
 
@@ -33,10 +35,14 @@ public class TeamManager extends SpigotManager {
     private boolean ignoreNoEco = false;
     @Setting(comment = "comment.teamPvP")
     public final boolean teamPvP = false;
+    @Setting(comment = "comment.attornLeave")
+    public final boolean attornLeave = false;
     @Setting(comment = "comment.maxDisplay")
     public final int maxDisplay = 10;
     @Setting(comment = "comment.maxDescription")
     public final int maxDescription = 100;
+    @Setting(comment = "comment.textCommand")
+    public final String textCommand = "/team";
     @Setting(comment = "comment.levels")
     private TreeMap<Integer, TeamLevel> levels = new TreeMap<>();
 
@@ -226,21 +232,27 @@ public class TeamManager extends SpigotManager {
         for (int i = 1; i <= page * 10 && it.hasNext(); i++) {
             TeamGuild guild = it.next();
             if (i >= page * 10 - 9) {
-                if (sender instanceof Player && guild.isShowRankJoin()) {
+                if (sender instanceof Player && guild.isShowTopJoin()) {
                     sendMessage((Player) sender,
-                            format(trans("rankLine", i, guild.getDisplay(), guild.getFrame(), guild.getLeader())),
-                            format(trans("clickJoin"), EnumClickAction.RUN_COMMAND, "/team join " + guild.getLeader(), null, null));
-                } else sendKey(sender, "rankLine", i, guild.getDisplay(), guild.getFrame(), guild.getLeader());
+                            format(trans("rankLine", i, guild.getDisplay(), guild.getFrame(), guild.getTeamLeader())),
+                            format(trans("clickJoin"), RUN_COMMAND, textCommand + " join " + guild.getTeamLeader(), null, null));
+                } else sendKey(sender, "rankLine", i, guild.getDisplay(), guild.getFrame(), guild.getTeamLeader());
             }
         }
         sendKey(sender, "rankFoot", page, rank.size() / 10 + 1);
     }
 
-    public void disband(final TeamGuild guild, String leader) {
+    public void disband(final TeamGuild guild) {
         rank.remove(guild);
-        guilds.remove(leader);
-        // TODO 通知在线的成员
-        teams.entrySet().removeIf(next -> guild == next.getValue());
+        guilds.remove(guild.getTeamLeader());
+        final String display = guild.getDisplay();
+        teams.entrySet().removeIf(entry -> {
+            if (guild.equals(entry.getValue())) {
+                Player player = Bukkit.getPlayer(entry.getKey());
+                if (player != null) sendKey(player, "guildDisband", display);
+                return true;
+            } else return false;
+        });
         saveGuild();
     }
 
@@ -352,13 +364,13 @@ public class TeamManager extends SpigotManager {
 
     public void sendHandleMessage(Player handler, String applicant) {
         sendMessage(handler,
-                format(trans("handleText", applicant)),
+                format(trans("receiveApplication", applicant)),
                 format(trans("acceptText"),
-                        EnumClickAction.RUN_COMMAND, "/guild accept " + applicant,
-                        EnumHoverAction.SHOW_TEXT, trans("acceptHover")),
+                        RUN_COMMAND, textCommand + " accept join " + applicant,
+                        SHOW_TEXT, trans("acceptHover")),
                 format(trans("rejectText"),
-                        EnumClickAction.RUN_COMMAND, "/guild reject " + applicant,
-                        EnumHoverAction.SHOW_TEXT, trans("rejectHover"))
+                        RUN_COMMAND, textCommand + " reject join " + applicant,
+                        SHOW_TEXT, trans("rejectHover"))
         );
     }
 
@@ -366,5 +378,46 @@ public class TeamManager extends SpigotManager {
         rank.remove(guild);
         consumer.accept(guild);
         rank.add(guild);
+    }
+
+    public void sendAttornMessage(Player target, TeamGuild guild) {
+        sendMessage(target,
+                format(trans("receiveAttorn", guild.getTeamLeader(), guild.getDisplay())),
+                format(trans("acceptText"),
+                        RUN_COMMAND, textCommand + " accept attorn " + guild.getTeamLeader(),
+                        SHOW_TEXT, trans("acceptHover")),
+                format(trans("rejectText"),
+                        RUN_COMMAND, textCommand + " reject attorn " + guild.getTeamLeader(),
+                        SHOW_TEXT, trans("rejectHover"))
+        );
+    }
+
+    public boolean attornTo(TeamGuild guild, Player player) {
+        if (guild.isAttorn(player)) {
+            String oldLeader = guild.getTeamLeader();
+            rank.remove(guild);
+            guilds.remove(oldLeader);
+            guild.setLeader(player);
+            guild.resetAttorn();
+            if (attornLeave) {
+                guild.unsetManager(oldLeader);
+                guild.delMember(oldLeader);
+            } else guild.addMember(oldLeader);
+            guilds.put(guild.getTeamLeader(), guild);
+            rank.add(guild);
+            return true;
+        } else return false;
+    }
+
+    public void sendInviteMessage(Player man, Player target, TeamGuild guild) {
+        sendMessage(target,
+                format(trans("receiveInvite", man.getName(), guild.getDisplay())),
+                format(trans("acceptText"),
+                        RUN_COMMAND, textCommand + " accept invite " + guild.getTeamLeader(),
+                        SHOW_TEXT, trans("acceptHover")),
+                format(trans("rejectText"),
+                        RUN_COMMAND, textCommand + " reject invite " + guild.getTeamLeader(),
+                        SHOW_TEXT, trans("rejectHover"))
+        );
     }
 }

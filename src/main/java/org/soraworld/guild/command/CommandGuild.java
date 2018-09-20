@@ -11,7 +11,7 @@ import org.soraworld.violet.command.Sub;
 
 public final class CommandGuild {
     @Sub
-    public static void rank(SpigotCommand self, CommandSender sender, Paths args) {
+    public static void top(SpigotCommand self, CommandSender sender, Paths args) {
         TeamManager manager = (TeamManager) self.manager;
         if (args.empty()) {
             manager.showRank(sender, 1);
@@ -47,21 +47,17 @@ public final class CommandGuild {
             if (sender instanceof Player) {
                 TeamGuild guild = manager.getGuild(sender.getName());
                 if (guild != null) {
-                    manager.disband(guild, sender.getName());
+                    manager.disband(guild);
                     manager.sendKey(sender, "disbandGuild", guild.getDisplay());
-                } else {
-                    manager.sendKey(sender, "ownNoGuild");
-                }
+                } else manager.sendKey(sender, "ownNoGuild");
             } else manager.sendKey(sender, "invalidArgs");
         } else {
             TeamGuild guild = manager.getGuild(args.get(0));
             if (guild != null) {
-                if (sender.hasPermission("guild" + ".admin") || guild.isLeader(sender.getName())) {
-                    manager.disband(guild, args.get(0));
+                if (sender.hasPermission(manager.defAdminPerm()) || guild.isLeader(sender.getName())) {
+                    manager.disband(guild);
                     manager.sendKey(sender, "disbandGuild", guild.getDisplay());
-                } else {
-                    manager.sendKey(sender, "noOpPermOrNotLeader");
-                }
+                } else manager.sendKey(sender, "noOpPermOrNotLeader");
             } else manager.sendKey(sender, "guildNotExist");
         }
     }
@@ -104,15 +100,15 @@ public final class CommandGuild {
         } else manager.sendKey(sender, "emptyArgs");
     }
 
-    @Sub(paths = {"rankjoin"}, onlyPlayer = true)
-    public static void showRankJoin(SpigotCommand self, CommandSender sender, Paths args) {
+    @Sub(paths = {"topjoin"}, onlyPlayer = true)
+    public static void showTopJoin(SpigotCommand self, CommandSender sender, Paths args) {
         if (args.notEmpty()) {
             TeamManager manager = (TeamManager) self.manager;
             Player player = (Player) sender;
             TeamGuild guild = manager.getGuild(player.getName());
             if (guild != null) {
-                guild.setShowRankJoin(Boolean.valueOf(args.first()));
-                manager.sendKey(player, guild.isShowRankJoin() ? "showRankJoin" : "notShowRankJoin");
+                guild.setShowTopJoin(Boolean.valueOf(args.first()));
+                manager.sendKey(player, guild.isShowTopJoin() ? "showRankJoin" : "notShowRankJoin");
             } else manager.sendKey(player, "guildNotExist");
         } else self.manager.sendKey(sender, "emptyArgs");
     }
@@ -134,37 +130,14 @@ public final class CommandGuild {
         } else manager.createGuild(player, "Team_" + player.getName());
     }
 
-    @Sub(paths = {"attorn", "to"}, onlyPlayer = true)
-    public static void attorn_to(SpigotCommand self, CommandSender sender, Paths args) {
-        TeamManager manager = (TeamManager) self.manager;
-        Player player = (Player) sender;
-        if (args.notEmpty()) {
-            TeamGuild guild = manager.getGuild(player.getName());
-            if (guild != null) {
-                Player target = Bukkit.getPlayer(args.first());
-                if (target != null) {
-                    // TODO sendAttorn
-                    manager.sendKey(player, "sendAttorn");
-                    manager.sendKey(target, "receiveAttorn");
-                } else manager.sendKey(player, "playerIsOffline", args.first());
-            } else manager.sendKey(player, "noCreateTeam");
-        } else manager.sendKey(player, "emptyArgs");
+    @Sub(onlyPlayer = true)
+    public static void home(SpigotCommand self, CommandSender sender, Paths args) {
+        // TODO home
     }
 
-    @Sub(paths = {"attorn", "accept"}, onlyPlayer = true)
-    public static void attorn_accept(SpigotCommand self, CommandSender sender, Paths args) {
-        // TODO accept
-        TeamManager manager = (TeamManager) self.manager;
-        Player player = (Player) sender;
-        manager.sendKey(player, "attornAccept");
-    }
-
-    @Sub(paths = {"attorn", "reject"}, onlyPlayer = true)
-    public static void attorn_reject(SpigotCommand self, CommandSender sender, Paths args) {
-        // TODO reject
-        TeamManager manager = (TeamManager) self.manager;
-        Player player = (Player) sender;
-        manager.sendKey(player, "attornReject");
+    @Sub(onlyPlayer = true)
+    public static void sethome(SpigotCommand self, CommandSender sender, Paths args) {
+        // TODO sethome
     }
 
     @Sub(onlyPlayer = true)
@@ -175,12 +148,148 @@ public final class CommandGuild {
         else manager.joinGuild(player, args.first());
     }
 
-    @Sub(onlyPlayer = true)
-    public static void recruit(SpigotCommand self, CommandSender sender, Paths args) {
-        // TODO recruit
+    @Sub(paths = {"accept", "join"}, onlyPlayer = true)
+    public static void accept_join(SpigotCommand self, CommandSender sender, Paths args) {
         TeamManager manager = (TeamManager) self.manager;
         Player player = (Player) sender;
-        manager.sendKey(player, "recruit");
+        if (args.empty()) {
+            manager.sendKey(player, "emptyArgs");
+            return;
+        }
+        TeamGuild guild = manager.fetchTeam(player);
+        if (guild == null) {
+            manager.sendKey(player, "notInAnyTeam");
+            return;
+        }
+        if (guild.isManager(player.getName())) {
+            String applicant = args.get(0);
+            TeamGuild team = manager.fetchTeam(applicant);
+            if (team != null) {
+                manager.sendKey(player, "alreadyJoinedTeam", applicant, team.getDisplay());
+                guild.closeApplication(applicant);
+                manager.saveGuild();
+                return;
+            }
+            if (guild.hasApplication(applicant)) {
+                if (guild.addMember(applicant)) {
+                    manager.sendKey(player, "acceptMember", applicant);
+                    Player app = Bukkit.getPlayer(applicant);
+                    if (app != null) {
+                        manager.sendKey(app, "joinAccepted", player.getName(), guild.getDisplay());
+                    }
+                } else {
+                    manager.sendKey(player, "acceptFailed");
+                    Player app = Bukkit.getPlayer(applicant);
+                    if (app != null) {
+                        manager.sendKey(app, "joinAcceptFailed", player.getName(), guild.getDisplay());
+                    }
+                }
+                guild.closeApplication(applicant);
+                manager.saveGuild();
+            } else manager.sendKey(player, "noJoinApplication", applicant);
+        } else manager.sendKey(player, "notManager");
+    }
+
+    @Sub(paths = {"reject", "join"}, onlyPlayer = true)
+    public static void reject_join(SpigotCommand self, CommandSender sender, Paths args) {
+        TeamManager manager = (TeamManager) self.manager;
+        Player player = (Player) sender;
+        if (args.empty()) {
+            manager.sendKey(player, "emptyArgs");
+            return;
+        }
+        TeamGuild guild = manager.fetchTeam(player);
+        if (guild == null) {
+            manager.sendKey(player, "notInAnyTeam");
+            return;
+        }
+        if (guild.isManager(player)) {
+            String applicant = args.get(0);
+            if (guild.hasApplication(applicant)) {
+                manager.sendKey(player, "rejectApplication", applicant);
+                guild.closeApplication(applicant);
+                manager.saveGuild();
+                Player app = Bukkit.getPlayer(applicant);
+                if (app != null) manager.sendKey(app, "applicationRejected");
+            } else manager.sendKey(player, "noJoinApplication", applicant);
+        } else manager.sendKey(player, "notManager");
+    }
+
+    @Sub(onlyPlayer = true)
+    public static void attorn(SpigotCommand self, CommandSender sender, Paths args) {
+        TeamManager manager = (TeamManager) self.manager;
+        Player player = (Player) sender;
+        if (args.notEmpty()) {
+            TeamGuild guild = manager.getGuild(player.getName());
+            if (guild != null) {
+                Player target = Bukkit.getPlayer(args.first());
+                if (target != null) {
+                    guild.sendAttorn(target);
+                    manager.sendKey(player, "sendAttorn");
+                } else manager.sendKey(player, "playerIsOffline", args.first());
+            } else manager.sendKey(player, "noCreateTeam");
+        } else manager.sendKey(player, "emptyArgs");
+    }
+
+    @Sub(paths = {"accept", "attorn"}, onlyPlayer = true)
+    public static void accept_attorn(SpigotCommand self, CommandSender sender, Paths args) {
+        TeamManager manager = (TeamManager) self.manager;
+        Player player = (Player) sender;
+        if (args.notEmpty()) {
+            TeamGuild team = manager.fetchTeam(player);
+            TeamGuild guild = manager.getGuild(args.first());
+            if (team == null || team.equals(guild)) {
+                if (guild != null) {
+                    Player oldLeader = guild.getLeader();
+                    if (manager.attornTo(guild, player)) {
+                        manager.sendKey(player, "attornAccept", guild.getDisplay());
+                        if (oldLeader != null) manager.sendKey(oldLeader, "attornAcceptBy", player.getName());
+                    } else manager.sendKey(player, "notAttorn", guild.getDisplay());
+                } else manager.sendKey(player, "guildNotExist");
+            } else manager.sendKey(player, "inAnotherGuild");
+        } else manager.sendKey(player, "emptyArgs");
+    }
+
+    @Sub(paths = {"reject", "attorn"}, onlyPlayer = true)
+    public static void reject_attorn(SpigotCommand self, CommandSender sender, Paths args) {
+        TeamManager manager = (TeamManager) self.manager;
+        Player player = (Player) sender;
+        if (args.notEmpty()) {
+            TeamGuild guild = manager.getGuild(args.first());
+            if (guild != null) {
+                if (guild.rejectAttorn(player)) {
+                    manager.sendKey(player, "attornReject", guild.getDisplay());
+                    Player oldLeader = guild.getLeader();
+                    if (oldLeader != null) manager.sendKey(oldLeader, "attornRejectBy", player.getName());
+                } else manager.sendKey(player, "notAttorn", guild.getDisplay());
+            } else manager.sendKey(player, "guildNotExist");
+        } else manager.sendKey(player, "emptyArgs");
+    }
+
+    @Sub(onlyPlayer = true)
+    public static void invite(SpigotCommand self, CommandSender sender, Paths args) {
+        TeamManager manager = (TeamManager) self.manager;
+        Player player = (Player) sender;
+        if (args.notEmpty()) {
+            TeamGuild guild = manager.fetchTeam(player);
+            if (guild != null) {
+                if (guild.isManager(player)) {
+                    Player target = Bukkit.getPlayer(args.first());
+                    if (target != null) {
+                        guild.sendInvite(player, target);
+                        manager.sendKey(player, "sendInvite");
+                    } else manager.sendKey(player, "playerIsOffline", args.first());
+                } else manager.sendKey(player, "notManager");
+            } else manager.sendKey(player, "guildNotExist");
+        } else manager.sendKey(player, "emptyArgs");
+    }
+
+    @Sub(paths = {"accept", "invite"}, onlyPlayer = true)
+    public static void accept_invite(SpigotCommand self, CommandSender sender, Paths args) {
+    }
+
+    @Sub(paths = {"reject", "invite"}, onlyPlayer = true)
+    public static void reject_invite(SpigotCommand self, CommandSender sender, Paths args) {
     }
 
     @Sub(onlyPlayer = true)
@@ -213,7 +322,7 @@ public final class CommandGuild {
             manager.sendKey(player, "notInAnyTeam");
             return;
         }
-        if (guild.hasManager(player.getName())) {
+        if (guild.isManager(player.getName())) {
             String member = args.get(0);
             if (guild.hasMember(member)) {
                 manager.leaveGuild(member, guild);
@@ -223,73 +332,6 @@ public final class CommandGuild {
                     manager.sendKey(mmp, "beKicked", guild.getDisplay());
                 }
             } else manager.sendKey(player, "noSuchMember", member);
-        } else manager.sendKey(player, "notManager");
-    }
-
-    @Sub(onlyPlayer = true)
-    public static void accept(SpigotCommand self, CommandSender sender, Paths args) {
-        TeamManager manager = (TeamManager) self.manager;
-        Player player = (Player) sender;
-        if (args.empty()) {
-            manager.sendKey(player, "emptyArgs");
-            return;
-        }
-        TeamGuild guild = manager.fetchTeam(player);
-        if (guild == null) {
-            manager.sendKey(player, "notInAnyTeam");
-            return;
-        }
-        if (guild.hasManager(player.getName())) {
-            String applicant = args.get(0);
-            TeamGuild team = manager.fetchTeam(applicant);
-            if (team != null) {
-                manager.sendKey(player, "alreadyJoinedTeam", applicant, team.getDisplay());
-                guild.closeApplication(applicant);
-                manager.saveGuild();
-                return;
-            }
-            if (guild.hasApplication(applicant)) {
-                if (guild.addMember(applicant)) {
-                    manager.sendKey(player, "acceptMember", applicant);
-                    Player app = Bukkit.getPlayer(applicant);
-                    if (app != null) {
-                        manager.sendKey(app, "joinAccepted", player.getName(), guild.getDisplay());
-                    }
-                } else {
-                    manager.sendKey(player, "acceptFailed");
-                    Player app = Bukkit.getPlayer(applicant);
-                    if (app != null) {
-                        manager.sendKey(app, "joinAcceptFailed", player.getName(), guild.getDisplay());
-                    }
-                }
-                guild.closeApplication(applicant);
-                manager.saveGuild();
-            } else manager.sendKey(player, "noJoinApplication", applicant);
-        } else manager.sendKey(player, "notManager");
-    }
-
-    @Sub(onlyPlayer = true)
-    public static void reject(SpigotCommand self, CommandSender sender, Paths args) {
-        TeamManager manager = (TeamManager) self.manager;
-        Player player = (Player) sender;
-        if (args.empty()) {
-            manager.sendKey(player, "emptyArgs");
-            return;
-        }
-        TeamGuild guild = manager.fetchTeam(player);
-        if (guild == null) {
-            manager.sendKey(player, "notInAnyTeam");
-            return;
-        }
-        if (guild.hasManager(player)) {
-            String applicant = args.get(0);
-            if (guild.hasApplication(applicant)) {
-                manager.sendKey(player, "rejectApplication", applicant);
-                guild.closeApplication(applicant);
-                manager.saveGuild();
-                Player app = Bukkit.getPlayer(applicant);
-                if (app != null) manager.sendKey(app, "applicationRejected");
-            } else manager.sendKey(player, "noJoinApplication", applicant);
         } else manager.sendKey(player, "notManager");
     }
 
@@ -381,7 +423,7 @@ public final class CommandGuild {
         }
         if (args.notEmpty()) {
             String name = args.get(0);
-            if (guild.hasManager(name)) {
+            if (guild.isManager(name)) {
                 if (guild.isLeader(name)) {
                     manager.sendKey(player, "cantUnsetLeader");
                 } else {

@@ -19,7 +19,9 @@ dependencies {
     compile 'org.soraworld:violet-spigot:2.3.2'
     compile 'org.black_ixx:PlayerPoints:2.1.3'
     compile 'net.milkbowl.vault:VaultAPI:1.6'
-    compile 'net.ess3:Essentials:Pre2.14.1.3'
+    compile('net.ess3:Essentials:Pre2.14.1.3') {
+        transitive = false
+    }
     compile files('lib/spigot-1.7.10.jar')
 }
 

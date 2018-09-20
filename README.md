@@ -4,10 +4,10 @@ TeamGuild
 ### 指令
 ```
 /guild|team                        主命令( 也可以使用/team )
-/guild rank                        查看公会排行榜
+/guild top                         查看公会排行榜
 /guild info [player]               查看自己公会或<player>公会的基本信息
-/guild disband [leader]            会长解散公会,或由OP解散会长<leader>的公会,需要权限<guild.admin>
-/guild create [display]            创建小队(公会),可选参数设置公会显示名.
+/guild disband [leader]            会长解散公会,或由OP解散会长<leader>的公会,需要管理权限
+/guild create [display]            创建公会,可选参数设置公会显示名.
 /guild join <leader>               向<leader>的公会发送加入申请
 /guild list                        列出所在公会的成员
 /guild leave                       退出当前公会
@@ -17,10 +17,10 @@ TeamGuild
 /guild display [name]              查看/设置公会显示名（仅会长可执行）
 /guild describe [description]      查看/设置公会简介（仅会长可执行）
 /guild upgrade                     升级公会（仅会长可执行）
-/guild attorn ...                  转让公会（未实现）
-/guild recruit ...                 招募会员（未实现）
-/guild setman <member>              将成员<member>设为公会管理员
-/guild unsetman <manager>           移除公会管理员<manager>的管理权限变为普通成员
+/guild attorn ...                  转让公会
+/guild invite ...                  邀请成员
+/guild setman <member>             将成员<member>设为公会管理员
+/guild unsetman <manager>          移除公会管理员<manager>的管理权限变为普通成员
 ```
 
 ### 配置
@@ -35,13 +35,13 @@ debug = true
 # 2. Essentials
 # 3. PlayerPoints
 ecoType = Vault
-# 是否允许小队内PVP（重启生效）
+# 是否允许公会成员PVP（重启生效）
 teamPvP = false
 # 公会显示名最大长度，每个中文占2个长度，颜色代码也算在长度内
 maxDisplay = 10
 # 公会简介最大长度，每个中文占2个长度
 maxDescription = 100
-# 小队(公会)等级设置
+# 公会等级设置
 # 等级列表，插件会从低到高自动排序，不必手动排序
 levels = [
   {

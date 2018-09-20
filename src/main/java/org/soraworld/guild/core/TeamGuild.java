@@ -21,15 +21,15 @@ import static org.soraworld.violet.util.ChatColor.COLOR_CHAR;
 
 public class TeamGuild implements Comparable<TeamGuild> {
 
-    private OfflinePlayer leader;
-    @Setting
-    private int frame = 0;
     @Setting
     private int level;
     @Setting
+    private int frame = 0;
+    @Setting
+    // TODO balance
     private int balance = 0;
     @Setting
-    private boolean showRankJoin = true;
+    private boolean showTopJoin = true;
     @Setting
     private String display;
     @Setting
@@ -41,7 +41,10 @@ public class TeamGuild implements Comparable<TeamGuild> {
     @Setting
     private LinkedHashSet<String> applications = new LinkedHashSet<>();
 
+    private Player attorn;
+    private OfflinePlayer leader;
     private final TeamManager manager;
+    private final HashSet<OfflinePlayer> invites = new HashSet<>();
 
     public TeamGuild(OfflinePlayer leader, int level, TeamManager manager) {
         this.leader = leader;
@@ -62,11 +65,11 @@ public class TeamGuild implements Comparable<TeamGuild> {
         members.remove(player);
     }
 
-    public boolean hasManager(Player player) {
+    public boolean isManager(Player player) {
         return isLeader(player) || managers.contains(player.getName());
     }
 
-    public boolean hasManager(String player) {
+    public boolean isManager(String player) {
         return isLeader(player) || managers.contains(player);
     }
 
@@ -75,8 +78,12 @@ public class TeamGuild implements Comparable<TeamGuild> {
         managers.remove(player);
     }
 
+    public Player getLeader() {
+        return leader.getPlayer();
+    }
+
     @Nonnull
-    public String getLeader() {
+    public String getTeamLeader() {
         return leader.getName();
     }
 
@@ -99,11 +106,11 @@ public class TeamGuild implements Comparable<TeamGuild> {
     }
 
     public boolean hasMember(String player) {
-        return isLeader(player) || hasManager(player) || members.contains(player);
+        return isLeader(player) || isManager(player) || members.contains(player);
     }
 
     public boolean hasMember(Player player) {
-        return isLeader(player) || hasManager(player) || members.contains(player.getName());
+        return isLeader(player) || isManager(player) || members.contains(player.getName());
     }
 
     public void delMember(String player) {
@@ -240,15 +247,47 @@ public class TeamGuild implements Comparable<TeamGuild> {
         this.frame += frame;
     }
 
-    public boolean isShowRankJoin() {
-        return showRankJoin;
+    public boolean isShowTopJoin() {
+        return showTopJoin;
     }
 
-    public void setShowRankJoin(boolean show) {
-        this.showRankJoin = show;
+    public void setShowTopJoin(boolean show) {
+        this.showTopJoin = show;
     }
 
     public int getFrame() {
         return frame;
+    }
+
+    public void sendAttorn(Player target) {
+        this.attorn = target;
+        manager.sendAttornMessage(target, this);
+    }
+
+    public boolean isAttorn(Player player) {
+        return attorn != null && attorn.getUniqueId().equals(player.getUniqueId());
+    }
+
+    public void setLeader(Player player) {
+        this.leader = player;
+        managers.remove(player.getName());
+        members.remove(player.getName());
+    }
+
+    public void resetAttorn() {
+        this.attorn = null;
+    }
+
+    public boolean rejectAttorn(Player player) {
+        if (isAttorn(player)) {
+            attorn = null;
+            return true;
+        }
+        return false;
+    }
+
+    public void sendInvite(Player man, Player target) {
+        invites.add(target);
+        manager.sendInviteMessage(man, target, this);
     }
 }

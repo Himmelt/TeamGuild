@@ -22,7 +22,7 @@ public class EventListener implements Listener {
     @EventHandler
     public void onPlayerJoin(final PlayerJoinEvent event) {
         final TeamGuild guild = manager.fetchTeam(event.getPlayer());
-        if (guild != null && guild.hasManager(event.getPlayer())) {
+        if (guild != null && guild.isManager(event.getPlayer())) {
             Bukkit.getScheduler().runTaskLater(manager.getPlugin(), () -> guild.notifyApplication(event.getPlayer()), 20);
         }
     }
