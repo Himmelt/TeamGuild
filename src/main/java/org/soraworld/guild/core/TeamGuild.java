@@ -19,6 +19,7 @@ import java.util.LinkedHashSet;
 import java.util.UUID;
 
 import static org.soraworld.violet.util.ChatColor.COLOR_CHAR;
+import static org.soraworld.violet.util.ChatColor.RESET;
 
 public class TeamGuild implements Comparable<TeamGuild> {
 
@@ -206,7 +207,7 @@ public class TeamGuild implements Comparable<TeamGuild> {
 
     public void showGuildInfo(CommandSender sender) {
         manager.sendKey(sender, "infoDisplay", display);
-        manager.sendKey(sender, "infoLeader", leader);
+        manager.sendKey(sender, "infoLeader", leader.getName());
         if (sender instanceof Player && hasMember(sender.getName()) || sender instanceof ConsoleCommandSender) {
             manager.sendKey(sender, "infoBalance", balance);
             manager.sendKey(sender, "maxManagers", manager.getLevel(level).mans);
@@ -232,7 +233,7 @@ public class TeamGuild implements Comparable<TeamGuild> {
         if (node instanceof NodeMap) {
             TeamGuild guild = new TeamGuild(Bukkit.getOfflinePlayer(leader), 0, manager);
             ((NodeMap) node).modify(guild);
-            if (!guild.display.endsWith("&r")) guild.display += "&r";
+            if (!guild.display.endsWith("&r") && !guild.display.endsWith(RESET.toString())) guild.display += "&r";
             return guild;
         }
         return null;

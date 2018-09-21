@@ -74,7 +74,7 @@ public final class CommandGuild {
                     try {
                         int frame = Integer.valueOf(args.get(1));
                         manager.updateGuild(guild, g -> g.addFrame(frame));
-                        manager.sendKey(sender, "addFrame");
+                        manager.sendKey(sender, "addFrame", frame, guild.getDisplay());
                     } catch (Throwable ignored) {
                         manager.sendKey(sender, "invalidInt");
                     }
@@ -93,7 +93,7 @@ public final class CommandGuild {
                     try {
                         int frame = Integer.valueOf(args.get(1));
                         manager.updateGuild(guild, g -> g.addFrame(-1 * frame));
-                        manager.sendKey(sender, "takeFrame");
+                        manager.sendKey(sender, "takeFrame", guild.getDisplay(), frame);
                     } catch (Throwable ignored) {
                         manager.sendKey(sender, "invalidInt");
                     }
@@ -231,7 +231,20 @@ public final class CommandGuild {
                     guild.sendAttorn(target);
                     manager.sendKey(player, "sendAttorn", target.getName());
                 } else manager.sendKey(player, "playerIsOffline", args.first());
-            } else manager.sendKey(player, "noCreateTeam");
+            } else manager.sendKey(player, "ownNoGuild");
+        } else manager.sendKey(player, "emptyArgs");
+    }
+
+    @Sub(onlyPlayer = true)
+    public static void unattorn(SpigotCommand self, CommandSender sender, Paths args) {
+        TeamManager manager = (TeamManager) self.manager;
+        Player player = (Player) sender;
+        if (args.notEmpty()) {
+            TeamGuild guild = manager.getGuild(player.getName());
+            if (guild != null) {
+                guild.resetAttorn();
+                manager.sendKey(player, "unAttorn");
+            } else manager.sendKey(player, "ownNoGuild");
         } else manager.sendKey(player, "emptyArgs");
     }
 
@@ -320,7 +333,7 @@ public final class CommandGuild {
                 if (guild != null) {
                     if (guild.isInvited(player)) {
                         if (guild.acceptInvite(player)) {
-                            manager.sendKey(player, "inviteAccepted");
+                            manager.sendKey(player, "inviteAccepted", guild.getDisplay());
                         } else manager.sendKey(player, "upMaxMembers");
                     } else manager.sendKey(player, "notInvited");
                 } else manager.sendKey(player, "guildNotExist");

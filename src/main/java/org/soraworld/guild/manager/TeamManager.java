@@ -16,6 +16,7 @@ import org.soraworld.violet.plugin.SpigotPlugin;
 import org.soraworld.violet.util.ChatColor;
 
 import javax.annotation.Nonnull;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
 import java.util.function.Consumer;
@@ -34,15 +35,15 @@ public class TeamManager extends SpigotManager {
     @Setting(comment = "comment.ignoreNoEco")
     private boolean ignoreNoEco = false;
     @Setting(comment = "comment.teamPvP")
-    public final boolean teamPvP = false;
+    public boolean teamPvP = false;
     @Setting(comment = "comment.attornLeave")
-    public final boolean attornLeave = false;
+    private boolean attornLeave = false;
     @Setting(comment = "comment.maxDisplay")
-    public final int maxDisplay = 10;
+    public int maxDisplay = 10;
     @Setting(comment = "comment.maxDescription")
-    public final int maxDescription = 100;
+    public int maxDescription = 100;
     @Setting(comment = "comment.textCommand")
-    public final String textCommand = "/team";
+    private String textCommand = "/team";
     @Setting(comment = "comment.levels")
     private TreeMap<Integer, TeamLevel> levels = new TreeMap<>();
 
@@ -57,7 +58,7 @@ public class TeamManager extends SpigotManager {
     public TeamManager(SpigotPlugin plugin, Path path) {
         super(plugin, path);
         options.registerType(defaultLevel);
-        guildFile = path.resolve("guild.conf");
+        guildFile = path.resolve("guilds.conf");
     }
 
     public boolean save() {
@@ -92,6 +93,10 @@ public class TeamManager extends SpigotManager {
     }
 
     public void loadGuild() {
+        if (Files.notExists(guildFile)) {
+            saveGuild();
+            return;
+        }
         FileNode node = new FileNode(guildFile.toFile(), options);
         try {
             node.load(false);
@@ -227,15 +232,18 @@ public class TeamManager extends SpigotManager {
     public void showRank(CommandSender sender, int page) {
         if (page < 1) page = 1;
         sendKey(sender, "rankHead");
-        sendKey(sender, "rankHint");
         Iterator<TeamGuild> it = rank.iterator();
         for (int i = 1; i <= page * 10 && it.hasNext(); i++) {
             TeamGuild guild = it.next();
             if (i >= page * 10 - 9) {
                 if (sender instanceof Player && guild.isShowTopJoin()) {
                     sendMessage((Player) sender,
-                            format(trans("rankLine", i, guild.getDisplay(), guild.getFrame(), guild.getTeamLeader())),
-                            format(trans("clickJoin"), RUN_COMMAND, textCommand + " join " + guild.getTeamLeader(), null, null));
+                            // TODO en_us 翻译
+                            // TODO 提示信息
+                            format(trans("rankLine1", i)),
+                            format(guild.getDisplay(), null, null, SHOW_TEXT, "multi \nline \n test"),
+                            format(trans("rankLine2", guild.getFrame(), guild.getTeamLeader())),
+                            format(trans("clickJoin"), RUN_COMMAND, textCommand + " join " + guild.getTeamLeader(), null, null));// TODO hover
                 } else sendKey(sender, "rankLine", i, guild.getDisplay(), guild.getFrame(), guild.getTeamLeader());
             }
         }
@@ -249,7 +257,7 @@ public class TeamManager extends SpigotManager {
         teams.entrySet().removeIf(entry -> {
             if (guild.equals(entry.getValue())) {
                 Player player = Bukkit.getPlayer(entry.getKey());
-                if (player != null) sendKey(player, "guildDisband", display);
+                if (player != null) sendKey(player, "disbandGuild", display);
                 return true;
             } else return false;
         });

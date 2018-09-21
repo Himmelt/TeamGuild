@@ -36,7 +36,7 @@ public class Economy {
                 manager.consoleKey("EcoNotSupport", "PlayerPoints");
             }
         } else {
-            manager.console("InvalidEcoSupport");
+            manager.consoleKey("InvalidEcoSupport", ecoType);
         }
     }
 
