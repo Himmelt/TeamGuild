@@ -64,6 +64,8 @@ receiveInvite = "%s 邀请你加入 %s 公会 "
 
 leaveGuild = "你退出了 %s 公会."
 leaderCantLeave = "你是公会长, 无法离开公会, 你可以转让或解散公会."
+cantKickLeader = "你无法将会长移出公会."
+cantKickAnotherManager = "你无法将另一个管理移出公会."
 kickSuccess = "你将玩家 %s 移出了公会."
 beKicked = "你被 %s 管理员移出了公会."
 noThisMember = "公会中没有 %s 这个成员."

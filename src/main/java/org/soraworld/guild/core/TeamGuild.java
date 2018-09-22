@@ -106,8 +106,8 @@ public class TeamGuild implements Comparable<TeamGuild> {
         return false;
     }
 
-    public boolean hasMember(String player) {
-        return isLeader(player) || isManager(player) || members.contains(player);
+    public boolean hasMember(String name) {
+        return isLeader(name) || isManager(name) || members.contains(name);
     }
 
     public boolean hasMember(Player player) {
@@ -193,27 +193,15 @@ public class TeamGuild implements Comparable<TeamGuild> {
     }
 
     public void showMemberList(CommandSender sender) {
-        manager.sendKey(sender, "listHead", display);
-        manager.sendKey(sender, "listLeader", leader);
+        manager.sendKey(sender, "listHead", getDisplay());
+        manager.sendKey(sender, "listLeader", leader.getName());
         for (String man : managers) {
             manager.sendKey(sender, "listManager", man);
         }
         for (String member : members) {
             manager.sendKey(sender, "listMember", member);
         }
-        manager.send(sender, "listFoot");
-    }
-
-    public void showGuildInfo(CommandSender sender) {
-        manager.send(sender, getHover());
-        manager.sendKey(sender, "info.display", getDisplay());
-        manager.sendKey(sender, "info.leader", leader.getName());
-        manager.sendKey(sender, "info.level", level);
-        manager.sendKey(sender, "info.frame", frame);
-        manager.sendKey(sender, "info.balance", balance);
-        manager.sendKey(sender, "info.members", members.size(), getTeamLevel().size);
-        manager.sendKey(sender, "info.managers", managers.size(), getTeamLevel().mans);
-        manager.sendKey(sender, "info.description", getDescription());
+        manager.sendKey(sender, "listFoot");
     }
 
     public int compareTo(@Nonnull TeamGuild other) {

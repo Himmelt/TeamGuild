@@ -64,6 +64,8 @@ receiveInvite = "%s invites you to join %s guild "
 
 leaveGuild = "You left %s guild."
 leaderCantLeave = "You are the leader, can't leave the guild, you can attorn or disband your guild."
+cantKickLeader = "You can't kick the leader of your guild."
+cantKickAnotherManager = "You can't kick another manager."
 kickSuccess = "You move %s out the guild."
 beKicked = "You are moved out %s guild by manager."
 noThisMember = "The guild doesn't have member %s."
