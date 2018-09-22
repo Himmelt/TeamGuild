@@ -148,7 +148,6 @@ public class TeamManager extends SpigotManager {
     }
 
     public void joinGuild(Player player, String leader) {
-        String username = player.getName();
         TeamGuild guild = teams.get(player.getUniqueId());
         if (guild != null) {
             sendKey(player, "alreadyInTeam");
@@ -158,10 +157,10 @@ public class TeamManager extends SpigotManager {
         if (guild == null) {
             sendKey(player, "guildNotExist");
         } else {
-            if (guild.hasMember(username)) {
+            if (guild.hasMember(player)) {
                 sendKey(player, "alreadyJoined");
             } else {
-                guild.addJoinApplication(username);
+                guild.addJoinApplication(player.getName());
                 sendKey(player, "sendApplication", guild.getDisplay());
                 saveGuild();
             }

@@ -4,7 +4,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
-import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
 import org.soraworld.guild.event.JoinApplicationEvent;
 import org.soraworld.guild.manager.TeamManager;
@@ -100,7 +99,7 @@ public class TeamGuild implements Comparable<TeamGuild> {
     }
 
     public boolean addMember(String player) {
-        if (members.size() + managers.size() < manager.getLevel(level).size) {
+        if (members.size() + managers.size() < getTeamLevel().size) {
             members.add(player);
             return true;
         }
@@ -206,14 +205,15 @@ public class TeamGuild implements Comparable<TeamGuild> {
     }
 
     public void showGuildInfo(CommandSender sender) {
-        manager.sendKey(sender, "infoDisplay", display);
-        manager.sendKey(sender, "infoLeader", leader.getName());
-        if (sender instanceof Player && hasMember(sender.getName()) || sender instanceof ConsoleCommandSender) {
-            manager.sendKey(sender, "infoBalance", balance);
-            manager.sendKey(sender, "maxManagers", manager.getLevel(level).mans);
-        }
-        manager.sendKey(sender, "infoMembers", getCount(), level);
-        manager.sendKey(sender, "infoDescription", description);
+        manager.send(sender, getHover());
+        manager.sendKey(sender, "info.display", getDisplay());
+        manager.sendKey(sender, "info.leader", leader.getName());
+        manager.sendKey(sender, "info.level", level);
+        manager.sendKey(sender, "info.frame", frame);
+        manager.sendKey(sender, "info.balance", balance);
+        manager.sendKey(sender, "info.members", members.size(), getTeamLevel().size);
+        manager.sendKey(sender, "info.managers", managers.size(), getTeamLevel().mans);
+        manager.sendKey(sender, "info.description", getDescription());
     }
 
     public int compareTo(@Nonnull TeamGuild other) {
@@ -313,11 +313,13 @@ public class TeamGuild implements Comparable<TeamGuild> {
     }
 
     public String getHover() {
-        return manager.trans("hover.display", getDisplay()) + '\n' + manager.trans("hover.level", level) + '\n' +
-                manager.trans("hover.frame", frame) + '\n' +
-                manager.trans("hover.balance", balance) + '\n' +
-                manager.trans("hover.members", members.size(), getTeamLevel().size) + '\n' +
-                manager.trans("hover.managers", managers.size(), getTeamLevel().mans) + '\n' +
-                manager.trans("hover.description", description);
+        return manager.trans("info.display", getDisplay()) + '\n' +
+                manager.trans("info.leader", leader.getName()) + '\n' +
+                manager.trans("info.level", level) + '\n' +
+                manager.trans("info.frame", frame) + '\n' +
+                manager.trans("info.balance", balance) + '\n' +
+                manager.trans("info.members", members.size(), getTeamLevel().size) + '\n' +
+                manager.trans("info.managers", managers.size(), getTeamLevel().mans) + '\n' +
+                manager.trans("info.description", getDescription());
     }
 }

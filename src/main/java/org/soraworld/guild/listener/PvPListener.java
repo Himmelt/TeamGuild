@@ -26,20 +26,20 @@ public class PvPListener implements Listener {
         if (damagee instanceof Player) {
             TeamGuild guild = manager.fetchTeam((Player) damagee);
             if (guild == null) return;
-            if (damager instanceof Player && guild.hasMember(((Player) damager).getName())) {
+            if (damager instanceof Player && guild.hasMember((Player) damager)) {
                 event.setCancelled(true);
                 return;
             }
             if (damager instanceof Projectile) {
                 ProjectileSource source = ((Projectile) damager).getShooter();
-                if (source instanceof Player && guild.hasMember(((Player) source).getName())) {
+                if (source instanceof Player && guild.hasMember((Player) source)) {
                     event.setCancelled(true);
                 }
                 return;
             }
             // Flans support
             Player shooter = Flans.getShooter(damager);
-            if (shooter != null && guild.hasMember(shooter.getName())) {
+            if (shooter != null && guild.hasMember(shooter)) {
                 event.setCancelled(true);
             }
         }

@@ -43,9 +43,7 @@ getDescription = "公会简介: %s"
 setDescription = "已设置公会简介为: %s"
 ownNoGuild = "你不是会长或没有创建任何公会."
 guildUpgraded = "公会升级成功, 已扣除 %d 费用."
-
 guildIsTopLevel = "公会已到最高级, 无法再升级."
-
 disbandGuild = "公会 %s 已被解散."
 notLeader = "你不是公会所有者."
 sendAttorn = "已向玩家 %s 发送公会转让请求."
@@ -83,13 +81,6 @@ rankLine1 = "%4d  "
 rankLine2 = "  荣耀 %-8d  会长 %-16s"
 rankFoot = "-----------------------第 %d/%d 页-----------------------"
 
-infoDisplay = "公会名称 %s"
-infoLeader = "公会会长 %s"
-infoBalance = "公会资金 %d"
-infoMembers = "当前有 %d 玩家加入, 工会等级 %d ."
-maxManagers = "当前最多可设置 %d 个管理员."
-infoDescription = "简介: %s"
-
 textTooLong = "&c你设置的文本长度已超过 %d , 请调整后重试. (注: 中文占2个长度)"
 EncodingException = "&c&l编码错误, 请开启调试模式到控制台查看详细信息."
 
@@ -108,8 +99,9 @@ notShowRankJoin = "已设置公会在排行榜不显示点击加入按钮."
 
 notImpl = "功能尚未实现, 敬请期待 !"
 
-hover {
+info {
   display = "公会名称: %s"
+  leader = "公会会长: %s"
   level = "公会等级: %d"
   frame = "公会荣耀: %d"
   balance = "公会资金: %d"
