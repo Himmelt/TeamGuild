@@ -1,7 +1,7 @@
 # English Language File
 # Please keep UTF-8 encoding
 
-chatHead: "[TeamGuild] "
+chatHead = "[TeamGuild] "
 
 flanSupport = "&aFound Flans class, will support Flans."
 flanNotSupport = "&6Not Found Flans class, will not support Flans."
@@ -78,10 +78,11 @@ listManager = "Player: &a%s&r   Status: &aManager"
 listMember = "Player: %s   Status: Member"
 listFoot = "--------------------------------------------"
 
-rankHead = "--------------Guild Top---------------"
+rankHead = "----------------------------Guild Tops----------------------------"
+rankLine = "%4d %-20sFrame %-8dLeader %-16s"
 rankLine1 = "%4d  "
 rankLine2 = "  Frame %-8d  Leader %-16s"
-rankFoot = "-----------------Page %d/%d -------------------"
+rankFoot = "----------------------------Page %d/%d ----------------------------"
 
 textTooLong = "&cText length is too long than %d, please check and try again."
 EncodingException = "&c&lEncode Error, please switch to DEBUG mode and check the console."
