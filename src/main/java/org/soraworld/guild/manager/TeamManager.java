@@ -236,14 +236,15 @@ public class TeamManager extends SpigotManager {
         for (int i = 1; i <= page * 10 && it.hasNext(); i++) {
             TeamGuild guild = it.next();
             if (i >= page * 10 - 9) {
-                if (sender instanceof Player && guild.isShowTopJoin()) {
-                    sendMessage((Player) sender,
-                            // TODO en_us 翻译
-                            // TODO 提示信息
-                            format(trans("rankLine1", i)),
-                            format(guild.getDisplay(), null, null, SHOW_TEXT, "multi \nline \n test"),
-                            format(trans("rankLine2", guild.getFrame(), guild.getTeamLeader())),
-                            format(trans("clickJoin"), RUN_COMMAND, textCommand + " join " + guild.getTeamLeader(), null, null));// TODO hover
+                if (sender instanceof Player) {
+                    IChatBaseComponent component = format(trans("rankLine1", i));
+                    component.addSibling(format(guild.getDisplay(), null, null, SHOW_TEXT, guild.getHover()));
+                    component.addSibling(format(trans("rankLine2", guild.getFrame(), guild.getTeamLeader())));
+                    if (guild.isShowTopJoin()) {
+                        component.addSibling(format(trans("clickJoin"),
+                                RUN_COMMAND, textCommand + " join " + guild.getTeamLeader(), null, null));
+                    }
+                    sendMessage((Player) sender, component);
                 } else sendKey(sender, "rankLine", i, guild.getDisplay(), guild.getFrame(), guild.getTeamLeader());
             }
         }

@@ -311,4 +311,13 @@ public class TeamGuild implements Comparable<TeamGuild> {
     public void unInviteAll() {
         invites.clear();
     }
+
+    public String getHover() {
+        return manager.trans("hover.display", getDisplay()) + '\n' + manager.trans("hover.level", level) + '\n' +
+                manager.trans("hover.frame", frame) + '\n' +
+                manager.trans("hover.balance", balance) + '\n' +
+                manager.trans("hover.members", members.size(), getTeamLevel().size) + '\n' +
+                manager.trans("hover.managers", managers.size(), getTeamLevel().mans) + '\n' +
+                manager.trans("hover.description", description);
+    }
 }

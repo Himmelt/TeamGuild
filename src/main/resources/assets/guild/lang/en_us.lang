@@ -93,6 +93,16 @@ isNotManager = "Player %s is not manager or not in the guild."
 
 notImpl = "WIP, please wait !"
 
+hover {
+  display = "Guild name: %s"
+  level = "Guild level: %d"
+  frame = "Guild frame: %d"
+  balance = "Guild balance: %d"
+  members = "Guild members: %d/%d"
+  managers = "Guild managers: %d/%d"
+  description = "Guild description:\n%s"
+}
+
 comment {
   ecoType = "Linked economy plugin\nCurrent support: \n1. Vault Economy Service (Any Economy Service implement can use, e.g. PlayerPoints)\n2. Essentials\n3. PlayerPoints"
   ignoreNoEco = "Enable to create guild when economy system is invalid."

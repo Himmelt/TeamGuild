@@ -108,6 +108,16 @@ notShowRankJoin = "已设置公会在排行榜不显示点击加入按钮."
 
 notImpl = "功能尚未实现, 敬请期待 !"
 
+hover {
+  display = "公会名称: %s"
+  level = "公会等级: %d"
+  frame = "公会荣耀: %d"
+  balance = "公会资金: %d"
+  members = "公会成员: %d/%d"
+  managers = "公会管理: %d/%d"
+  description = "公会简介:\n%s"
+}
+
 comment {
   ecoType = "需要对接的经济系统插件\n目前支持的经济插件: \n1. Vault经济服务 (任何实现了Vault经济服务的插件都可以, 例如PlayerPoints)\n2. Essentials\n3. PlayerPoints"
   ignoreNoEco = "没有经济系统时是否允许创建公会."
