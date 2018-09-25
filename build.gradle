@@ -26,6 +26,7 @@ dependencies {
         transitive = false
     }
     compile files('lib/spigot-1.7.10.jar')
+    compile files('lib/Residence-4.8.1.0.jar')
 }
 
 tasks.withType(JavaCompile) {

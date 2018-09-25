@@ -33,7 +33,7 @@ public class TeamManager extends SpigotManager {
     @Setting(comment = "comment.ecoType")
     private String ecoType = "Vault";
     @Setting(comment = "comment.ignoreNoEco")
-    private boolean ignoreNoEco = false;
+    public boolean ignoreNoEco = false;
     @Setting(comment = "comment.teamPvP")
     public boolean teamPvP = false;
     @Setting(comment = "comment.attornLeave")
@@ -42,6 +42,8 @@ public class TeamManager extends SpigotManager {
     public int maxDisplay = 10;
     @Setting(comment = "comment.maxDescription")
     public int maxDescription = 100;
+    @Setting(comment = "comment.residencePrice")
+    public float residencePrice = 1.0F;
     @Setting(comment = "comment.textCommand")
     private String textCommand = "/team";
     @Setting(comment = "comment.levels")

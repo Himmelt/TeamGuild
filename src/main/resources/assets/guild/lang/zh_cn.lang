@@ -102,7 +102,10 @@ notShowRankJoin = "已设置公会在排行榜不显示点击加入按钮."
 
 registerExpansionFailed = "PlaceholderAPI 公会扩展 注册失败 !"
 registerExpansionSuccess = "PlaceholderAPI 公会扩展 注册成功."
-placeholderAPIException = "PlaceholderAPI 对接失败, 将无法使用 占位变量 !"
+noPlaceholderAPI = "PlaceholderAPI 对接失败, 将无法使用 占位变量 !"
+noResidenceApi = "Residence 领地插件没有对接，此功能不可用."
+guildResNotCreate = "公会领地未创建."
+guildResExist = "公会领地已存在."
 
 notImpl = "功能尚未实现, 敬请期待 !"
 
@@ -111,7 +114,7 @@ info {
   leader = "公会会长: %s"
   level = "公会等级: %d"
   frame = "公会荣耀: %d"
-  balance = "公会资金: %d"
+  balance = "公会资金: %.2f"
   members = "公会成员: %d/%d"
   managers = "公会管理: %d/%d"
   description = "公会简介:\n%s"

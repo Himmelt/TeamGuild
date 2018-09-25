@@ -102,7 +102,8 @@ notShowRankJoin = "Set hidden 'ClickJoin' clickable text in guild tops."
 
 registerExpansionFailed = "PlaceholderAPI GuildExpansion register failed !"
 registerExpansionSuccess = "PlaceholderAPI GuildExpansion register success."
-placeholderAPIException = "PlaceholderAPI hook failed, placeholders will be invaluable !"
+noPlaceholderAPI = "PlaceholderAPI hook failed, placeholders will be invaluable !"
+noResidenceApi = "Residence Plugin not hook, function not available."
 
 notImpl = "WIP, please wait !"
 
@@ -111,7 +112,7 @@ info {
   leader = "Guild leader: %s"
   level = "Guild level: %d"
   frame = "Guild frame: %d"
-  balance = "Guild balance: %d"
+  balance = "Guild balance: %.2f"
   members = "Guild members: %d/%d"
   managers = "Guild managers: %d/%d"
   description = "Guild description:\n%s"

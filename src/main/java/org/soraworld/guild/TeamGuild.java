@@ -1,6 +1,9 @@
 package org.soraworld.guild;
 
+import com.bekvon.bukkit.residence.Residence;
+import com.bekvon.bukkit.residence.api.ResidenceApi;
 import me.clip.placeholderapi.PlaceholderAPI;
+import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import org.bukkit.event.Listener;
 import org.soraworld.guild.command.CommandGuild;
 import org.soraworld.guild.expansion.GuildExpansion;
@@ -12,6 +15,7 @@ import org.soraworld.violet.command.SpigotBaseSubs;
 import org.soraworld.violet.command.SpigotCommand;
 import org.soraworld.violet.manager.SpigotManager;
 import org.soraworld.violet.plugin.SpigotPlugin;
+import org.soraworld.violet.util.ChatColor;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -20,19 +24,44 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class TeamGuild extends SpigotPlugin {
+
+    private static final boolean placeholderApi;
+    public static final boolean residenceApi;
+
+    static {
+        boolean residence = false, placeholder = false;
+        try {
+            PlaceholderAPI.class.getName();
+            PlaceholderExpansion.class.getName();
+            placeholder = true;
+        } catch (Throwable ignored) {
+        }
+        try {
+            Residence.class.getName();
+            ResidenceApi.class.getName();
+            residence = true;
+        } catch (Throwable ignored) {
+        }
+        placeholderApi = placeholder;
+        residenceApi = residence;
+    }
+
     @Nonnull
     public String assetsId() {
         return "guild";
     }
 
     public void afterEnable() {
-        try {
-            if (PlaceholderAPI.registerExpansion(new GuildExpansion((TeamManager) manager))) {
-                manager.consoleKey("registerExpansionSuccess");
-            } else manager.consoleKey("registerExpansionFailed");
-        } catch (Throwable e) {
-            manager.consoleKey("placeholderAPIException");
-        }
+        if (placeholderApi) {
+            try {
+                PlaceholderExpansion expansion = GuildExpansion.class.getConstructor(TeamManager.class).newInstance(manager);
+                if (PlaceholderAPI.registerExpansion(expansion)) {
+                    manager.consoleKey("registerExpansionSuccess");
+                } else manager.consoleKey("registerExpansionFailed");
+            } catch (Throwable ignored) {
+                manager.console(ChatColor.RED + "GuildExpansion Construct Instance failed !!!");
+            }
+        } else manager.consoleKey("noPlaceholderAPI");
     }
 
     @Nonnull

@@ -3,7 +3,7 @@ version: 1.1.4
 author: Himmelt
 main: org.soraworld.guild.TeamGuild
 depend: [Violet]
-softdepend: [Vault,Essentials,PlayerPoints,PlaceholderAPI]
+softdepend: [Vault,Essentials,PlayerPoints,PlaceholderAPI,Residence]
 website: https://github.com/Himmelt/TeamGuild
 description: TeamGuild Plugin.
 permissions:

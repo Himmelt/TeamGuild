@@ -27,8 +27,7 @@ public class TeamGuild implements Comparable<TeamGuild> {
     @Setting
     private int frame = 0;
     @Setting
-    // TODO balance
-    private int balance = 0;
+    private double balance = 0;
     @Setting
     private boolean showTopJoin = true;
     @Setting
@@ -311,6 +310,10 @@ public class TeamGuild implements Comparable<TeamGuild> {
                 manager.trans("info.description", getDescription());
     }
 
+    public String getResName() {
+        return "GuildRes_" + leader.getName();
+    }
+
     public String getVariable(String params) {
         switch (params) {
             case "leader":
@@ -334,5 +337,31 @@ public class TeamGuild implements Comparable<TeamGuild> {
             default:
                 return "no variable";
         }
+    }
+
+    public boolean setEco(double amount) {
+        balance = amount;
+        return true;
+    }
+
+    public boolean addEco(double amount) {
+        balance += amount;
+        return true;
+    }
+
+    public double getEco() {
+        return balance;
+    }
+
+    public boolean hasEnough(double amount) {
+        return manager.ignoreNoEco || balance >= amount;
+    }
+
+    public boolean takeEco(double amount) {
+        if (balance >= amount) {
+            balance -= amount;
+            return true;
+        }
+        return manager.ignoreNoEco;
     }
 }

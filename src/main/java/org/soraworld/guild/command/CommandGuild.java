@@ -1,5 +1,10 @@
 package org.soraworld.guild.command;
 
+import com.bekvon.bukkit.residence.Residence;
+import com.bekvon.bukkit.residence.protection.ClaimedResidence;
+import com.bekvon.bukkit.residence.protection.FlagPermissions;
+import com.bekvon.bukkit.residence.protection.ResidenceManager;
+import com.bekvon.bukkit.residence.selection.SelectionManager;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -10,6 +15,8 @@ import org.soraworld.violet.command.SpigotCommand;
 import org.soraworld.violet.command.Sub;
 
 import java.util.UUID;
+
+import static org.soraworld.guild.TeamGuild.residenceApi;
 
 public final class CommandGuild {
     @Sub
@@ -134,16 +141,44 @@ public final class CommandGuild {
 
     @Sub(onlyPlayer = true)
     public static void home(SpigotCommand self, CommandSender sender, Paths args) {
-        // TODO home
         TeamManager manager = (TeamManager) self.manager;
         Player player = (Player) sender;
-        manager.sendKey(player, "notImpl");
+        if (residenceApi) {
+            TeamGuild guild = manager.fetchTeam(player);
+            if (guild != null) {
+                ClaimedResidence res = Residence.getInstance().getResidenceManager().getByName(guild.getResName());
+                if (res != null) res.tpToResidence(player, player, false);
+                else manager.sendKey(player, "GuildResNotCreate");
+            } else manager.sendKey(player, "notInAnyTeam");
+        } else manager.sendKey(player, "noResidenceApi");
     }
 
     @Sub(onlyPlayer = true)
     public static void sethome(SpigotCommand self, CommandSender sender, Paths args) {
-        // TODO sethome
-        self.manager.sendKey(sender, "notImpl");
+        TeamManager manager = (TeamManager) self.manager;
+        Player player = (Player) sender;
+        if (residenceApi) {
+            TeamGuild guild = manager.getGuild(player.getName());
+            if (guild != null) {
+                ResidenceManager apiR = Residence.getInstance().getResidenceManager();
+                SelectionManager apiS = Residence.getInstance().getSelectionManager();
+                ClaimedResidence res = apiR.getByName(guild.getResName());
+                if (res == null) {
+                    if (apiS.hasPlacedBoth(player)) {
+                        double amount = apiS.getSelectionCuboid(player).getSize() * manager.residencePrice;
+                        if (guild.hasEnough(amount)) {
+                            if (apiR.addResidence(player, guild.getResName(), guild.getResName(),
+                                    apiS.getPlayerLoc1(player), apiS.getPlayerLoc2(player), true)) {
+                                res = apiR.getByName(guild.getResName());
+                                res.getPermissions().setPlayerFlag(player.getName(), "admin", FlagPermissions.FlagState.TRUE);
+                                guild.takeEco(amount);
+                                manager.sendKey(player, "guildResCreateSuccess");
+                            } else manager.sendKey(player, "guildResCreateFailed");
+                        } else manager.sendKey(player, "guildEcoNotEnough");
+                    } else manager.sendKey(player, "selectFirst");
+                } else manager.sendKey(player, "GuildResExist");
+            } else manager.sendKey(player, "ownNoGuild");
+        } else manager.sendKey(player, "noResidenceApi");
     }
 
     @Sub(onlyPlayer = true)
