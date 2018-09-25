@@ -1,7 +1,9 @@
 package org.soraworld.guild;
 
+import me.clip.placeholderapi.PlaceholderAPI;
 import org.bukkit.event.Listener;
 import org.soraworld.guild.command.CommandGuild;
+import org.soraworld.guild.expansion.GuildExpansion;
 import org.soraworld.guild.listener.ChatListener;
 import org.soraworld.guild.listener.EventListener;
 import org.soraworld.guild.listener.PvPListener;
@@ -21,6 +23,16 @@ public class TeamGuild extends SpigotPlugin {
     @Nonnull
     public String assetsId() {
         return "guild";
+    }
+
+    public void afterEnable() {
+        try {
+            if (PlaceholderAPI.registerExpansion(new GuildExpansion((TeamManager) manager))) {
+                manager.consoleKey("registerExpansionSuccess");
+            } else manager.consoleKey("registerExpansionFailed");
+        } catch (Throwable e) {
+            manager.consoleKey("placeholderAPIException");
+        }
     }
 
     @Nonnull

@@ -135,7 +135,9 @@ public final class CommandGuild {
     @Sub(onlyPlayer = true)
     public static void home(SpigotCommand self, CommandSender sender, Paths args) {
         // TODO home
-        self.manager.sendKey(sender, "notImpl");
+        TeamManager manager = (TeamManager) self.manager;
+        Player player = (Player) sender;
+        manager.sendKey(player, "notImpl");
     }
 
     @Sub(onlyPlayer = true)

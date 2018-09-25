@@ -119,7 +119,7 @@ public class TeamGuild implements Comparable<TeamGuild> {
         members.remove(player);
     }
 
-    public int getCount() {
+    public int getAmount() {
         return members.size() + managers.size();
     }
 
@@ -306,8 +306,33 @@ public class TeamGuild implements Comparable<TeamGuild> {
                 manager.trans("info.level", level) + '\n' +
                 manager.trans("info.frame", frame) + '\n' +
                 manager.trans("info.balance", balance) + '\n' +
-                manager.trans("info.members", members.size(), getTeamLevel().size) + '\n' +
+                manager.trans("info.members", getAmount(), getTeamLevel().size) + '\n' +
                 manager.trans("info.managers", managers.size(), getTeamLevel().mans) + '\n' +
                 manager.trans("info.description", getDescription());
+    }
+
+    public String getVariable(String params) {
+        switch (params) {
+            case "leader":
+                return leader.getName();
+            case "display":
+                return getDisplay();
+            case "level":
+                return String.valueOf(level);
+            case "frame":
+                return String.valueOf(frame);
+            case "balance":
+                return String.valueOf(balance);
+            case "mem_amount":
+                return String.valueOf(getAmount());
+            case "mem_max":
+                return String.valueOf(getTeamLevel().size);
+            case "man_amount":
+                return String.valueOf(managers.size());
+            case "man_max":
+                return String.valueOf(getTeamLevel().mans);
+            default:
+                return "no variable";
+        }
     }
 }

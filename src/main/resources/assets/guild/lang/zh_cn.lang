@@ -100,6 +100,10 @@ takeFrame = "已从 %s 公会移除 %d 荣耀."
 showRankJoin = "已设置公会在排行榜显示点击加入按钮."
 notShowRankJoin = "已设置公会在排行榜不显示点击加入按钮."
 
+registerExpansionSuccess = "PlaceholderAPI 公会扩展 注册失败 !"
+registerExpansionFailed = "PlaceholderAPI 公会扩展 注册成功."
+placeholderAPIException = "PlaceholderAPI 对接失败, 将无法使用 占位变量 !"
+
 notImpl = "功能尚未实现, 敬请期待 !"
 
 info {

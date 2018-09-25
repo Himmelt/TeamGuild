@@ -100,6 +100,10 @@ takeFrame = "Take %s guild %d frame."
 showRankJoin = "Set shown 'ClickJoin' clickable text in guild tops."
 notShowRankJoin = "Set hidden 'ClickJoin' clickable text in guild tops."
 
+registerExpansionSuccess = "PlaceholderAPI GuildExpansion register failed !"
+registerExpansionFailed = "PlaceholderAPI GuildExpansion register success."
+placeholderAPIException = "PlaceholderAPI hook failed, placeholders will be invaluable !"
+
 notImpl = "WIP, please wait !"
 
 info {
