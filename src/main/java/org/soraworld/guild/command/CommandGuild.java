@@ -72,6 +72,44 @@ public final class CommandGuild {
         }
     }
 
+    @Sub(paths = {"eco", "give"}, perm = "admin")
+    public static void eco_give(SpigotCommand self, CommandSender sender, Paths args) {
+        TeamManager manager = (TeamManager) self.manager;
+        if (args.notEmpty()) {
+            if (args.size() == 2) {
+                TeamGuild guild = manager.getGuild(args.first());
+                if (guild != null) {
+                    try {
+                        float amount = Float.valueOf(args.get(1));
+                        manager.updateGuild(guild, g -> g.addEco(amount));
+                        manager.sendKey(sender, "addEco", amount, guild.getDisplay());
+                    } catch (Throwable ignored) {
+                        manager.sendKey(sender, "invalidFloat");
+                    }
+                } else manager.sendKey(sender, "guildNotExist");
+            } else manager.sendKey(sender, "invalidArgs");
+        } else manager.sendKey(sender, "emptyArgs");
+    }
+
+    @Sub(paths = {"eco", "take"}, perm = "admin")
+    public static void eco_take(SpigotCommand self, CommandSender sender, Paths args) {
+        TeamManager manager = (TeamManager) self.manager;
+        if (args.notEmpty()) {
+            if (args.size() == 2) {
+                TeamGuild guild = manager.getGuild(args.first());
+                if (guild != null) {
+                    try {
+                        float amount = Float.valueOf(args.get(1));
+                        manager.updateGuild(guild, g -> g.takeEco(-1 * amount));
+                        manager.sendKey(sender, "takeEco", guild.getDisplay(), amount);
+                    } catch (Throwable ignored) {
+                        manager.sendKey(sender, "invalidFloat");
+                    }
+                } else manager.sendKey(sender, "guildNotExist");
+            } else manager.sendKey(sender, "invalidArgs");
+        } else manager.sendKey(sender, "emptyArgs");
+    }
+
     @Sub(paths = {"frame", "give"}, perm = "admin")
     public static void frame_give(SpigotCommand self, CommandSender sender, Paths args) {
         TeamManager manager = (TeamManager) self.manager;

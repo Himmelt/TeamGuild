@@ -213,7 +213,12 @@ public class TeamGuild implements Comparable<TeamGuild> {
     }
 
     public int compareTo(@Nonnull TeamGuild other) {
-        if (other.frame == this.frame) return other.level - this.level;
+        if (other.frame == this.frame) {
+            if (other.level == this.level) {
+                return (int) (other.balance - this.balance);
+            }
+            return other.level - this.level;
+        }
         return other.frame - this.frame;
     }
 
