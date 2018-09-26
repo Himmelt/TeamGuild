@@ -6,6 +6,7 @@ import com.bekvon.bukkit.residence.protection.FlagPermissions;
 import com.bekvon.bukkit.residence.protection.ResidenceManager;
 import com.bekvon.bukkit.residence.selection.SelectionManager;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.soraworld.guild.core.TeamGuild;
@@ -146,9 +147,12 @@ public final class CommandGuild {
         if (residenceApi) {
             TeamGuild guild = manager.fetchTeam(player);
             if (guild != null) {
-                ClaimedResidence res = Residence.getInstance().getResidenceManager().getByName(guild.getResName());
-                if (res != null) res.tpToResidence(player, player, false);
-                else manager.sendKey(player, "GuildResNotCreate");
+                ClaimedResidence res = Residence.getInstance().getResidenceManager().getByName(guild.getHomeName());
+                if (res != null) {
+                    Location loc = res.getTeleportLocation();
+                    if (loc != null && player.teleport(loc)) manager.sendKey(player, "tpGuildSuccess");
+                    else manager.sendKey(player, "tpGuildFailed");
+                } else manager.sendKey(player, "GuildResNotCreate");
             } else manager.sendKey(player, "notInAnyTeam");
         } else manager.sendKey(player, "noResidenceApi");
     }
@@ -162,14 +166,17 @@ public final class CommandGuild {
             if (guild != null) {
                 ResidenceManager apiR = Residence.getInstance().getResidenceManager();
                 SelectionManager apiS = Residence.getInstance().getSelectionManager();
-                ClaimedResidence res = apiR.getByName(guild.getResName());
+                ClaimedResidence res = apiR.getByName(guild.getHomeName());
                 if (res == null) {
                     if (apiS.hasPlacedBoth(player)) {
                         double amount = apiS.getSelectionCuboid(player).getSize() * manager.residencePrice;
                         if (guild.hasEnough(amount)) {
-                            if (apiR.addResidence(player, guild.getResName(), guild.getResName(),
-                                    apiS.getPlayerLoc1(player), apiS.getPlayerLoc2(player), true)) {
-                                res = apiR.getByName(guild.getResName());
+                            String serverOwner = Residence.getInstance().getServerLandname();
+                            String serverUUID = Residence.getInstance().getServerLandUUID();
+                            if (apiR.addResidence(player, serverOwner, guild.getHomeName(), apiS.getPlayerLoc1(player), apiS.getPlayerLoc2(player), true)) {
+                                res = apiR.getByName(guild.getHomeName());
+                                res.getPermissions().setOwnerUUID(UUID.fromString(serverUUID));
+                                //res.getPermissions().setOwner(serverOwner, false);
                                 res.getPermissions().setPlayerFlag(player.getName(), "admin", FlagPermissions.FlagState.TRUE);
                                 guild.takeEco(amount);
                                 manager.sendKey(player, "guildResCreateSuccess");
@@ -178,6 +185,23 @@ public final class CommandGuild {
                     } else manager.sendKey(player, "selectFirst");
                 } else manager.sendKey(player, "GuildResExist");
             } else manager.sendKey(player, "ownNoGuild");
+        } else manager.sendKey(player, "noResidenceApi");
+    }
+
+    @Sub(onlyPlayer = true)
+    public static void delhome(SpigotCommand self, CommandSender sender, Paths args) {
+        TeamManager manager = (TeamManager) self.manager;
+        Player player = (Player) sender;
+        if (residenceApi) {
+            TeamGuild guild = manager.fetchTeam(player);
+            if (guild != null) {
+                ResidenceManager apiR = Residence.getInstance().getResidenceManager();
+                ClaimedResidence res = apiR.getByName(guild.getHomeName());
+                if (res != null) {
+                    apiR.removeResidence(res);
+                    manager.sendKey(player, "GuildResRemove");
+                } else manager.sendKey(player, "GuildResNotCreate");
+            } else manager.sendKey(player, "notInAnyTeam");
         } else manager.sendKey(player, "noResidenceApi");
     }
 
@@ -265,8 +289,10 @@ public final class CommandGuild {
             if (guild != null) {
                 Player target = Bukkit.getPlayer(args.first());
                 if (target != null) {
-                    guild.sendAttorn(target);
-                    manager.sendKey(player, "sendAttorn", target.getName());
+                    if (!player.equals(target)) {
+                        guild.sendAttorn(target);
+                        manager.sendKey(player, "sendAttorn", target.getName());
+                    } else manager.sendKey(player, "cantAttornToSelf");
                 } else manager.sendKey(player, "playerIsOffline", args.first());
             } else manager.sendKey(player, "ownNoGuild");
         } else manager.sendKey(player, "emptyArgs");

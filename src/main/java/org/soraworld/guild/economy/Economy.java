@@ -16,7 +16,7 @@ public class Economy {
                 manager.consoleKey("EcoSupport", "Vault");
             } catch (Throwable e) {
                 if (e.getMessage().equals("noVaultImpl")) {
-                    manager.console("noVaultImpl");
+                    manager.consoleKey("noVaultImpl");
                 } else {
                     manager.consoleKey("EcoNotSupport", "Vault");
                 }

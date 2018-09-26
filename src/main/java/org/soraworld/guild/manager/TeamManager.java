@@ -404,15 +404,9 @@ public class TeamManager extends SpigotManager {
 
     public boolean attornTo(TeamGuild guild, Player player) {
         if (guild.isAttorn(player)) {
-            String oldLeader = guild.getTeamLeader();
             rank.remove(guild);
-            guilds.remove(oldLeader);
-            guild.setLeader(player);
-            guild.resetAttorn();
-            if (attornLeave) {
-                guild.unsetManager(oldLeader);
-                guild.delMember(oldLeader);
-            } else guild.addMember(oldLeader);
+            guilds.remove(guild.getTeamLeader());
+            guild.attornTo(player, attornLeave);
             guilds.put(guild.getTeamLeader(), guild);
             rank.add(guild);
             return true;

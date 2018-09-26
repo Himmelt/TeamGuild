@@ -1,5 +1,11 @@
 package org.soraworld.guild.core;
 
+import com.bekvon.bukkit.residence.Residence;
+import com.bekvon.bukkit.residence.event.ResidenceRenameEvent;
+import com.bekvon.bukkit.residence.protection.ClaimedResidence;
+import com.bekvon.bukkit.residence.protection.FlagPermissions;
+import com.bekvon.bukkit.residence.protection.ResidenceManager;
+import com.bekvon.bukkit.residence.protection.ResidencePermissions;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
@@ -13,10 +19,13 @@ import org.soraworld.hocon.node.Options;
 import org.soraworld.hocon.node.Setting;
 
 import javax.annotation.Nonnull;
+import java.lang.reflect.Field;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
+import java.util.Map;
 import java.util.UUID;
 
+import static org.soraworld.guild.TeamGuild.residenceApi;
 import static org.soraworld.violet.util.ChatColor.COLOR_CHAR;
 import static org.soraworld.violet.util.ChatColor.RESET;
 
@@ -310,8 +319,8 @@ public class TeamGuild implements Comparable<TeamGuild> {
                 manager.trans("info.description", getDescription());
     }
 
-    public String getResName() {
-        return "GuildRes_" + leader.getName();
+    public String getHomeName() {
+        return "GuildHome_" + leader.getName();
     }
 
     public String getVariable(String params) {
@@ -363,5 +372,46 @@ public class TeamGuild implements Comparable<TeamGuild> {
             return true;
         }
         return manager.ignoreNoEco;
+    }
+
+    public void attornTo(Player player, boolean leave) {
+        String oldHome = getHomeName();
+        String oldLeader = getTeamLeader();
+        setLeader(player);
+        resetAttorn();
+        if (leave) {
+            unsetManager(oldLeader);
+            delMember(oldLeader);
+        } else addMember(oldLeader);
+        renameHome(oldHome, getHomeName(), oldLeader, getTeamLeader());
+    }
+
+    private void renameHome(String oldName, String newName, String oldLeader, String newLeader) {
+        if (residenceApi) {
+            Residence plugin = Residence.getInstance();
+            ResidenceManager apiR = plugin.getResidenceManager();
+            ClaimedResidence home = apiR.getByName(oldName);
+            if (home != null) {
+                ResidenceRenameEvent event = new ResidenceRenameEvent(home, newName, oldName);
+                Bukkit.getPluginManager().callEvent(event);
+                apiR.removeChunkList(oldName);
+                home.setName(newName);
+                try {
+                    Field residences = ResidenceManager.class.getDeclaredField("residences");
+                    residences.setAccessible(true);
+                    Map map = (Map) residences.get(apiR);
+                    map.put(newName.toLowerCase(), home);
+                    map.remove(oldName.toLowerCase());
+                    apiR.calculateChunks(newName);
+                    plugin.getSignUtil().updateSignResName(home);
+                } catch (Throwable e) {
+                    e.printStackTrace();
+                }
+                ResidencePermissions perm = home.getPermissions();
+                perm.removeAllPlayerFlags(oldLeader);
+                perm.removeAllPlayerFlags(newLeader);
+                perm.setPlayerFlag(newLeader, "admin", FlagPermissions.FlagState.TRUE);
+            }
+        }
     }
 }
