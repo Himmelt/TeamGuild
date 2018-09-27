@@ -1,7 +1,6 @@
 package org.soraworld.guild.core;
 
 import com.bekvon.bukkit.residence.Residence;
-import com.bekvon.bukkit.residence.event.ResidenceRenameEvent;
 import com.bekvon.bukkit.residence.protection.ClaimedResidence;
 import com.bekvon.bukkit.residence.protection.FlagPermissions;
 import com.bekvon.bukkit.residence.protection.ResidenceManager;
@@ -397,8 +396,8 @@ public class TeamGuild implements Comparable<TeamGuild> {
             ResidenceManager apiR = plugin.getResidenceManager();
             ClaimedResidence home = apiR.getByName(oldName);
             if (home != null) {
-                ResidenceRenameEvent event = new ResidenceRenameEvent(home, newName, oldName);
-                Bukkit.getPluginManager().callEvent(event);
+                //ResidenceRenameEvent event = new ResidenceRenameEvent(home, newName, oldName);
+                //Bukkit.getPluginManager().callEvent(event);
                 apiR.removeChunkList(oldName);
                 home.setName(newName);
                 try {
@@ -417,6 +416,17 @@ public class TeamGuild implements Comparable<TeamGuild> {
                 perm.removeAllPlayerFlags(newLeader);
                 perm.setPlayerFlag(newLeader, "admin", FlagPermissions.FlagState.TRUE);
             }
+        }
+    }
+
+    public void convoke(String message) {
+        for (String man : managers) {
+            Player player = Bukkit.getPlayer(man);
+            if (player != null) manager.sendConvoke(player, message);
+        }
+        for (String mem : members) {
+            Player player = Bukkit.getPlayer(mem);
+            if (player != null) manager.sendConvoke(player, message);
         }
     }
 }

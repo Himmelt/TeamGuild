@@ -10,6 +10,7 @@ import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.soraworld.guild.core.TeamGuild;
+import org.soraworld.guild.economy.Economy;
 import org.soraworld.guild.manager.TeamManager;
 import org.soraworld.violet.command.Paths;
 import org.soraworld.violet.command.SpigotCommand;
@@ -100,8 +101,10 @@ public final class CommandGuild {
                 if (guild != null) {
                     try {
                         float amount = Float.valueOf(args.get(1));
-                        manager.updateGuild(guild, g -> g.takeEco(-1 * amount));
-                        manager.sendKey(sender, "takeEco", guild.getDisplay(), amount);
+                        if (guild.hasEnough(amount)) {
+                            manager.updateGuild(guild, g -> g.takeEco(-1 * amount));
+                            manager.sendKey(sender, "takeEco", guild.getDisplay(), amount);
+                        } else manager.sendKey(sender, "notEnough", guild.getEco());
                     } catch (Throwable ignored) {
                         manager.sendKey(sender, "invalidFloat");
                     }
@@ -179,6 +182,33 @@ public final class CommandGuild {
     }
 
     @Sub(onlyPlayer = true)
+    public static void donate(SpigotCommand self, CommandSender sender, Paths args) {
+        TeamManager manager = (TeamManager) self.manager;
+        Player player = (Player) sender;
+        if (args.notEmpty()) {
+            TeamGuild guild = manager.fetchTeam(player);
+            if (guild != null) {
+                try {
+                    int amount = Integer.valueOf(args.first());
+                    if (Economy.hasEnough(player, amount)) {
+                        Economy.takeEco(player, amount);
+                        guild.addEco(amount);
+                        manager.sendKey(player, "donateSuccess", amount);
+                    } else manager.sendKey(player, "notEnough");
+                } catch (Throwable e) {
+                    manager.sendKey(player, "invalidInt");
+                }
+            } else manager.sendKey(player, "notInAnyTeam");
+        } else manager.sendKey(player, "emptyArgs");
+    }
+
+    @Sub
+    public static void chat() {
+        // [Display][Name] meaasge
+        // TODO test when args contains space or with "xxx     sdsd  x"
+    }
+
+    @Sub(onlyPlayer = true)
     public static void home(SpigotCommand self, CommandSender sender, Paths args) {
         TeamManager manager = (TeamManager) self.manager;
         Player player = (Player) sender;
@@ -190,7 +220,7 @@ public final class CommandGuild {
                     Location loc = res.getTeleportLocation();
                     if (loc != null && player.teleport(loc)) manager.sendKey(player, "tpGuildSuccess");
                     else manager.sendKey(player, "tpGuildFailed");
-                } else manager.sendKey(player, "GuildResNotCreate");
+                } else manager.sendKey(player, "guildResNotCreate");
             } else manager.sendKey(player, "notInAnyTeam");
         } else manager.sendKey(player, "noResidenceApi");
     }
@@ -238,7 +268,7 @@ public final class CommandGuild {
                 if (res != null) {
                     apiR.removeResidence(res);
                     manager.sendKey(player, "GuildResRemove");
-                } else manager.sendKey(player, "GuildResNotCreate");
+                } else manager.sendKey(player, "guildResNotCreate");
             } else manager.sendKey(player, "notInAnyTeam");
         } else manager.sendKey(player, "noResidenceApi");
     }
@@ -454,6 +484,16 @@ public final class CommandGuild {
                 manager.sendKey(player, "rejectInvite");
             } else manager.sendKey(player, "guildNotExist");
         } else manager.sendKey(player, "emptyArgs");
+    }
+
+    @Sub(onlyPlayer = true)
+    public static void convoke(SpigotCommand self, CommandSender sender, Paths args) {
+        TeamManager manager = (TeamManager) self.manager;
+        Player player = (Player) sender;
+        TeamGuild guild = manager.getGuild(player.getName());
+        if (guild != null) {
+            guild.convoke(args.first());
+        } else manager.sendKey(player, "ownNoGuild");
     }
 
     @Sub(onlyPlayer = true)

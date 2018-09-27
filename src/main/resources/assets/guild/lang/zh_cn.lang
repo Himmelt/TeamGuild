@@ -3,76 +3,121 @@
 
 chatHead = "[公  会] "
 
-flanSupport = "&a已检测到枪械 Flans 必须类, 将启用枪械支持."
-flanNotSupport = "&6未检测到枪械 Flans 必须类, 将禁用枪械支持."
-
-vaultImpl = "&a已检测到 &eVault&a 经济系统, 实现插件 &e%s&r 货币名称 &a%s"
-noVaultImpl = "&c已检测到 &eVault&c 经济系统, 但没有实现插件, 对接失败."
-EcoSupport = "&a已检测到 &e%s&a 经济系统, 对接完成."
-EcoNotSupport = "&c未检测到 &e%s&c 经济系统, 对接失败."
-InvalidEcoSupport = "&c无效的经济系统 %s , 请检查配置项和对应经济插件."
+# 第三方依赖
+flans {
+  hook = "&a已检测到枪械 Flans 必须类, 将启用枪械支持."
+  notHook = "&6未检测到枪械 Flans 必须类, 将禁用枪械支持."
+}
+vault {
+  ecoImpl = "&a已检测到 &eVault&a 经济系统, 实现插件 &e%s&r 货币名称 &a%s"
+  noEcoImpl = "&c已检测到 &eVault&c 经济系统, 但没有实现插件, 对接失败."
+}
+economy {
+  hook = "&a已检测到 &e%s&a 经济系统, 对接完成."
+  notHook = "&c未检测到 &e%s&c 经济系统, 对接失败."
+  invalid = "&c无效的经济系统 %s , 请检查配置项和对应经济插件."
+}
+placeholder {
+  notHook = "PlaceholderAPI 变量插件没有对接，此功能不可用 !"
+  expansionSuccess = "PlaceholderAPI 公会扩展 注册成功."
+  expansionFailed = "PlaceholderAPI 公会扩展 注册失败 !"
+}
+residence {
+  notHook = "Residence 领地插件没有对接，此功能不可用."
+}
 
 alreadyLeader = "你已经创建一个公会, 无法再创建公会."
 alreadyInTeam = "你已经加入一个公会, 无法执行请求的操作."
 createTeamSuccess = "公会创建成功, 已收取 %d 资金."
+addEco = ""
+takeEco = ""
+notEnough = "你没有足够资金."
+donateSuccess = "你向公会捐赠了 %.2f 资金."
 noEnoughEco = "此操作需要 %d 资金, 你没有足够资金."
-guildNotExist = "公会不存在."
+
 alreadyJoined = "你已经加入该公会, 无需重复加入."
 inAnotherGuild = "你已加入其他公会, 无法完成操作."
-sendApplication = "已向 %s 公会发送加入申请."
-receiveApplication = "玩家 &e%s&r 申请加入你的队伍."
+
 acceptText = " &a接受 "
 rejectText = " &c拒绝 "
 clickJoin = " &a&l申请加入"
 acceptHover = "点击&a接受"
 rejectHover = "点击&c拒绝"
-rejectApplication = "已拒绝玩家 &e%s&r 的申请."
-applicationRejected = "你的申请被公会管理员拒绝."
-notManager = "你不是公会管理员, 无法执行此操作."
-noJoinApplication = "玩家 %s 没有申请加入, 或申请已被处理."
-alreadyJoinedTeam = "玩家 %s 已加入 %s 公会, 已忽略本次申请."
+
+application {
+  send = "已向 %s 公会发送加入申请."
+  none = "玩家 %s 没有申请加入, 或申请已被处理."
+  receive = "玩家 &e%s&r 申请加入公会."
+  accept = "已接受玩家 &e%s&r 的申请."
+  acceptMax = "申请受理失败, 公会人数已达最大."
+  accepted = "%s 接受了你的申请, 你已加入 %s 公会."
+  acceptedMax = "%s 已受理你的申请, 但人数已达上限, 无法加入 %s 公会."
+  reject = "已拒绝玩家 &e%s&r 的申请."
+  rejected = "你的申请已被公会管理员拒绝."
+  alreadyIn = "玩家 %s 已加入 %s 公会, 已忽略本次申请."
+}
+
 notInAnyTeam = "你没有加入任何公会."
-acceptMember = "已接受玩家 &e%s&r 的申请."
+
 noOpPermOrNotLeader = "你需要管理权限<&c%s&r>或身为会长才能执行操作."
-joinAccepted = "%s 接受了你的申请, 你已加入 %s 公会"
-acceptFailed = "申请受理失败, 公会人数已达最大."
-joinAcceptFailed = "%s 已受理你的申请, 但人数已达上限, 你无法加入 %s 公会"
-getDisplay = "公会当前显示名是 %s"
-setDisplay = "公会显示名已设置为 %s"
-getDescription = "公会简介: %s"
-setDescription = "已设置公会简介为: %s"
+
+get {
+  display = "公会当前显示名是 %s"
+  description = "公会简介: %s"
+}
+set {
+  display = "公会显示名已设置为 %s"
+  description = "已设置公会简介为: %s"
+}
+
 ownNoGuild = "你不是会长或没有创建任何公会."
-guildUpgraded = "公会升级成功, 已扣除 %d 费用."
-guildIsTopLevel = "公会已到最高级, 无法再升级."
-disbandGuild = "公会 %s 已被解散."
-notLeader = "你不是公会所有者."
-sendAttorn = "已向玩家 %s 发送公会转让请求."
-cantAttornToSelf = "你无需将公会转让给自己."
-unAttorn = "已取消转让公会."
-receiveAttorn = "%s 请求将公会 %s 转让给你 "
 playerIsOffline = "对方不在线."
-attornAccept = "你接受了 %s 公会的转让."
-attornReject = "你拒绝了 %s 公会的转让."
-attornRejectBy = "%s 拒绝了你的转让."
-notAttorn = "公会 %s 没有转让给你, 或已取消转让."
 
-sendInvite = "已发送邀请."
-unInvited = "已取消邀请 %s ."
-unInvitedAll = "已取消所有邀请."
-inviteAccepted = "你接受了邀请, 现在你是 %s 公会的成员了."
-notInvited = "你没有被邀请, 或邀请已取消."
-rejectInvite = "你拒绝了邀请."
-receiveInvite = "%s 邀请你加入 %s 公会 "
+attorn {
+  send = "已向玩家 %s 发送公会转让请求."
+  notSelf = "你无需将公会转让给自己."
+  cancel = "已取消转让公会."
+  receive = "%s 请求将公会 %s 转让给你 "
+  accept = "你接受了 %s 公会的转让."
+  reject = "你拒绝了 %s 公会的转让."
+  rejectBy = "%s 拒绝了你的转让."
+  notAttorn = "公会 %s 没有转让给你, 或已取消转让."
+}
 
-leaveGuild = "你退出了 %s 公会."
-leaderCantLeave = "你是公会长, 无法离开公会, 你可以转让或解散公会."
-cantKickLeader = "你无法将会长移出公会."
-cantKickAnotherManager = "你无法将另一个管理移出公会."
-kickSuccess = "你将玩家 %s 移出了公会."
-beKicked = "你被 %s 管理员移出了公会."
-noThisMember = "公会中没有 %s 这个成员."
-notManager = "你不是公会管理员."
-notifyLeave = "玩家 %s 退出了公会."
+invite {
+  send = "已向 %s 发送邀请."
+  cancel = "已取消邀请 %s ."
+  cancelAll = "已取消所有邀请."
+  accept = "你接受了邀请, 现在你是 %s 公会的成员了."
+  notInvited = "你没有被邀请, 或邀请已取消."
+  reject = "你拒绝了邀请."
+  receive = "%s 邀请你加入 %s 公会 "
+}
+guild {
+  notifyLeave = "玩家 %s 退出了公会."
+  disband = "公会 %s 已被解散."
+  topLevel = "公会已到最高级, 无法继续升级."
+  upgrade = "公会升级成功, 已扣除 %d 费用."
+  notExist = "公会不存在."
+  donate = "你向公会捐赠了 %.2f 资金."
+}
+
+leader {
+  cantLeave = "公会会长无法离开公会, 但可以转让或解散公会."
+  notLeader = "你不是公会所有者."
+}
+manager {
+  cantKickLeader = "你无法将会长移出公会."
+  cantKickManager = "你无法将另一个管理移出公会."
+  kickSuccess = "你将成员 %s 移出了公会."
+  noMember = "公会中没有 %s 这个成员."
+  notManager = "你不是公会管理员."
+
+}
+member {
+  leave = "你离开了 %s 公会."
+  beKicked = "你被公会管理 %s 移出了公会."
+}
 
 listHead = "------------公会 %s 的成员--------------"
 listLeader = "玩家: &e%s&r   身份: &e会长"
@@ -108,6 +153,19 @@ noPlaceholderAPI = "PlaceholderAPI 对接失败, 将无法使用 占位变量 !"
 noResidenceApi = "Residence 领地插件没有对接，此功能不可用."
 guildResNotCreate = "公会领地未创建."
 guildResExist = "公会领地已存在."
+
+
+guild {
+  home {
+    notExist = "公会领地未创建."
+    alreadyExist = "公会领地已存在."
+    remove = "公会领地已删除."
+    selectFirst = "请先用工具选择领地范围."
+    tpSuccess = "已抵达公会领地传送点."
+    tpFailed = "无法抵达公会领地传送点."
+  }
+}
+
 
 notImpl = "功能尚未实现, 敬请期待 !"
 

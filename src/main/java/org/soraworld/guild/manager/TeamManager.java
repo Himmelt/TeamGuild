@@ -424,4 +424,13 @@ public class TeamManager extends SpigotManager {
                         SHOW_TEXT, trans("rejectHover"))
         );
     }
+
+    public void sendConvoke(Player player, String message) {
+        sendMessage(player,
+                format(trans("convokeMessage", message)),
+                format(trans("gotoHome"),
+                        RUN_COMMAND, textCommand + " home",
+                        SHOW_TEXT, trans("gotoHome"))
+        );
+    }
 }
