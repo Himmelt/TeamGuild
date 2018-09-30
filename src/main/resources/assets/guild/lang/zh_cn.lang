@@ -26,6 +26,28 @@ residence {
   notHook = "Residence 领地插件没有对接，此功能不可用."
 }
 
+# ------------ 命令相关 ------------
+# 排行榜
+top {
+  head = "----------------------------公会排行榜----------------------------"
+  line = "%4d %-20s荣耀 %-8d会长 %-16s"
+  line1 = "%4d  "
+  line2 = "  荣耀 %-8d会长 %-16s"
+  join = " &a&l申请加入"
+  foot = "----------------------------第 %d/%d 页----------------------------"
+}
+# 信息
+info {
+  display = "公会名称: %s"
+  leader = "公会会长: %s"
+  level = "公会等级: %d"
+  frame = "公会荣耀: %d"
+  balance = "公会资金: %.2f"
+  members = "公会成员: %d/%d"
+  managers = "公会管理: %d/%d"
+  description = "公会简介:\n%s"
+}
+
 alreadyLeader = "你已经创建一个公会, 无法再创建公会."
 alreadyInTeam = "你已经加入一个公会, 无法执行请求的操作."
 createTeamSuccess = "公会创建成功, 已收取 %d 资金."
@@ -34,9 +56,6 @@ takeEco = ""
 notEnough = "你没有足够资金."
 donateSuccess = "你向公会捐赠了 %.2f 资金."
 noEnoughEco = "此操作需要 %d 资金, 你没有足够资金."
-
-alreadyJoined = "你已经加入该公会, 无需重复加入."
-inAnotherGuild = "你已加入其他公会, 无法完成操作."
 
 acceptText = " &a接受 "
 rejectText = " &c拒绝 "
@@ -59,7 +78,14 @@ application {
 
 notInAnyTeam = "你没有加入任何公会."
 
-noOpPermOrNotLeader = "你需要管理权限<&c%s&r>或身为会长才能执行操作."
+player {
+  notInAny = "你没有加入任何公会."
+  ownNone = "你没有创建任何公会."
+  notLeaderAdmin = "你需要管理权限<&c%s&r>或身为会长才能执行操作."
+  alreadyJoined = "你已经加入该公会, 无需重复加入."
+  inAnother = "你已加入其他公会, 无法完成操作."
+  ecoNotEnough = "你没有足够的资金."
+}
 
 get {
   display = "公会当前显示名是 %s"
@@ -79,6 +105,7 @@ attorn {
   cancel = "已取消转让公会."
   receive = "%s 请求将公会 %s 转让给你 "
   accept = "你接受了 %s 公会的转让."
+  acceptBy = "%s 接受了你的公会的转让."
   reject = "你拒绝了 %s 公会的转让."
   rejectBy = "%s 拒绝了你的转让."
   notAttorn = "公会 %s 没有转让给你, 或已取消转让."
@@ -92,7 +119,9 @@ invite {
   notInvited = "你没有被邀请, 或邀请已取消."
   reject = "你拒绝了邀请."
   receive = "%s 邀请你加入 %s 公会 "
+  max = "该公会人数已满, 无法加入."
 }
+
 guild {
   notifyLeave = "玩家 %s 退出了公会."
   disband = "公会 %s 已被解散."
@@ -100,6 +129,37 @@ guild {
   upgrade = "公会升级成功, 已扣除 %d 费用."
   notExist = "公会不存在."
   donate = "你向公会捐赠了 %.2f 资金."
+  eco {
+    give = "给与 %s 公会 %.2f 资金."
+    take = "拿走 %s 公会 %.2f 资金."
+    none = "%s 公会只有 %.2f 资金."
+  }
+  frame {
+    give = "给与 %s 公会 %d 荣耀."
+    take = "拿走 %s 公会 %d 荣耀."
+    none = "%s 公会只有 %d 荣耀."
+  }
+  setMan = "已将玩家 %s 设置为本公会管理员."
+  cantUnsetLeader = "你不能移除会长的管理权."
+  unsetMan = "已移除 %s 对公会的管理权."
+  isNotManager = "玩家 %s 不是公会管理员或未加入本公会."
+  addFrame = "已添加 %d 荣耀至 %s 公会."
+  takeFrame = "已从 %s 公会移除 %d 荣耀."
+  upMaxMembers = "公会人数已满 !"
+  noMember = "公会中没有 %s 这个成员."
+  maxMan = "公会管理员数量已满."
+}
+
+home {
+  notExist = "公会领地未创建."
+  created = "公会领地创建成功."
+  createFailed = "公会领地创建失败."
+  alreadyExist = "公会领地已存在."
+  ecoNone = "公会资金不足, 无法创建领地, 请重新选择区域."
+  remove = "公会领地已删除."
+  selectFirst = "请先用工具选择领地范围."
+  tpSuccess = "已抵达公会领地传送点."
+  tpFailed = "无法抵达公会领地传送点."
 }
 
 leader {
@@ -110,40 +170,25 @@ manager {
   cantKickLeader = "你无法将会长移出公会."
   cantKickManager = "你无法将另一个管理移出公会."
   kickSuccess = "你将成员 %s 移出了公会."
-  noMember = "公会中没有 %s 这个成员."
   notManager = "你不是公会管理员."
-
 }
 member {
   leave = "你离开了 %s 公会."
   beKicked = "你被公会管理 %s 移出了公会."
 }
 
-listHead = "------------公会 %s 的成员--------------"
-listLeader = "玩家: &e%s&r   身份: &e会长"
-listManager = "玩家: &a%s&r   身份: &a副会长"
-listMember = "玩家: %s   身份: 成员"
-listFoot = "----------------------------------------------"
-
-rankHead = "----------------------------公会排行榜----------------------------"
-rankLine = "%4d %-20s荣耀 %-8d会长 %-16s"
-rankLine1 = "%4d  "
-rankLine2 = "  荣耀 %-8d会长 %-16s"
-rankFoot = "----------------------------第 %d/%d 页----------------------------"
+# 公会成员列表
+list {
+  head = "------------公会 %s 的成员--------------"
+  leader = "玩家: &e%s&r   身份: &e会长"
+  manager = "玩家: &a%s&r   身份: &a管理"
+  member = "玩家: %s   身份: 成员"
+  foot = "----------------------------------------------"
+}
 
 textTooLong = "&c你设置的文本长度已超过 %d , 请调整后重试. (注: 中文占2个长度)"
 EncodingException = "&c&l编码错误, 请开启调试模式到控制台查看详细信息."
 
-setManager = "已将玩家 %s 设置为本公会管理员."
-upMaxManagers = "公会管理员已满 !"
-upMaxMembers = "公会人数已满 !"
-noSuchMember = "公会内没有名为 %s 的成员."
-
-cantUnsetLeader = "你不能移除会长的管理权."
-unsetManager = "已移除 %s 对公会的管理权."
-isNotManager = "玩家 %s 不是公会管理员或未加入本公会."
-addFrame = "已添加 %d 荣耀至 %s 公会."
-takeFrame = "已从 %s 公会移除 %d 荣耀."
 showRankJoin = "已设置公会在排行榜显示点击加入按钮."
 notShowRankJoin = "已设置公会在排行榜不显示点击加入按钮."
 
@@ -151,34 +196,8 @@ registerExpansionFailed = "PlaceholderAPI 公会扩展 注册失败 !"
 registerExpansionSuccess = "PlaceholderAPI 公会扩展 注册成功."
 noPlaceholderAPI = "PlaceholderAPI 对接失败, 将无法使用 占位变量 !"
 noResidenceApi = "Residence 领地插件没有对接，此功能不可用."
-guildResNotCreate = "公会领地未创建."
-guildResExist = "公会领地已存在."
-
-
-guild {
-  home {
-    notExist = "公会领地未创建."
-    alreadyExist = "公会领地已存在."
-    remove = "公会领地已删除."
-    selectFirst = "请先用工具选择领地范围."
-    tpSuccess = "已抵达公会领地传送点."
-    tpFailed = "无法抵达公会领地传送点."
-  }
-}
-
 
 notImpl = "功能尚未实现, 敬请期待 !"
-
-info {
-  display = "公会名称: %s"
-  leader = "公会会长: %s"
-  level = "公会等级: %d"
-  frame = "公会荣耀: %d"
-  balance = "公会资金: %.2f"
-  members = "公会成员: %d/%d"
-  managers = "公会管理: %d/%d"
-  description = "公会简介:\n%s"
-}
 
 comment {
   ecoType = "需要对接的经济系统插件\n目前支持的经济插件: \n1. Vault经济服务 (任何实现了Vault经济服务的插件都可以, 例如PlayerPoints)\n2. Essentials\n3. PlayerPoints"

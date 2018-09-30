@@ -11,6 +11,7 @@ import org.soraworld.guild.listener.ChatListener;
 import org.soraworld.guild.listener.EventListener;
 import org.soraworld.guild.listener.PvPListener;
 import org.soraworld.guild.manager.TeamManager;
+import org.soraworld.hocon.node.Paths;
 import org.soraworld.violet.command.SpigotBaseSubs;
 import org.soraworld.violet.command.SpigotCommand;
 import org.soraworld.violet.manager.SpigotManager;
@@ -90,6 +91,7 @@ public class TeamGuild extends SpigotPlugin {
         command.extractSub(SpigotBaseSubs.class, "help");
         command.extractSub(SpigotBaseSubs.class, "rextract");
         command.extractSub(CommandGuild.class);
+        manager.getDisableCmds().forEach((s) -> command.removeSub(new Paths(s)));
         register(this, command);
     }
 }

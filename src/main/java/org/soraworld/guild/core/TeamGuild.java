@@ -17,7 +17,6 @@ import org.soraworld.hocon.node.NodeMap;
 import org.soraworld.hocon.node.Options;
 import org.soraworld.hocon.node.Setting;
 
-import javax.annotation.Nonnull;
 import java.lang.reflect.Field;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
@@ -90,12 +89,10 @@ public class TeamGuild implements Comparable<TeamGuild> {
         return leader.getPlayer();
     }
 
-    @Nonnull
     public String getTeamLeader() {
         return leader.getName();
     }
 
-    @Nonnull
     public String getDisplay() {
         return display == null ? "" : display.replace('&', ChatColor.COLOR_CHAR);
     }
@@ -103,6 +100,14 @@ public class TeamGuild implements Comparable<TeamGuild> {
     public void setDisplay(String display) {
         if (!display.endsWith("&r")) display += "&r";
         this.display = display;
+    }
+
+    public String getDescription() {
+        return description == null ? "" : description.replace('&', COLOR_CHAR);
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     public boolean addMember(String player) {
@@ -130,13 +135,6 @@ public class TeamGuild implements Comparable<TeamGuild> {
         return members.size() + managers.size();
     }
 
-    public String getDescription() {
-        return description == null ? "" : description.replace('&', COLOR_CHAR);
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
 
     public void addJoinApplication(String username) {
         applications.add(username);
@@ -189,12 +187,12 @@ public class TeamGuild implements Comparable<TeamGuild> {
     public void notifyLeave(String username) {
         Player handler = leader.getPlayer();
         if (handler != null) {
-            manager.sendKey(handler, "notifyLeave", username);
+            manager.sendKey(handler, "guild.notifyLeave", username);
         }
         for (String man : managers) {
             handler = Bukkit.getPlayer(man);
             if (handler != null) {
-                manager.sendKey(handler, "notifyLeave", username);
+                manager.sendKey(handler, "guild.notifyLeave", username);
             }
         }
     }
@@ -211,7 +209,7 @@ public class TeamGuild implements Comparable<TeamGuild> {
         manager.sendKey(sender, "listFoot");
     }
 
-    public int compareTo(@Nonnull TeamGuild other) {
+    public int compareTo(TeamGuild other) {
         if (other.frame == this.frame) {
             if (other.level == this.level) {
                 return (int) (other.balance - this.balance);
@@ -245,20 +243,12 @@ public class TeamGuild implements Comparable<TeamGuild> {
         return node;
     }
 
-    public void addFrame(int frame) {
-        this.frame += frame;
-    }
-
     public boolean isShowTopJoin() {
         return showTopJoin;
     }
 
     public void setShowTopJoin(boolean show) {
         this.showTopJoin = show;
-    }
-
-    public int getFrame() {
-        return frame;
     }
 
     public void sendAttorn(Player target) {
@@ -352,30 +342,44 @@ public class TeamGuild implements Comparable<TeamGuild> {
         }
     }
 
-    public boolean setEco(double amount) {
-        balance = amount;
-        return true;
+    public int getFrame() {
+        return frame;
     }
 
-    public boolean addEco(double amount) {
-        balance += amount;
-        return true;
+    public void setFrame(int amount) {
+        frame = amount;
+    }
+
+    public boolean hasFrame(int amount) {
+        return frame >= amount;
+    }
+
+    public void giveFrame(int amount) {
+        frame += amount;
+    }
+
+    public boolean takeFrame(int amount) {
+        return frame >= amount && (frame -= amount) >= 0;
     }
 
     public double getEco() {
         return balance;
     }
 
-    public boolean hasEnough(double amount) {
+    public void setEco(double amount) {
+        balance = amount;
+    }
+
+    public boolean hasEco(double amount) {
         return manager.ignoreNoEco || balance >= amount;
     }
 
+    public void giveEco(double amount) {
+        balance += amount;
+    }
+
     public boolean takeEco(double amount) {
-        if (balance >= amount) {
-            balance -= amount;
-            return true;
-        }
-        return manager.ignoreNoEco;
+        return balance >= amount ? (balance -= amount) >= 0 : manager.ignoreNoEco;
     }
 
     public void attornTo(Player player, boolean leave) {

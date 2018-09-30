@@ -216,7 +216,7 @@ public class TeamManager extends SpigotManager {
     public void upgrade(Player player) {
         TeamGuild guild = guilds.get(player.getName());
         if (guild == null) {
-            sendKey(player, "ownNoGuild");
+            sendKey(player, "player.ownNone");
             return;
         }
         Map.Entry<Integer, TeamLevel> entry = levels.higherEntry(guild.getLevel());
@@ -224,32 +224,32 @@ public class TeamManager extends SpigotManager {
             TeamLevel next = entry.getValue();
             if (Economy.takeEco(player, next.cost)) {
                 updateGuild(guild, g -> g.setLevel(entry.getKey()));
-                sendKey(player, "guildUpgraded", next.cost);
+                sendKey(player, "guild.upgrade", next.cost);
                 saveGuild();
             } else sendKey(player, "noEnoughEco", next.cost);
-        } else sendKey(player, "guildIsTopLevel");
+        } else sendKey(player, "guild.topLevel");
     }
 
     public void showRank(CommandSender sender, int page) {
         if (page < 1) page = 1;
-        sendKey(sender, "rankHead");
+        sendKey(sender, "top.head");
         Iterator<TeamGuild> it = rank.iterator();
         for (int i = 1; i <= page * 10 && it.hasNext(); i++) {
             TeamGuild guild = it.next();
             if (i >= page * 10 - 9) {
                 if (sender instanceof Player) {
-                    IChatBaseComponent component = format(trans("rankLine1", i));
+                    IChatBaseComponent component = format(trans("top.line1", i));
                     component.addSibling(format(guild.getDisplay(), null, null, SHOW_TEXT, guild.getHover()));
-                    component.addSibling(format(trans("rankLine2", guild.getFrame(), guild.getTeamLeader())));
+                    component.addSibling(format(trans("top.line2", guild.getFrame(), guild.getTeamLeader())));
                     if (guild.isShowTopJoin()) {
-                        component.addSibling(format(trans("clickJoin"),
+                        component.addSibling(format(trans("top.jin"),
                                 RUN_COMMAND, textCommand + " join " + guild.getTeamLeader(), null, null));
                     }
                     sendMessage((Player) sender, component);
-                } else sendKey(sender, "rankLine", i, guild.getDisplay(), guild.getFrame(), guild.getTeamLeader());
+                } else sendKey(sender, "top.line", i, guild.getDisplay(), guild.getFrame(), guild.getTeamLeader());
             }
         }
-        sendKey(sender, "rankFoot", page, rank.size() / 10 + 1);
+        sendKey(sender, "top.foot", page, rank.size() / 10 + 1);
     }
 
     public void disband(final TeamGuild guild) {
@@ -259,7 +259,7 @@ public class TeamManager extends SpigotManager {
         teams.entrySet().removeIf(entry -> {
             if (guild.equals(entry.getValue())) {
                 Player player = Bukkit.getPlayer(entry.getKey());
-                if (player != null) sendKey(player, "disbandGuild", display);
+                if (player != null) sendKey(player, "guild.disband", display);
                 return true;
             } else return false;
         });
