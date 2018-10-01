@@ -91,7 +91,7 @@ public class TeamGuild extends SpigotPlugin {
         command.extractSub(SpigotBaseSubs.class, "help");
         command.extractSub(SpigotBaseSubs.class, "rextract");
         command.extractSub(CommandGuild.class);
-        manager.getDisableCmds().forEach((s) -> command.removeSub(new Paths(s)));
+        manager.getDisableCmds().forEach(s -> command.removeSub(new Paths(s)));
         register(this, command);
     }
 }
