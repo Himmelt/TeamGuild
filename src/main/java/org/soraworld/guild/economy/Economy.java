@@ -13,30 +13,30 @@ public class Economy {
         if ("Vault".equalsIgnoreCase(ecoType)) {
             try {
                 eco = new VaultEconomy(manager);
-                manager.consoleKey("EcoSupport", "Vault");
+                manager.consoleKey("vault.ecoImpl", "Vault");
             } catch (Throwable e) {
-                if (e.getMessage().equals("noVaultImpl")) {
-                    manager.consoleKey("noVaultImpl");
+                if (e.getMessage().equals("vault.noEcoImpl")) {
+                    manager.consoleKey("vault.noEcoImpl");
                 } else {
-                    manager.consoleKey("EcoNotSupport", "Vault");
+                    manager.consoleKey("economy.notHook", "Vault");
                 }
             }
         } else if ("Essentials".equalsIgnoreCase(ecoType)) {
             try {
                 eco = new EssEconomy();
-                manager.consoleKey("EcoSupport", "Essentials");
+                manager.consoleKey("economy.hook", "Essentials");
             } catch (Throwable ignored) {
-                manager.consoleKey("EcoNotSupport", "Essentials");
+                manager.consoleKey("economy.notHook", "Essentials");
             }
         } else if ("PlayerPoints".equalsIgnoreCase(ecoType)) {
             try {
                 eco = new PointsEconomy();
-                manager.consoleKey("EcoSupport", "PlayerPoints");
+                manager.consoleKey("economy.hook", "PlayerPoints");
             } catch (Throwable ignored) {
-                manager.consoleKey("EcoNotSupport", "PlayerPoints");
+                manager.consoleKey("economy.notHook", "PlayerPoints");
             }
         } else {
-            manager.consoleKey("InvalidEcoSupport", ecoType);
+            manager.consoleKey("economy.invalid", ecoType);
         }
     }
 
