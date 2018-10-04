@@ -16,9 +16,9 @@ public class Flans {
             net.minecraft.server.v1_7_R4.Entity.class.getName();
             EntityBullet.class.getName();
             support = true;
-            config.consoleKey("flan.hook");
+            config.consoleKey("flans.hook");
         } catch (Throwable ignored) {
-            config.consoleKey("flan.notHook");
+            config.consoleKey("flans.notHook");
         }
     }
 

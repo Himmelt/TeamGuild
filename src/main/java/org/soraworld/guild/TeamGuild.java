@@ -11,15 +11,12 @@ import org.soraworld.guild.listener.ChatListener;
 import org.soraworld.guild.listener.EventListener;
 import org.soraworld.guild.listener.PvPListener;
 import org.soraworld.guild.manager.TeamManager;
-import org.soraworld.hocon.node.Paths;
 import org.soraworld.violet.command.SpigotBaseSubs;
 import org.soraworld.violet.command.SpigotCommand;
 import org.soraworld.violet.manager.SpigotManager;
 import org.soraworld.violet.plugin.SpigotPlugin;
 import org.soraworld.violet.util.ChatColor;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
@@ -47,7 +44,6 @@ public class TeamGuild extends SpigotPlugin {
         residenceApi = residence;
     }
 
-    @Nonnull
     public String assetsId() {
         return "guild";
     }
@@ -57,20 +53,18 @@ public class TeamGuild extends SpigotPlugin {
             try {
                 PlaceholderExpansion expansion = GuildExpansion.class.getConstructor(TeamManager.class).newInstance(manager);
                 if (PlaceholderAPI.registerExpansion(expansion)) {
-                    manager.consoleKey("registerExpansionSuccess");
-                } else manager.consoleKey("registerExpansionFailed");
+                    manager.consoleKey("placeholder.expansionSuccess");
+                } else manager.consoleKey("placeholder.expansionFailed");
             } catch (Throwable ignored) {
                 manager.console(ChatColor.RED + "GuildExpansion Construct Instance failed !!!");
             }
-        } else manager.consoleKey("noPlaceholderAPI");
+        } else manager.consoleKey("placeholder.notHook");
     }
 
-    @Nonnull
     protected SpigotManager registerManager(Path path) {
         return new TeamManager(this, path);
     }
 
-    @Nullable
     protected List<Listener> registerListeners() {
         ArrayList<Listener> listeners = new ArrayList<>();
         if (manager instanceof TeamManager) {
@@ -84,14 +78,9 @@ public class TeamGuild extends SpigotPlugin {
 
     protected void registerCommands() {
         SpigotCommand command = new SpigotCommand(getId(), null, false, manager, "team");
-        command.extractSub(SpigotBaseSubs.class, "lang");
-        command.extractSub(SpigotBaseSubs.class, "debug");
-        command.extractSub(SpigotBaseSubs.class, "save");
-        command.extractSub(SpigotBaseSubs.class, "reload");
-        command.extractSub(SpigotBaseSubs.class, "help");
-        command.extractSub(SpigotBaseSubs.class, "rextract");
+        command.extractSub(SpigotBaseSubs.class);
         command.extractSub(CommandGuild.class);
-        manager.getDisableCmds().forEach(s -> command.removeSub(new Paths(s)));
+        command.setUsage("/team ....");
         register(this, command);
     }
 }
