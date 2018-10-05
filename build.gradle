@@ -15,7 +15,7 @@ repositories {
 }
 
 dependencies {
-    //compile 'org.soraworld:violet-spigot:2.3.5'
+    compile 'org.soraworld:violet-spigot:2.3.6'
     compileOnly 'org.black_ixx:PlayerPoints:2.1.3'
     compileOnly 'net.milkbowl.vault:VaultAPI:1.6'
     compileOnly 'me.clip:placeholderapi:2.9.2'
@@ -23,7 +23,7 @@ dependencies {
         transitive = false
     }
     compile files('lib/spigot-1.7.10.jar')
-    compile files('lib/SpigotViolet-2.3.5-hocon.jar')
+    //compile files('lib/SpigotViolet-2.3.6-hocon.jar')
     compileOnly files('lib/Residence-4.8.1.0.jar')
 }
 
