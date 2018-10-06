@@ -46,6 +46,8 @@ public class TeamManager extends SpigotManager {
     public float residencePrice = 1.0F;
     @Setting(comment = "comment.textCommand")
     private String textCommand = "/team";
+    @Setting(comment = "comment.dailyBonus")
+    private HashMap<Integer, ArrayList<String>> dailyBonus = new HashMap<>();
     @Setting(comment = "comment.levels")
     private TreeMap<Integer, TeamLevel> levels = new TreeMap<>();
 
@@ -157,13 +159,13 @@ public class TeamManager extends SpigotManager {
         }
         guild = guilds.get(leader);
         if (guild == null) {
-            sendKey(player, "guildNotExist");
+            sendKey(player, "guild.notExist");
         } else {
             if (guild.hasMember(player)) {
-                sendKey(player, "alreadyJoined");
+                sendKey(player, "player.alreadyJoined");
             } else {
                 guild.addJoinApplication(player.getName());
-                sendKey(player, "sendApplication", guild.getDisplay());
+                sendKey(player, "application.send", guild.getDisplay());
                 saveGuild();
             }
         }
@@ -242,7 +244,7 @@ public class TeamManager extends SpigotManager {
                     component.addSibling(format(guild.getDisplay(), null, null, SHOW_TEXT, guild.getHover()));
                     component.addSibling(format(trans("top.line2", guild.getFrame(), guild.getTeamLeader())));
                     if (guild.isShowTopJoin()) {
-                        component.addSibling(format(trans("top.jin"),
+                        component.addSibling(format(trans("top.join"),
                                 RUN_COMMAND, textCommand + " join " + guild.getTeamLeader(), null, null));
                     }
                     sendMessage((Player) sender, component);
@@ -432,5 +434,32 @@ public class TeamManager extends SpigotManager {
                         RUN_COMMAND, textCommand + " home",
                         SHOW_TEXT, trans("gotoHome"))
         );
+    }
+
+    public int getRank(TeamGuild guild) {
+        int i = 0;
+        for (TeamGuild team : rank) {
+            i++;
+            if (team.equals(guild)) return i;
+        }
+        return -1;
+    }
+
+    public List<String> getDailyBonus(TeamGuild guild) {
+        return dailyBonus.getOrDefault(getRank(guild), new ArrayList<>());
+    }
+
+    public void topkit(Player player) {
+        TeamGuild guild = guilds.get(player.getName());
+        if (guild != null) {
+            if (guild.canGetBonus()) {
+                for (String cmd : getDailyBonus(guild)) {
+                    Bukkit.dispatchCommand(Bukkit.getConsoleSender(), cmd.replace("{leader}", player.getName()));
+                }
+                guild.updateLastBonus();
+                saveGuild();
+                sendKey(player, "getBonus");
+            } else sendKey(player, "alreadyGetBonus");
+        } else sendKey(player, "player.ownNone");
     }
 }

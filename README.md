@@ -31,7 +31,8 @@ TeamGuild
 /team kick <player>               将<player>移出公会（会长副会长可执行, 会长可以踢除自己外的所有人,副会长只能踢普通成员）
 /team display [name]              查看/设置公会显示名（仅会长可执行）
 /team describe [description]      查看/设置公会简介, 可使用 \n 换行（仅会长可执行）
-/team upgrade                     升级公会（仅会长可执行）
+/team upgrade                     升级公会 (仅会长可执行)
+/team topkit                      领取排行榜每日奖励(仅会长可执行)
 ```
 
 ### 配置

@@ -42,6 +42,8 @@ public class TeamGuild implements Comparable<TeamGuild> {
     @Setting
     private String description;
     @Setting
+    private long lastBonus = 0;
+    @Setting
     private HashSet<String> members = new HashSet<>();
     @Setting
     private HashSet<String> managers = new HashSet<>();
@@ -198,15 +200,15 @@ public class TeamGuild implements Comparable<TeamGuild> {
     }
 
     public void showMemberList(CommandSender sender) {
-        manager.sendKey(sender, "listHead", getDisplay());
-        manager.sendKey(sender, "listLeader", leader.getName());
+        manager.sendKey(sender, "list.head", getDisplay());
+        manager.sendKey(sender, "list.leader", leader.getName());
         for (String man : managers) {
-            manager.sendKey(sender, "listManager", man);
+            manager.sendKey(sender, "list.manager", man);
         }
         for (String member : members) {
-            manager.sendKey(sender, "listMember", member);
+            manager.sendKey(sender, "list.member", member);
         }
-        manager.sendKey(sender, "listFoot");
+        manager.sendKey(sender, "list.foot");
     }
 
     public int compareTo(TeamGuild other) {
@@ -260,7 +262,7 @@ public class TeamGuild implements Comparable<TeamGuild> {
         return attorn != null && player.getUniqueId().equals(attorn);
     }
 
-    public void setLeader(Player player) {
+    private void setLeader(Player player) {
         this.leader = player;
         managers.remove(player.getName());
         members.remove(player.getName());
@@ -432,5 +434,17 @@ public class TeamGuild implements Comparable<TeamGuild> {
             Player player = Bukkit.getPlayer(mem);
             if (player != null) manager.sendConvoke(player, message);
         }
+    }
+
+    public UUID getUUID() {
+        return leader.getUniqueId();
+    }
+
+    public boolean canGetBonus() {
+        return System.currentTimeMillis() / 86400000 > lastBonus;
+    }
+
+    public void updateLastBonus() {
+        lastBonus = System.currentTimeMillis() / 86400000;
     }
 }

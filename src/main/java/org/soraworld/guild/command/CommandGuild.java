@@ -218,7 +218,7 @@ public final class CommandGuild {
                 ClaimedResidence res = Residence.getInstance().getResidenceManager().getByName(guild.getHomeName());
                 if (res != null) {
                     Location loc = res.getTeleportLocation();
-                    if (loc != null && player.teleport(loc)) manager.sendKey(player, "tpGuildSuccess");
+                    if (loc != null && player.teleport(loc)) manager.sendKey(player, "home.tpSuccess");
                     else manager.sendKey(player, "home.tpFailed");
                 } else manager.sendKey(player, "home.notExist");
             } else manager.sendKey(player, "player.notInAny");
@@ -624,7 +624,7 @@ public final class CommandGuild {
                 String name = args.first();
                 if (guild.isManager(name)) {
                     if (guild.isLeader(name)) {
-                        manager.sendKey(player, "cantUnsetLeader");
+                        manager.sendKey(player, "guild.cantUnsetLeader");
                     } else {
                         guild.unsetManager(name);
                         manager.saveGuild();
@@ -649,5 +649,11 @@ public final class CommandGuild {
     public static void upgrade(SpigotCommand self, CommandSender sender, Args args) {
         TeamManager manager = (TeamManager) self.manager;
         manager.upgrade((Player) sender);
+    }
+
+    @Sub(onlyPlayer = true)
+    public static void topkit(SpigotCommand self, CommandSender sender, Args args) {
+        TeamManager manager = (TeamManager) self.manager;
+        manager.topkit((Player) sender);
     }
 }

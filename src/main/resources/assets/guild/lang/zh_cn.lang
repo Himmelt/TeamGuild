@@ -26,7 +26,6 @@ residence {
   notHook = "Residence 领地插件没有对接，此功能不可用."
 }
 
-# ------------ 命令相关 ------------
 # 排行榜
 top {
   head = "----------------------------公会排行榜----------------------------"
@@ -49,13 +48,15 @@ info {
 }
 
 alreadyLeader = "你已经创建一个公会, 无法再创建公会."
-alreadyInTeam = "你已经加入一个公会, 无法执行请求的操作."
+alreadyInTeam = "你已经加入一个公会, 无法再创建公会."
 createTeamSuccess = "公会创建成功, 已收取 %d 资金."
 addEco = ""
 takeEco = ""
 notEnough = "你没有足够资金."
 donateSuccess = "你向公会捐赠了 %.2f 资金."
 noEnoughEco = "此操作需要 %d 资金, 你没有足够资金."
+alreadyGetBonus = "今天的排行榜奖励已领取过."
+getBonus = "成功领取今天的排行榜奖励."
 
 acceptText = " &a接受 "
 rejectText = " &c拒绝 "
@@ -207,6 +208,7 @@ comment {
   maxDisplay = "公会显示名最大长度, 每个中文占2个长度, 颜色代码也算在长度内."
   maxDescription = "公会简介最大长度, 每个中文占2个长度."
   textCommand = "用于聊天文字点击的命令, 此处已默认插件主命令,\n请勿随意修改, 只有在默认命令冲突无效时才需要修改."
+  dailyBonus = "排行榜每日奖励, 每个排行 对应一组命令数组.\n命令不用加 / , {leader} 代表会长 或 公会id."
   levels = "公会等级设置\n等级列表, 插件会从低到高自动排序, 不必手动排序."
   level {
     size = "该等级公会成员容量"
