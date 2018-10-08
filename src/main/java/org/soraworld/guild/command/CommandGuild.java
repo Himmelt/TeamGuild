@@ -194,7 +194,7 @@ public final class CommandGuild {
                         Economy.takeEco(player, amount);
                         guild.giveEco(amount);
                         manager.sendKey(player, "guild.donate", amount);
-                    } else manager.sendKey(player, "player.ecoNotEnough");
+                    } else manager.sendKey(player, "player.noEco");
                 } catch (Throwable e) {
                     manager.sendKey(player, "invalidInt");
                 }
@@ -249,7 +249,7 @@ public final class CommandGuild {
                                 guild.takeEco(amount);
                                 manager.sendKey(player, "home.created");
                             } else manager.sendKey(player, "home.createFailed");
-                        } else manager.sendKey(player, "home.ecoNone");
+                        } else manager.sendKey(player, "home.noEco");
                     } else manager.sendKey(player, "home.selectFirst");
                 } else manager.sendKey(player, "home.alreadyExist");
             } else manager.sendKey(player, "player.ownNone");
@@ -361,7 +361,7 @@ public final class CommandGuild {
                         guild.sendAttorn(target);
                         manager.sendKey(player, "attorn.send", target.getName());
                     } else manager.sendKey(player, "attorn.notSelf");
-                } else manager.sendKey(player, "playerIsOffline", args.first());
+                } else manager.sendKey(player, "player.offline", args.first());
             } else manager.sendKey(player, "player.ownNone");
         } else manager.sendKey(player, "emptyArgs");
     }
@@ -424,7 +424,7 @@ public final class CommandGuild {
                     if (target != null) {
                         guild.sendInvite(player, target);
                         manager.sendKey(player, "invite.send");
-                    } else manager.sendKey(player, "playerIsOffline", args.first());
+                    } else manager.sendKey(player, "player.offline", args.first());
                 } else manager.sendKey(player, "manager.notManager");
             } else manager.sendKey(player, "guild.notExist");
         } else manager.sendKey(player, "emptyArgs");

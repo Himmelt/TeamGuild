@@ -125,26 +125,20 @@ public class TeamManager extends SpigotManager {
     }
 
     public void createGuild(Player player, String display) {
-        String username = player.getName();
         TeamGuild guild = teams.get(player.getUniqueId());
-        if (guild != null) {
-            if (guild.isLeader(username)) sendKey(player, "alreadyLeader");
-            else sendKey(player, "alreadyInTeam");
-            return;
-        }
-        guild = new TeamGuild(player, 0, this);
-        guild.setDisplay(display);
-        guild.setDescription(username + "'s Team.");
-        int cost = levels.firstEntry().getValue().cost;
-        if (Economy.takeEco(player, cost)) {
-            rank.add(guild);
-            teams.put(player.getUniqueId(), guild);
-            guilds.put(username, guild);
-            sendKey(player, "createTeamSuccess", cost);
-            saveGuild();
-        } else {
-            sendKey(player, "noEnoughEco", cost);
-        }
+        if (guild == null) {
+            guild = new TeamGuild(player, 0, this);
+            guild.setDisplay(display);
+            guild.setDescription(player.getName() + "'s Team.");
+            int cost = levels.firstEntry().getValue().cost;
+            if (Economy.takeEco(player, cost)) {
+                rank.add(guild);
+                teams.put(player.getUniqueId(), guild);
+                guilds.put(player.getName(), guild);
+                sendKey(player, "create.success", cost);
+                saveGuild();
+            } else sendKey(player, "create.noEco", cost);
+        } else sendKey(player, "create.inTeam");
     }
 
     public TeamLevel getLevel(int level) {
@@ -153,22 +147,18 @@ public class TeamManager extends SpigotManager {
 
     public void joinGuild(Player player, String leader) {
         TeamGuild guild = teams.get(player.getUniqueId());
-        if (guild != null) {
-            sendKey(player, "alreadyInTeam");
-            return;
-        }
-        guild = guilds.get(leader);
         if (guild == null) {
-            sendKey(player, "guild.notExist");
-        } else {
-            if (guild.hasMember(player)) {
-                sendKey(player, "player.alreadyJoined");
-            } else {
-                guild.addJoinApplication(player.getName());
-                sendKey(player, "application.send", guild.getDisplay());
-                saveGuild();
-            }
-        }
+            guild = guilds.get(leader);
+            if (guild != null) {
+                if (!guild.hasMember(player)) {
+                    guild.addJoinApplication(player.getName());
+                    sendKey(player, "application.send", guild.getDisplay());
+                    saveGuild();
+                } else sendKey(player, "player.alreadyJoined");
+            } else sendKey(player, "guild.notExist");
+        } else if (guild.equals(guilds.get(leader))) {
+            sendKey(player, "player.alreadyJoined");
+        } else sendKey(player, "player.inAnother");
     }
 
     public void leaveGuild(Player player, TeamGuild guild) {
@@ -217,19 +207,17 @@ public class TeamManager extends SpigotManager {
 
     public void upgrade(Player player) {
         TeamGuild guild = guilds.get(player.getName());
-        if (guild == null) {
-            sendKey(player, "player.ownNone");
-            return;
-        }
-        Map.Entry<Integer, TeamLevel> entry = levels.higherEntry(guild.getLevel());
-        if (entry != null) {
-            TeamLevel next = entry.getValue();
-            if (Economy.takeEco(player, next.cost)) {
-                updateGuild(guild, g -> g.setLevel(entry.getKey()));
-                sendKey(player, "guild.upgrade", next.cost);
-                saveGuild();
-            } else sendKey(player, "noEnoughEco", next.cost);
-        } else sendKey(player, "guild.topLevel");
+        if (guild != null) {
+            Map.Entry<Integer, TeamLevel> entry = levels.higherEntry(guild.getLevel());
+            if (entry != null) {
+                TeamLevel next = entry.getValue();
+                if (Economy.takeEco(player, next.cost)) {
+                    updateGuild(guild, g -> g.setLevel(entry.getKey()));
+                    sendKey(player, "guild.upgrade", next.cost);
+                    saveGuild();
+                } else sendKey(player, "upgrade.noEco", next.cost);
+            } else sendKey(player, "guild.topLevel");
+        } else sendKey(player, "player.ownNone");
     }
 
     public void showRank(CommandSender sender, int page) {
@@ -458,8 +446,8 @@ public class TeamManager extends SpigotManager {
                 }
                 guild.updateLastBonus();
                 saveGuild();
-                sendKey(player, "getBonus");
-            } else sendKey(player, "alreadyGetBonus");
+                sendKey(player, "dailyBonus.claim");
+            } else sendKey(player, "dailyBonus.claimed");
         } else sendKey(player, "player.ownNone");
     }
 }

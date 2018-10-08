@@ -3,123 +3,199 @@
 
 chatHead = "[TeamGuild] "
 
-flanSupport = "&aFound Flans class, will support Flans."
-flanNotSupport = "&6Not Found Flans class, will not support Flans."
+# Third-party
+flans {
+  hook = "&aFound Flans class, will support Flans."
+  notHook = "&6Not Found Flans class, will not support Flans."
+}
+vault {
+  ecoImpl = "&aFound &eVault&a economy service, implement plugin &e%s&r currency-name &a%s"
+  noEcoImpl = "&cFound &eVault&c economy service, but no Implement, hook failed."
+}
+economy {
+  hook = "&aFound &e%s&a economy system, hook success."
+  notHook = "&cNot found any &e%s&c economy system, hook failed."
+  invalid = "&cInvalid economy-system %s , please check config and economy plugin."
+}
+placeholder {
+  notHook = "PlaceholderAPI not hook."
+  expansionSuccess = "PlaceholderAPI guild expansion register success."
+  expansionFailed = "PlaceholderAPI guild expansion register failed !"
+}
+residence {
+  notHook = "Residence not hook."
+}
 
-vaultImpl = "&aFound &eVault&a economy service, implement plugin &e%s&r currency-name &a%s"
-noVaultImpl = "&cFound &eVault&c economy service, but no Implement, docking failed."
-EcoSupport = "&aFound &e%s&a economy system, docking success."
-EcoNotSupport = "&cNot found any &e%s&c economy system, docking failed."
-InvalidEcoSupport = "&cInvalid economy-system %s , please check config and economy plugin."
+# tops
+top {
+  head = "----------------------------Guild Tops----------------------------"
+  line = "%4d %-20sFrame %-8dLeader %-16s"
+  line1 = "%4d  "
+  line2 = "  Frame %-8dLeader %-16s"
+  join = " &a&lJoin"
+  foot = "---------------------------- %d/%d Page----------------------------"
+}
+# info
+info {
+  display = "Guild Name: %s"
+  leader = "Guild Leader: %s"
+  level = "Guild Level: %d"
+  frame = "Guild Frame: %d"
+  balance = "Guild Balance: %.2f"
+  members = "Guild Members: %d/%d"
+  managers = "Guild Managers: %d/%d"
+  description = "Guild Description:\n%s"
+}
+# members list
+list {
+  head = "------------Guild %s's members--------------"
+  leader = "Name: &e%s&r   Role: &eLeader"
+  manager = "Name: &a%s&r   Role: &aManager"
+  member = "Name: %s   Role: Member"
+  foot = "----------------------------------------------"
+}
+# create guild
+create {
+  inTeam = "You have joined a guild, can't create guild."
+  success = "Guild created success, took you %d money."
+  noEco = "This need %d money, you can't pay it."
+}
+# dailyBonus
+dailyBonus {
+  claim = "Claim today's bonus for guild-top success."
+  claimed = "You have claimed today's bonus."
+}
+# join application
+application {
+  send = "Appliction has been sent to %s guild."
+  none = "Player %s dosen't send application or has been dealed."
+  receive = "Player &e%s&r apply to join you guild."
+  accept = "Accepted player &e%s&r's applcation."
+  acceptMax = "Application deal failed, members is maximum."
+  accepted = "%s accepted your application, you are in %s guild."
+  acceptedMax = "%s accept your application, but members is up to maximum, you can't join %s guild."
+  reject = "Rejected &e%s&r's application."
+  rejected = "Your application was rejected by guild manager."
+  alreadyIn = "Player %s has joined %s guild, ignore this application."
+}
 
-alreadyLeader = "You have created a guild, can't create another."
-alreadyInTeam = "You have joined a guild, can't join another."
-createTeamSuccess = "Guild created success, took you %d money."
-noEnoughEco = "This need %d money, you can't pay it."
-guildNotExist = "Guild is not exist."
-alreadyJoined = "You already joined the guild, no need to join again."
-sendApplication = "Appliction has been sent to %s guild."
-receiveApplication = "Player &e%s&r apply to join you guild."
+# player message
+player {
+  notInAny = "You have not joined any guild."
+  ownNone = "You have not created any guild."
+  notLeaderAdmin = "You need permission <&c%s&r> or be the guild's leader to do this."
+  alreadyJoined = "You already joined the guild, no need to join again."
+  inAnother = "You have joined another guild."
+  noEco = "You don't have enough money."
+  offline = "Player is offline."
+}
+leader {
+  cantLeave = "Leader can't leave guild, but can attorn or disband it."
+  notLeader = "You are not the guild's leader."
+}
+manager {
+  cantKickLeader = "You can't kick your leader."
+  cantKickManager = "You can't kick another manager."
+  kickSuccess = "You moved member %s out of the guild."
+  notManager = "You are not the guild's manager."
+}
+member {
+  leave = "You left %s guild."
+  beKicked = "You are moved out %s guild by the manager."
+}
+# 公会消息
+guild {
+  notifyLeave = "Member %s left the guild."
+  disband = "Guild %s has been disbanded."
+  topLevel = "Guild is up to max level, cant upgrade."
+  upgrade = "Guild upgrade success, has took %d money."
+  notExist = "Guild not exist."
+  donate = "You donated %.2f money to your guild."
+  eco {
+    give = "Give %s guild %.2f money."
+    take = "Take %s guild %.2f money."
+    none = "%s guild has only %.2f money."
+  }
+  frame {
+    give = "Give %s guild %d frame."
+    take = "Take %s guild %d frame."
+    none = "%s guild has only %d frame."
+  }
+  setMan = "Set player %s as guild's manager."
+  cantUnsetLeader = "You cant unset guild's leader."
+  unsetMan = "Unset %s's guild manager."
+  isNotManager = "Player %s is not manager or not in the guild."
+  addFrame = "Add %d frame to %s guild."
+  takeFrame = "Take %s guild %d frame."
+  upMaxMembers = "Guild members is up to maximum !"
+  noMember = "Guild has no %s member."
+  maxMan = "Guild managers is up to maximum !"
+}
+# attorn guild
+attorn {
+  send = "Sent attorn application to player %s ."
+  notSelf = "You don't need to attorn your guild to yourself."
+  cancel = "Canceled attorn guild."
+  receive = "%s want to give his guild %s to you "
+  accept = "You accepted %s guild's attorn."
+  acceptBy = "%s accepted your guild's attorn."
+  reject = "You rejected %s guild's attorn."
+  rejectBy = "%s rejected your guild's attorn."
+  notAttorn = "Guild %s was not attorned to you, or it's leader canceled this action."
+}
+# invite sb
+invite {
+  send = "Invitation has been sent to %s ."
+  cancel = "Canceled inviting %s ."
+  cancelAll = "Canceled all invitations."
+  accept = "You accept the invitation, you are now one of the %s guild."
+  notInvited = "You are not invited, or the invitation was canceled."
+  reject = "You reject the invitation."
+  receive = "%s invites you to join %s guild "
+  max = "The guild's members is up to max."
+}
+# upgrade guild
+upgrade {
+  success = "Guild upgrade success, has took %d money."
+  topLevel = "Guild is up to max level, cant upgrade."
+  noEco = "This up-level need %d money, your guild dont have enough money."
+}
+# guild residence
+home {
+  notExist = "Guild's home not exist."
+  created = "Create guild's home success."
+  createFailed = "Create guild's home failed."
+  alreadyExist = "Guild's home already exist."
+  noEco = "Guild's balance cant pay for your selection."
+  remove = "Guild's home was deleted."
+  selectFirst = "Please use tool select two point first."
+  tpSuccess = "You have reached guild's home."
+  tpFailed = "You can't go to guild home."
+}
+
+get {
+  display = "Guild's display-name is %s"
+  description = "Guild's description is: %s"
+}
+set {
+  display = "Guild's display-name is set to %s"
+  description = "Guild's description is set to: %s"
+}
+
+# click text
 acceptText = " &aAccept "
 rejectText = " &cReject "
 clickJoin = " &a&lJoin"
-acceptHover = "&aAccept"
-rejectHover = "&cReject"
-rejectApplication = "Rejected &e%s&r's application."
-applicationRejected = "Your application was rejected by guild manager."
-notManage = "Your are not guild manager, can't do this."
-noJoinApplication = "Player %s dosen't send application or has been dealed."
-alreadyJoinedTeam = "Player %s has joined %s guild, ignore this application."
-notInAnyTeam = "You are not in any guild."
-acceptMember = "Accepted player &e%s&r's applcation."
-noOpPermOrNotLeader = "You need permission <&c%s&r> or be the guild's owner to do this."
-joinAccepted = "%s accepted your application, you are in %s guild."
-acceptFailed = "Application deal failed, members is maximum."
-joinAcceptFailed = "%s accept your application, but members is up to maximum, you can't join %s guild."
-getDisplay = "Guild's display name is: %s"
-setDisplay = "Set guild's display name to: %s"
-getDescription = "Guild description is: %s"
-setDescription = "Set guild description to: %s"
-ownNoGuild = "You are not the owner, or you has not created a guild."
-guildUpgraded = "Guild upgrade success, has took %d money."
-guildIsTopLevel = "Guild is top level, can't upgared."
-disbandGuild = "Guild %s was disbanded."
-notLeader = "You are not the guild's owner."
-sendAttorn = "Sent attorn application to player %s ."
-cantAttornToSelf = "You don't need to attorn your guild to yourself."
-unAttorn = "Canceled attorn guild."
-receiveAttorn = "%s want to give his guild %s to you "
-playerIsOffline = "The player is offline."
-noCreateTeam = "You have not created a guild."
-attornAccept = "You accepted %s guild's attorn."
-attornReject = "You rejected %s guild's attorn."
-attornRejectBy = "%s 拒绝了你的转让."
-notAttorn = "Guild %s was not attorned to you, or it's leader canceled this action."
-
-sendInvite = "Invitation has been sent."
-unInvited = "Canceled inviting %s ."
-unInvitedAll = "Canceled all invitations."
-inviteAccepted = "You accept the invitation, you are now one of the %s guild."
-notInvited = "You are not invited, or the invitation was canceled."
-rejectInvite = "You reject the invitation."
-receiveInvite = "%s invites you to join %s guild "
-
-leaveGuild = "You left %s guild."
-leaderCantLeave = "You are the leader, can't leave the guild, you can attorn or disband your guild."
-cantKickLeader = "You can't kick the leader of your guild."
-cantKickAnotherManager = "You can't kick another manager."
-kickSuccess = "You move %s out the guild."
-beKicked = "You are moved out %s guild by manager."
-noThisMember = "The guild doesn't have member %s."
-notManager = "You are not the guild's manager."
-notifyLeave = "Player %s leave the guild."
-
-listHead = "------------ %s's Members --------------"
-listLeader = "Player: &e%s&r   Status: &eLeader"
-listManager = "Player: &a%s&r   Status: &aManager"
-listMember = "Player: %s   Status: Member"
-listFoot = "--------------------------------------------"
-
-rankHead = "----------------------------Guild Tops----------------------------"
-rankLine = "%4d %-20sFrame %-8dLeader %-16s"
-rankLine1 = "%4d  "
-rankLine2 = "  Frame %-8d  Leader %-16s"
-rankFoot = "----------------------------Page %d/%d ----------------------------"
+acceptHover = "Click&aJoin"
+rejectHover = "Click&cReject"
 
 textTooLong = "&cText length is too long than %d, please check and try again."
 EncodingException = "&c&lEncode Error, please switch to DEBUG mode and check the console."
-
-setManager = "Set player %s as guild's manager."
-upMaxManagers = "Managers is up to maximum !"
-upMaxMembers = "Managers is up to maximum !"
-noSuchMember = "There is no such member named %s ."
-
-cantUnsetLeader = "You cant unset guild's leader."
-unsetManager = "Unset %s's guild manager."
-isNotManager = "Player %s is not manager or not in the guild."
-addFrame = "Add %d frame to %s guild."
-takeFrame = "Take %s guild %d frame."
 showRankJoin = "Set shown 'ClickJoin' clickable text in guild tops."
 notShowRankJoin = "Set hidden 'ClickJoin' clickable text in guild tops."
-
-registerExpansionFailed = "PlaceholderAPI GuildExpansion register failed !"
-registerExpansionSuccess = "PlaceholderAPI GuildExpansion register success."
-noPlaceholderAPI = "PlaceholderAPI hook failed, placeholders will be invaluable !"
-noResidenceApi = "Residence Plugin not hook, function not available."
-
 notImpl = "WIP, please wait !"
 
-info {
-  display = "Guild name: %s"
-  leader = "Guild leader: %s"
-  level = "Guild level: %d"
-  frame = "Guild frame: %d"
-  balance = "Guild balance: %.2f"
-  members = "Guild members: %d/%d"
-  managers = "Guild managers: %d/%d"
-  description = "Guild description:\n%s"
-}
-
+# comment
 comment {
   ecoType = "Linked economy plugin\nCurrent support: \n1. Vault Economy Service (Any Economy Service implement can use, e.g. PlayerPoints)\n2. Essentials\n3. PlayerPoints"
   ignoreNoEco = "Enable to create guild when economy system is invalid."
@@ -128,6 +204,7 @@ comment {
   maxDisplay = "Maximum of display's characters, color codes are included."
   maxDescription = "Maximum of description's characters."
   textCommand = "Command used when chat click, default plugin main command,\nPlease don't edit unless commands confliction or can't use."
+  dailyBonus = "Daily Bonus for guild tops, every rank has a list of commands.\ncommand dont startswith / , {leader} is the leader's name or guild's id."
   levels = "Guild levels settings\nLevels, auto sort, no need to sort by hand."
   level {
     size = "This level maximum members"
