@@ -15,7 +15,7 @@ repositories {
 }
 
 dependencies {
-    compile 'org.soraworld:violet-spigot:2.3.6'
+    compile 'org.soraworld:violet-spigot:2.3.8'
     compileOnly 'org.black_ixx:PlayerPoints:2.1.3'
     compileOnly 'net.milkbowl.vault:VaultAPI:1.6'
     compileOnly 'me.clip:placeholderapi:2.9.2'
