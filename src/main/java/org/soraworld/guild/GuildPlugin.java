@@ -4,8 +4,10 @@ import com.bekvon.bukkit.residence.Residence;
 import com.bekvon.bukkit.residence.api.ResidenceApi;
 import me.clip.placeholderapi.PlaceholderAPI;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
+import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 import org.soraworld.guild.command.CommandGuild;
+import org.soraworld.guild.core.TeamGuild;
 import org.soraworld.guild.expansion.GuildExpansion;
 import org.soraworld.guild.listener.ChatListener;
 import org.soraworld.guild.listener.EventListener;
@@ -21,10 +23,11 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
-public class TeamGuild extends SpigotPlugin {
+public class GuildPlugin extends SpigotPlugin {
 
     private static final boolean placeholderApi;
     public static final boolean residenceApi;
+    private static TeamManager API;
 
     static {
         boolean residence = false, placeholder = false;
@@ -62,13 +65,14 @@ public class TeamGuild extends SpigotPlugin {
     }
 
     protected SpigotManager registerManager(Path path) {
-        return new TeamManager(this, path);
+        API = new TeamManager(this, path);
+        return API;
     }
 
     protected List<Listener> registerListeners() {
         ArrayList<Listener> listeners = new ArrayList<>();
-        if (manager instanceof TeamManager) {
-            TeamManager manager = (TeamManager) this.manager;
+        if (API instanceof TeamManager) {
+            TeamManager manager = API;
             listeners.add(new EventListener(manager));
             if (!manager.teamPvP) listeners.add(new PvPListener(manager));
             listeners.add(new ChatListener(manager));
@@ -77,10 +81,14 @@ public class TeamGuild extends SpigotPlugin {
     }
 
     protected void registerCommands() {
-        SpigotCommand command = new SpigotCommand(getId(), null, false, manager, "team");
+        SpigotCommand command = new SpigotCommand(getId(), null, false, API, "team");
         command.extractSub(SpigotBaseSubs.class);
         command.extractSub(CommandGuild.class);
         command.setUsage("/team ....");
         register(this, command);
+    }
+
+    public static TeamGuild getTeam(Player player) {
+        return API.fetchTeam(player);
     }
 }

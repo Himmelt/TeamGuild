@@ -23,7 +23,7 @@ import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.UUID;
 
-import static org.soraworld.guild.TeamGuild.residenceApi;
+import static org.soraworld.guild.GuildPlugin.residenceApi;
 import static org.soraworld.violet.util.ChatColor.COLOR_CHAR;
 import static org.soraworld.violet.util.ChatColor.RESET;
 
@@ -136,7 +136,6 @@ public class TeamGuild implements Comparable<TeamGuild> {
     public int getAmount() {
         return members.size() + managers.size();
     }
-
 
     public void addJoinApplication(String username) {
         applications.add(username);

@@ -18,7 +18,7 @@ import org.soraworld.violet.command.Sub;
 
 import java.util.UUID;
 
-import static org.soraworld.guild.TeamGuild.residenceApi;
+import static org.soraworld.guild.GuildPlugin.residenceApi;
 
 public final class CommandGuild {
     @Sub
