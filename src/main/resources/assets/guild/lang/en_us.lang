@@ -29,9 +29,9 @@ residence {
 # tops
 top {
   head = "----------------------------Guild Tops----------------------------"
-  line = "%4d %-20sFrame %-8dLeader %-16s"
+  line = "%4d %-20sFame %-8dLeader %-16s"
   line1 = "%4d  "
-  line2 = "  Frame %-8dLeader %-16s"
+  line2 = "  Fame %-8dLeader %-16s"
   join = " &a&lJoin"
   foot = "---------------------------- %d/%d Page----------------------------"
 }
@@ -40,7 +40,7 @@ info {
   display = "Guild Name: %s"
   leader = "Guild Leader: %s"
   level = "Guild Level: %d"
-  frame = "Guild Frame: %d"
+  fame = "Guild Fame: %d"
   balance = "Guild Balance: %.2f"
   members = "Guild Members: %d/%d"
   managers = "Guild Managers: %d/%d"
@@ -116,17 +116,21 @@ guild {
     take = "Take %s guild %.2f money."
     none = "%s guild has only %.2f money."
   }
-  frame {
-    give = "Give %s guild %d frame."
-    take = "Take %s guild %d frame."
-    none = "%s guild has only %d frame."
+  memFame {
+    give = "Give %s guild member %s %d fame."
+    take = "Take %s guild member %s %d fame."
+  }
+  fame {
+    give = "Give %s guild %d fame."
+    take = "Take %s guild %d fame."
+    none = "%s guild has only %d fame."
   }
   setMan = "Set player %s as guild's manager."
   cantUnsetLeader = "You cant unset guild's leader."
   unsetMan = "Unset %s's guild manager."
   isNotManager = "Player %s is not manager or not in the guild."
-  addFrame = "Add %d frame to %s guild."
-  takeFrame = "Take %s guild %d frame."
+  addFame = "Add %d fame to %s guild."
+  takeFame = "Take %s guild %d fame."
   upMaxMembers = "Guild members is up to maximum !"
   noMember = "Guild has no %s member."
   maxMan = "Guild managers is up to maximum !"

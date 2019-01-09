@@ -113,40 +113,52 @@ public final class CommandGuild {
         } else manager.sendKey(sender, "emptyArgs");
     }
 
-    @Sub(path = "frame.give", perm = "admin")
-    public static void frame_give(SpigotCommand self, CommandSender sender, Args args) {
+    @Sub(path = "fame.give", perm = "admin")
+    public static void fame_give(SpigotCommand self, CommandSender sender, Args args) {
         TeamManager manager = (TeamManager) self.manager;
         if (args.notEmpty()) {
             if (args.size() == 2) {
-                TeamGuild guild = manager.getGuild(args.first());
+                TeamGuild guild = manager.fetchTeam(args.first());
                 if (guild != null) {
                     try {
-                        int frame = Integer.valueOf(args.get(1));
-                        manager.updateGuild(guild, g -> g.giveFrame(frame));
-                        manager.sendKey(sender, "guild.frame.give", guild.getDisplay(), frame);
+                        int fame = Integer.valueOf(args.get(1));
+                        String player = args.first();
+                        if (guild.isLeader(player)) {
+                            manager.updateGuild(guild, g -> g.giveFame(fame));
+                            manager.sendKey(sender, "guild.fame.take", guild.getDisplay(), fame);
+                        } else {
+                            manager.updateGuild(guild, g -> g.giveMemFame(player, fame));
+                            manager.sendKey(sender, "guild.memFame.give", guild.getDisplay(), player, fame);
+                        }
                     } catch (Throwable ignored) {
                         manager.sendKey(sender, "invalidInt");
                     }
-                } else manager.sendKey(sender, "guild.notExist");
+                } else manager.sendKey(sender, "player.notInAnyTeam");
             } else manager.sendKey(sender, "invalidArgs");
         } else manager.sendKey(sender, "emptyArgs");
     }
 
-    @Sub(path = "frame.take", perm = "admin")
-    public static void frame_take(SpigotCommand self, CommandSender sender, Args args) {
+    @Sub(path = "fame.take", perm = "admin")
+    public static void fame_take(SpigotCommand self, CommandSender sender, Args args) {
         TeamManager manager = (TeamManager) self.manager;
         if (args.notEmpty()) {
             if (args.size() == 2) {
-                TeamGuild guild = manager.getGuild(args.first());
+                TeamGuild guild = manager.fetchTeam(args.first());
                 if (guild != null) {
                     try {
-                        int frame = Integer.valueOf(args.get(1));
-                        manager.updateGuild(guild, g -> g.giveFrame(-1 * frame));
-                        manager.sendKey(sender, "guild.frame.take", guild.getDisplay(), frame);
+                        int fame = Integer.valueOf(args.get(1));
+                        String player = args.first();
+                        if (guild.isLeader(player)) {
+                            manager.updateGuild(guild, g -> g.giveFame(-1 * fame));
+                            manager.sendKey(sender, "guild.fame.take", guild.getDisplay(), fame);
+                        } else {
+                            manager.updateGuild(guild, g -> g.giveMemFame(player, -1 * fame));
+                            manager.sendKey(sender, "guild.memFame.take", guild.getDisplay(), player, fame);
+                        }
                     } catch (Throwable ignored) {
                         manager.sendKey(sender, "invalidInt");
                     }
-                } else manager.sendKey(sender, "guild.notExist");
+                } else manager.sendKey(sender, "guild.notInAnyTeam");
             } else manager.sendKey(sender, "invalidArgs");
         } else manager.sendKey(sender, "emptyArgs");
     }

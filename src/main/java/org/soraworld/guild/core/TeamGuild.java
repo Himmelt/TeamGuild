@@ -18,10 +18,7 @@ import org.soraworld.hocon.node.Options;
 import org.soraworld.hocon.node.Setting;
 
 import java.lang.reflect.Field;
-import java.util.HashSet;
-import java.util.LinkedHashSet;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 import static org.soraworld.guild.GuildPlugin.residenceApi;
 import static org.soraworld.violet.util.ChatColor.COLOR_CHAR;
@@ -32,7 +29,7 @@ public class TeamGuild implements Comparable<TeamGuild> {
     @Setting
     private int level;
     @Setting
-    private int frame = 0;
+    private int fame = 0;
     @Setting
     private double balance = 0;
     @Setting
@@ -49,6 +46,8 @@ public class TeamGuild implements Comparable<TeamGuild> {
     private HashSet<String> managers = new HashSet<>();
     @Setting
     private LinkedHashSet<String> applications = new LinkedHashSet<>();
+    @Setting
+    private HashMap<String, Integer> fameMap = new HashMap<>();
 
     private UUID attorn;
     private OfflinePlayer leader;
@@ -131,6 +130,7 @@ public class TeamGuild implements Comparable<TeamGuild> {
     public void delMember(String player) {
         managers.remove(player);
         members.remove(player);
+        fameMap.remove(player);
     }
 
     public int getAmount() {
@@ -211,13 +211,13 @@ public class TeamGuild implements Comparable<TeamGuild> {
     }
 
     public int compareTo(TeamGuild other) {
-        if (other.frame == this.frame) {
+        if (other.getFame() == this.getFame()) {
             if (other.level == this.level) {
                 return (int) (other.balance - this.balance);
             }
             return other.level - this.level;
         }
-        return other.frame - this.frame;
+        return other.getFame() - this.getFame();
     }
 
     public boolean equals(Object obj) {
@@ -307,7 +307,7 @@ public class TeamGuild implements Comparable<TeamGuild> {
         return manager.trans("info.display", getDisplay()) + '\n' +
                 manager.trans("info.leader", leader.getName()) + '\n' +
                 manager.trans("info.level", level) + '\n' +
-                manager.trans("info.frame", frame) + '\n' +
+                manager.trans("info.fame", getFame()) + '\n' +
                 manager.trans("info.balance", balance) + '\n' +
                 manager.trans("info.members", getAmount(), getTeamLevel().size) + '\n' +
                 manager.trans("info.managers", managers.size(), getTeamLevel().mans) + '\n' +
@@ -326,8 +326,8 @@ public class TeamGuild implements Comparable<TeamGuild> {
                 return getDisplay();
             case "level":
                 return String.valueOf(level);
-            case "frame":
-                return String.valueOf(frame);
+            case "fame":
+                return String.valueOf(getFame());
             case "balance":
                 return String.valueOf(balance);
             case "mem_amount":
@@ -343,24 +343,43 @@ public class TeamGuild implements Comparable<TeamGuild> {
         }
     }
 
-    public int getFrame() {
-        return frame;
+    public int getFame() {
+        fameMap.values().forEach(i -> fame += i);
+        return fame;
     }
 
-    public void setFrame(int amount) {
-        frame = amount;
+    public void setFame(int amount) {
+        fame = amount;
     }
 
-    public boolean hasFrame(int amount) {
-        return frame >= amount;
+    public boolean hasFame(int amount) {
+        return fame >= amount;
     }
 
-    public void giveFrame(int amount) {
-        frame += amount;
+    public void giveFame(int amount) {
+        fame += amount;
     }
 
-    public boolean takeFrame(int amount) {
-        return frame >= amount && (frame -= amount) >= 0;
+    public boolean takeFame(int amount) {
+        return fame >= amount && (fame -= amount) >= 0;
+    }
+
+    public void setMemFame(String member, int amount) {
+        fameMap.put(member, amount);
+    }
+
+    public void getMemFame(String member) {
+        fameMap.getOrDefault(member, 0);
+    }
+
+    public void giveMemFame(String member, int amount) {
+        fameMap.put(member, amount + fameMap.getOrDefault(member, 0));
+    }
+
+    public boolean takeMemFame(String member, int amount) {
+        int fame = fameMap.getOrDefault(member, 0) - amount;
+        fameMap.put(member, fame < 0 ? 0 : fame);
+        return fame >= 0;
     }
 
     public double getEco() {

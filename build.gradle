@@ -1,7 +1,7 @@
 apply plugin: 'java'
 
 group = 'org.soraworld'
-version = '1.1.5'
+version = '1.1.6'
 archivesBaseName = "TeamGuild"
 
 sourceCompatibility = targetCompatibility = 1.8
@@ -23,7 +23,6 @@ dependencies {
         transitive = false
     }
     compile files('lib/spigot-1.7.10.jar')
-    //compile files('lib/SpigotViolet-2.3.6-hocon.jar')
     compileOnly files('lib/Residence-4.8.1.0.jar')
 }
 

@@ -71,7 +71,7 @@ public class GuildPlugin extends SpigotPlugin {
 
     protected List<Listener> registerListeners() {
         ArrayList<Listener> listeners = new ArrayList<>();
-        if (API instanceof TeamManager) {
+        if (API != null) {
             TeamManager manager = API;
             listeners.add(new EventListener(manager));
             if (!manager.teamPvP) listeners.add(new PvPListener(manager));

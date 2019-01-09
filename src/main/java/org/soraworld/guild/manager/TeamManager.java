@@ -230,13 +230,13 @@ public class TeamManager extends SpigotManager {
                 if (sender instanceof Player) {
                     IChatBaseComponent component = format(trans("top.line1", i));
                     component.addSibling(format(guild.getDisplay(), null, null, SHOW_TEXT, guild.getHover()));
-                    component.addSibling(format(trans("top.line2", guild.getFrame(), guild.getTeamLeader())));
+                    component.addSibling(format(trans("top.line2", guild.getFame(), guild.getTeamLeader())));
                     if (guild.isShowTopJoin()) {
                         component.addSibling(format(trans("top.join"),
                                 RUN_COMMAND, textCommand + " join " + guild.getTeamLeader(), null, null));
                     }
                     sendMessage((Player) sender, component);
-                } else sendKey(sender, "top.line", i, guild.getDisplay(), guild.getFrame(), guild.getTeamLeader());
+                } else sendKey(sender, "top.line", i, guild.getDisplay(), guild.getFame(), guild.getTeamLeader());
             }
         }
         sendKey(sender, "top.foot", page, rank.size() / 10 + 1);
