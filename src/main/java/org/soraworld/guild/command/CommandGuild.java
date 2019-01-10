@@ -131,7 +131,7 @@ public final class CommandGuild {
                         String player = args.first();
                         if (guild.isLeader(player)) {
                             manager.updateGuild(guild, g -> g.giveFame(fame));
-                            manager.sendKey(sender, "guild.fame.take", guild.getDisplay(), fame);
+                            manager.sendKey(sender, "guild.fame.give", guild.getDisplay(), fame);
                         } else {
                             manager.updateGuild(guild, g -> g.giveMemFame(player, fame));
                             manager.sendKey(sender, "guild.memFame.give", guild.getDisplay(), player, fame);
@@ -164,7 +164,7 @@ public final class CommandGuild {
                     } catch (Throwable ignored) {
                         manager.sendKey(sender, "invalidInt");
                     }
-                } else manager.sendKey(sender, "guild.notInAnyTeam");
+                } else manager.sendKey(sender, "player.notInAnyTeam");
             } else manager.sendKey(sender, "invalidArgs");
         } else manager.sendKey(sender, "emptyArgs");
     }
@@ -510,7 +510,11 @@ public final class CommandGuild {
         } else manager.sendKey(player, "emptyArgs");
     }
 
-    @Sub(onlyPlayer = true, path = "black.add")
+    @Sub(onlyPlayer = true, virtual = true, usage = "/team black add|remove <player>")
+    public static void black(SpigotCommand self, CommandSender sender, Args args) {
+    }
+
+    @Sub(onlyPlayer = true, path = "black.add", usage = "/team black add <player>")
     public static void black_add(SpigotCommand self, CommandSender sender, Args args) {
         TeamManager manager = (TeamManager) self.manager;
         Player player = (Player) sender;
@@ -525,7 +529,7 @@ public final class CommandGuild {
         } else manager.sendKey(player, "emptyArgs");
     }
 
-    @Sub(onlyPlayer = true, path = "black.remove")
+    @Sub(onlyPlayer = true, path = "black.remove", usage = "/team black remove <player>")
     public static void black_remove(SpigotCommand self, CommandSender sender, Args args) {
         TeamManager manager = (TeamManager) self.manager;
         Player player = (Player) sender;

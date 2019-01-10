@@ -29,7 +29,7 @@ public class VaultEconomy implements IEconomy {
         return false;
     }
 
-    public String getName() {
+    public String getCoinName() {
         return vaultEco.getName();
     }
 

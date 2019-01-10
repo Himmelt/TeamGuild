@@ -117,6 +117,18 @@ public class TeamGuild implements Comparable<TeamGuild> {
         if (blackList.contains(player)) return false;
         if (members.size() + managers.size() < getTeamLevel().size) {
             members.add(player);
+            Player app = Bukkit.getPlayer(player);
+            if (app != null) manager.cacheTeam(app, this);
+            return true;
+        }
+        return false;
+    }
+
+    public boolean addMember(Player player) {
+        if (blackList.contains(player.getName())) return false;
+        if (members.size() + managers.size() < getTeamLevel().size) {
+            members.add(player.getName());
+            manager.cacheTeam(player, this);
             return true;
         }
         return false;
@@ -304,7 +316,7 @@ public class TeamGuild implements Comparable<TeamGuild> {
     public boolean acceptInvite(Player player) {
         if (invites.contains(player.getUniqueId())) {
             invites.remove(player.getUniqueId());
-            return addMember(player.getName());
+            return addMember(player);
         } else return false;
     }
 
@@ -432,8 +444,8 @@ public class TeamGuild implements Comparable<TeamGuild> {
     }
 
     public void teamChat(Player source, String message) {
-        if (source != null) message = "[" + source.getName() + "] " + message;
-        else message = manager.trans("teamPrefix") + message;
+        if (source != null) message = "[" + getDisplay() + "][" + source.getName() + "] " + message;
+        else message = "[" + getDisplay() + "] " + message;
         Player player = leader.getPlayer();
         if (player != null) player.sendMessage(message);
         for (String mem : managers) {

@@ -14,7 +14,7 @@ public class Economy {
             try {
                 VaultEconomy vEco = new VaultEconomy();
                 eco = vEco;
-                manager.consoleKey("vault.ecoImpl", vEco.getProviderName(), vEco.getName());
+                manager.consoleKey("vault.ecoImpl", vEco.getProviderName(), vEco.getCoinName());
             } catch (Throwable e) {
                 if (e.getMessage().contains("noVaultImpl")) {
                     manager.consoleKey("vault.noEcoImpl");
