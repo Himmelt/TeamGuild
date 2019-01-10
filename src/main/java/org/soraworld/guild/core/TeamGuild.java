@@ -89,7 +89,7 @@ public class TeamGuild implements Comparable<TeamGuild> {
     }
 
     public Player getLeader() {
-        return leader.getPlayer();
+        return Bukkit.getPlayer(leader.getUniqueId());
     }
 
     public String getTeamLeader() {
@@ -182,7 +182,7 @@ public class TeamGuild implements Comparable<TeamGuild> {
             manager.sendHandleMessage(handler, applicant);
             return;
         }
-        handler = leader.getPlayer();
+        handler = getLeader();
         if (handler != null) {
             manager.sendHandleMessage(handler, applicant);
         }
@@ -215,7 +215,7 @@ public class TeamGuild implements Comparable<TeamGuild> {
     }
 
     public void notifyLeave(String username) {
-        Player handler = leader.getPlayer();
+        Player handler = getLeader();
         if (handler != null) {
             manager.sendKey(handler, "guild.notifyLeave", username);
         }
@@ -373,8 +373,7 @@ public class TeamGuild implements Comparable<TeamGuild> {
     }
 
     public int getFame() {
-        fameMap.values().forEach(i -> fame += i);
-        return fame;
+        return fame + fameMap.values().stream().mapToInt(i -> i).sum();
     }
 
     public void setFame(int amount) {
@@ -446,7 +445,7 @@ public class TeamGuild implements Comparable<TeamGuild> {
     public void teamChat(Player source, String message) {
         if (source != null) message = "[" + getDisplay() + "][" + source.getName() + "] " + message;
         else message = "[" + getDisplay() + "] " + message;
-        Player player = leader.getPlayer();
+        Player player = Bukkit.getPlayer(leader.getUniqueId());
         if (player != null) player.sendMessage(message);
         for (String mem : managers) {
             player = Bukkit.getPlayer(mem);

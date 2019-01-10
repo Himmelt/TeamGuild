@@ -46,9 +46,11 @@ public class TeamManager extends SpigotManager {
     public float residencePrice = 1.0F;
     @Setting(comment = "comment.textCommand")
     private String textCommand = "/team";
-    @Setting(comment = "comment.dailyBonus")
+    @Setting(path = "dailyBonus", comment = "comment.dailyBonus")
+    private HashMap<String, ArrayList<String>> dailyBonus2 = new HashMap<>();
     private HashMap<Integer, ArrayList<String>> dailyBonus = new HashMap<>();
-    @Setting(comment = "comment.levels")
+    @Setting(path = "levels", comment = "comment.levels")
+    private HashMap<String, TeamLevel> levels2 = new HashMap<>();
     private TreeMap<Integer, TeamLevel> levels = new TreeMap<>();
 
     private final Path guildFile;
@@ -67,6 +69,10 @@ public class TeamManager extends SpigotManager {
 
     public boolean save() {
         if (!levels.containsKey(0)) levels.put(0, defaultLevel);
+        dailyBonus2.clear();
+        dailyBonus.forEach((i, b) -> dailyBonus2.put(String.valueOf(i), b));
+        levels2.clear();
+        levels.forEach((i, l) -> levels2.put(String.valueOf(i), l));
         saveGuild();
         return super.save();
     }
@@ -77,6 +83,10 @@ public class TeamManager extends SpigotManager {
     }
 
     public void afterLoad() {
+        dailyBonus.clear();
+        dailyBonus2.forEach((i, b) -> dailyBonus.put(Integer.valueOf(i), b));
+        levels.clear();
+        levels2.forEach((i, l) -> levels.put(Integer.valueOf(i), l));
         loadGuild();
         if (!levels.containsKey(0)) levels.put(0, defaultLevel);
         Economy.checkEconomy(this, ecoType, ignoreNoEco);
