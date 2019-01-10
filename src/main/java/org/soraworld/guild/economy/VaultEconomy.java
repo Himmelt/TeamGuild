@@ -5,20 +5,20 @@ import net.milkbowl.vault.economy.EconomyResponse;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.plugin.RegisteredServiceProvider;
-import org.soraworld.guild.manager.TeamManager;
 
 public class VaultEconomy implements IEconomy {
 
     private final Economy vaultEco;
+    private final String providerName;
 
-    VaultEconomy(TeamManager config) throws Exception {
+    VaultEconomy() throws Exception {
         Economy economy = null;
         RegisteredServiceProvider<Economy> provider = Bukkit.getServicesManager().getRegistration(Economy.class);
         if (provider != null) economy = provider.getProvider();
         if (economy == null) {
             throw new Exception("noVaultImpl");
         }
-        config.consoleKey("vaultImpl", provider.getPlugin().getName(), economy.getName());
+        providerName = provider.getPlugin().getName();
         vaultEco = economy;
     }
 
@@ -27,6 +27,14 @@ public class VaultEconomy implements IEconomy {
             return addEco(player, amount);
         }
         return false;
+    }
+
+    public String getName() {
+        return vaultEco.getName();
+    }
+
+    public String getProviderName() {
+        return providerName;
     }
 
     public boolean addEco(OfflinePlayer player, double amount) {

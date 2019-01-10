@@ -177,7 +177,9 @@ home {
   tpSuccess = "已抵达公会领地传送点."
   tpFailed = "无法抵达公会领地传送点."
 }
-
+convoke {
+  message = "会长召集: %s  "
+}
 get {
   display = "公会当前显示名是 %s"
   description = "公会简介: %s"
@@ -193,12 +195,14 @@ rejectText = " &c拒绝 "
 clickJoin = " &a&l申请加入"
 acceptHover = "点击&a接受"
 rejectHover = "点击&c拒绝"
+gotoHome = " &a前往公会领地"
 
 textTooLong = "&c你设置的文本长度已超过 %d , 请调整后重试. (注: 中文占2个长度)"
 EncodingException = "&c&l编码错误, 请开启调试模式到控制台查看详细信息."
 showRankJoin = "已设置公会在排行榜显示点击加入按钮."
 notShowRankJoin = "已设置公会在排行榜不显示点击加入按钮."
 notImpl = "功能尚未实现, 敬请期待 !"
+teamPrefix = "[公会] "
 
 # 注释文本
 comment {
@@ -208,6 +212,7 @@ comment {
   attornLeave = "转让公会后是否直接脱离公会."
   maxDisplay = "公会显示名最大长度, 每个中文占2个长度, 颜色代码也算在长度内."
   maxDescription = "公会简介最大长度, 每个中文占2个长度."
+  residencePrice = "公会领地的单价."
   textCommand = "用于聊天文字点击的命令, 此处已默认插件主命令,\n请勿随意修改, 只有在默认命令冲突无效时才需要修改."
   dailyBonus = "排行榜每日奖励, 每个排行 对应一组命令数组.\n命令不用加 / , {leader} 代表会长 或 公会id."
   levels = "公会等级设置\n等级列表, 插件会从低到高自动排序, 不必手动排序."

@@ -151,9 +151,11 @@ public class TeamManager extends SpigotManager {
             guild = guilds.get(leader);
             if (guild != null) {
                 if (!guild.hasMember(player)) {
-                    guild.addJoinApplication(player.getName());
-                    sendKey(player, "application.send", guild.getDisplay());
-                    saveGuild();
+                    if (!guild.isBlack(player.getName())) {
+                        guild.addJoinApplication(player.getName());
+                        sendKey(player, "application.send", guild.getDisplay());
+                        saveGuild();
+                    } else send(player, "You are in the Team's Blacklist.");
                 } else sendKey(player, "player.alreadyJoined");
             } else sendKey(player, "guild.notExist");
         } else if (guild.equals(guilds.get(leader))) {
@@ -243,7 +245,6 @@ public class TeamManager extends SpigotManager {
     }
 
     public void disband(final TeamGuild guild) {
-        rank.remove(guild);
         guilds.remove(guild.getTeamLeader());
         final String display = guild.getDisplay();
         teams.entrySet().removeIf(entry -> {
@@ -364,7 +365,7 @@ public class TeamManager extends SpigotManager {
 
     public void sendHandleMessage(Player handler, String applicant) {
         sendMessage(handler,
-                format(trans("receiveApplication", applicant)),
+                format(trans("application.receive", applicant)),
                 format(trans("acceptText"),
                         RUN_COMMAND, textCommand + " accept join " + applicant,
                         SHOW_TEXT, trans("acceptHover")),
@@ -382,7 +383,7 @@ public class TeamManager extends SpigotManager {
 
     public void sendAttornMessage(Player target, TeamGuild guild) {
         sendMessage(target,
-                format(trans("receiveAttorn", guild.getTeamLeader(), guild.getDisplay())),
+                format(trans("attorn.receive", guild.getTeamLeader(), guild.getDisplay())),
                 format(trans("acceptText"),
                         RUN_COMMAND, textCommand + " accept attorn " + guild.getTeamLeader(),
                         SHOW_TEXT, trans("acceptHover")),
@@ -405,7 +406,7 @@ public class TeamManager extends SpigotManager {
 
     public void sendInviteMessage(Player man, Player target, TeamGuild guild) {
         sendMessage(target,
-                format(trans("receiveInvite", man.getName(), guild.getDisplay())),
+                format(trans("invite.receive", man.getName(), guild.getDisplay())),
                 format(trans("acceptText"),
                         RUN_COMMAND, textCommand + " accept invite " + guild.getTeamLeader(),
                         SHOW_TEXT, trans("acceptHover")),
@@ -417,7 +418,7 @@ public class TeamManager extends SpigotManager {
 
     public void sendConvoke(Player player, String message) {
         sendMessage(player,
-                format(trans("convokeMessage", message)),
+                format(trans("convoke.message", message)),
                 format(trans("gotoHome"),
                         RUN_COMMAND, textCommand + " home",
                         SHOW_TEXT, trans("gotoHome"))

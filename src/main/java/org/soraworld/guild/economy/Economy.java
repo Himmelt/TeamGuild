@@ -12,10 +12,11 @@ public class Economy {
         Economy.ignore = ignore;
         if ("Vault".equalsIgnoreCase(ecoType)) {
             try {
-                eco = new VaultEconomy(manager);
-                manager.consoleKey("vault.ecoImpl", "Vault");
+                VaultEconomy vEco = new VaultEconomy();
+                eco = vEco;
+                manager.consoleKey("vault.ecoImpl", vEco.getProviderName(), vEco.getName());
             } catch (Throwable e) {
-                if (e.getMessage().equals("vault.noEcoImpl")) {
+                if (e.getMessage().contains("noVaultImpl")) {
                     manager.consoleKey("vault.noEcoImpl");
                 } else {
                     manager.consoleKey("economy.notHook", "Vault");

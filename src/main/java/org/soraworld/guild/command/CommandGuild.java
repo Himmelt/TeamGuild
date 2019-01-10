@@ -59,7 +59,9 @@ public final class CommandGuild {
                 TeamGuild guild = manager.getGuild(sender.getName());
                 if (guild != null) {
                     manager.disband(guild);
-                    manager.sendKey(sender, "guild.disband", guild.getDisplay());
+                    if (!guild.hasMember((Player) sender)) {
+                        manager.sendKey(sender, "guild.disband", guild.getDisplay());
+                    }
                 } else manager.sendKey(sender, "player.ownNone");
             } else manager.sendKey(sender, "emptyArgs");
         } else {
@@ -67,7 +69,11 @@ public final class CommandGuild {
             if (guild != null) {
                 if (sender.hasPermission(manager.defAdminPerm()) || guild.isLeader(sender.getName())) {
                     manager.disband(guild);
-                    manager.sendKey(sender, "guild.disband", guild.getDisplay());
+                    if (sender instanceof Player) {
+                        if (!guild.hasMember((Player) sender)) {
+                            manager.sendKey(sender, "guild.disband", guild.getDisplay());
+                        }
+                    } else manager.sendKey(sender, "guild.disband", guild.getDisplay());
                 } else manager.sendKey(sender, "player.notLeaderAdmin");
             } else manager.sendKey(sender, "guild.notExist");
         }
@@ -214,10 +220,14 @@ public final class CommandGuild {
         } else manager.sendKey(player, "emptyArgs");
     }
 
-    @Sub
-    public static void chat() {
-        // [Display][Name] meaasge
-        // TODO test when args contains space or with "xxx     sdsd  x"
+    @Sub(onlyPlayer = true)
+    public static void chat(SpigotCommand self, CommandSender sender, Args args) {
+        TeamManager manager = (TeamManager) self.manager;
+        Player player = (Player) sender;
+        TeamGuild team = manager.fetchTeam(player);
+        if (team != null) {
+            team.teamChat(player, args.getContent());
+        } else manager.sendKey(player, "player.notInAny");
     }
 
     @Sub(onlyPlayer = true)
@@ -434,8 +444,10 @@ public final class CommandGuild {
                 if (guild.isManager(player)) {
                     Player target = Bukkit.getPlayer(args.first());
                     if (target != null) {
-                        guild.sendInvite(player, target);
-                        manager.sendKey(player, "invite.send");
+                        if (!guild.isBlack(target.getName())) {
+                            guild.sendInvite(player, target);
+                            manager.sendKey(player, "invite.send", target.getName());
+                        } else manager.send(player, "Player " + target.getName() + " is in your Team's Blacklist.");
                     } else manager.sendKey(player, "player.offline", args.first());
                 } else manager.sendKey(player, "manager.notManager");
             } else manager.sendKey(player, "guild.notExist");
@@ -494,6 +506,36 @@ public final class CommandGuild {
             if (guild != null) {
                 guild.unInvite(player.getUniqueId());
                 manager.sendKey(player, "invite.reject");
+            } else manager.sendKey(player, "guild.notExist");
+        } else manager.sendKey(player, "emptyArgs");
+    }
+
+    @Sub(onlyPlayer = true, path = "black.add")
+    public static void black_add(SpigotCommand self, CommandSender sender, Args args) {
+        TeamManager manager = (TeamManager) self.manager;
+        Player player = (Player) sender;
+        if (args.notEmpty()) {
+            TeamGuild guild = manager.fetchTeam(player);
+            if (guild != null) {
+                if (guild.isLeader(player)) {
+                    guild.addBlack(args.first());
+                    manager.send(sender, "Add " + args.first() + " to Team Blacklist.");
+                } else manager.sendKey(player, "leader.notLeader");
+            } else manager.sendKey(player, "guild.notExist");
+        } else manager.sendKey(player, "emptyArgs");
+    }
+
+    @Sub(onlyPlayer = true, path = "black.remove")
+    public static void black_remove(SpigotCommand self, CommandSender sender, Args args) {
+        TeamManager manager = (TeamManager) self.manager;
+        Player player = (Player) sender;
+        if (args.notEmpty()) {
+            TeamGuild guild = manager.fetchTeam(player);
+            if (guild != null) {
+                if (guild.isLeader(player)) {
+                    guild.removeBlack(args.first());
+                    manager.send(sender, "Remove " + args.first() + " from Team Blacklist.");
+                } else manager.sendKey(player, "leader.notLeader");
             } else manager.sendKey(player, "guild.notExist");
         } else manager.sendKey(player, "emptyArgs");
     }
@@ -561,7 +603,7 @@ public final class CommandGuild {
             return;
         }
         if (args.empty()) {
-            manager.sendKey(player, "getDisplay", guild.getDisplay());
+            manager.sendKey(player, "get.display", guild.getDisplay());
         } else {
             String text = args.first();
             try {
@@ -589,13 +631,13 @@ public final class CommandGuild {
             return;
         }
         if (args.empty()) {
-            manager.sendKey(player, "getDescription", guild.getDescription());
+            manager.sendKey(player, "get.description", guild.getDescription());
         } else {
             String text = args.first();
             try {
                 if (text.getBytes("GB2312").length <= manager.maxDescription) {
                     guild.setDescription(text);
-                    manager.sendKey(player, "setDescription", guild.getDisplay());
+                    manager.sendKey(player, "set.description", guild.getDisplay());
                     manager.saveGuild();
                 } else {
                     manager.sendKey(player, "textTooLong", manager.maxDescription);

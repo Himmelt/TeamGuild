@@ -7,6 +7,7 @@ import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 import org.soraworld.guild.command.CommandGuild;
+import org.soraworld.guild.command.TeamChat;
 import org.soraworld.guild.core.TeamGuild;
 import org.soraworld.guild.expansion.GuildExpansion;
 import org.soraworld.guild.listener.ChatListener;
@@ -86,6 +87,7 @@ public class GuildPlugin extends SpigotPlugin {
         command.extractSub(CommandGuild.class);
         command.setUsage("/team ....");
         register(this, command);
+        register(this, new TeamChat("teamchat", null, true, manager, "tchat", "tmsg", "tm"));
     }
 
     public static TeamGuild getTeam(Player player) {

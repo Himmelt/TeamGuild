@@ -45,6 +45,8 @@ public class TeamGuild implements Comparable<TeamGuild> {
     @Setting
     private HashSet<String> managers = new HashSet<>();
     @Setting
+    private HashSet<String> blackList = new HashSet<>();
+    @Setting
     private LinkedHashSet<String> applications = new LinkedHashSet<>();
     @Setting
     private HashMap<String, Integer> fameMap = new HashMap<>();
@@ -112,6 +114,7 @@ public class TeamGuild implements Comparable<TeamGuild> {
     }
 
     public boolean addMember(String player) {
+        if (blackList.contains(player)) return false;
         if (members.size() + managers.size() < getTeamLevel().size) {
             members.add(player);
             return true;
@@ -131,6 +134,20 @@ public class TeamGuild implements Comparable<TeamGuild> {
         managers.remove(player);
         members.remove(player);
         fameMap.remove(player);
+    }
+
+    public boolean isBlack(String name) {
+        return blackList.contains(name);
+    }
+
+    public void addBlack(String player) {
+        if (!members.contains(player) && !leader.getName().equals(player)) {
+            blackList.add(player);
+        }
+    }
+
+    public void removeBlack(String player) {
+        blackList.remove(player);
     }
 
     public int getAmount() {
@@ -412,6 +429,21 @@ public class TeamGuild implements Comparable<TeamGuild> {
             delMember(oldLeader);
         } else addMember(oldLeader);
         renameHome(oldHome, getHomeName(), oldLeader, getTeamLeader());
+    }
+
+    public void teamChat(Player source, String message) {
+        if (source != null) message = "[" + source.getName() + "] " + message;
+        else message = manager.trans("teamPrefix") + message;
+        Player player = leader.getPlayer();
+        if (player != null) player.sendMessage(message);
+        for (String mem : managers) {
+            player = Bukkit.getPlayer(mem);
+            if (player != null) player.sendMessage(message);
+        }
+        for (String mem : members) {
+            player = Bukkit.getPlayer(mem);
+            if (player != null) player.sendMessage(message);
+        }
     }
 
     private void renameHome(String oldName, String newName, String oldLeader, String newLeader) {

@@ -176,7 +176,9 @@ home {
   tpSuccess = "You have reached guild's home."
   tpFailed = "You can't go to guild home."
 }
-
+convoke {
+  message = "Leader convoke: %s  "
+}
 get {
   display = "Guild's display-name is %s"
   description = "Guild's description is: %s"
@@ -192,12 +194,14 @@ rejectText = " &cReject "
 clickJoin = " &a&lJoin"
 acceptHover = "Click&aJoin"
 rejectHover = "Click&cReject"
+gotoHome = " &aGo Guild Home"
 
 textTooLong = "&cText length is too long than %d, please check and try again."
 EncodingException = "&c&lEncode Error, please switch to DEBUG mode and check the console."
 showRankJoin = "Set shown 'ClickJoin' clickable text in guild tops."
 notShowRankJoin = "Set hidden 'ClickJoin' clickable text in guild tops."
 notImpl = "WIP, please wait !"
+teamPrefix = "[Guild] "
 
 # comment
 comment {
@@ -207,6 +211,7 @@ comment {
   attornLeave = "Leave the guild when attorn to other."
   maxDisplay = "Maximum of display's characters, color codes are included."
   maxDescription = "Maximum of description's characters."
+  residencePrice = "Price of per-block for guild residence."
   textCommand = "Command used when chat click, default plugin main command,\nPlease don't edit unless commands confliction or can't use."
   dailyBonus = "Daily Bonus for guild tops, every rank has a list of commands.\ncommand dont startswith / , {leader} is the leader's name or guild's id."
   levels = "Guild levels settings\nLevels, auto sort, no need to sort by hand."
