@@ -259,15 +259,11 @@ public class TeamManager extends SpigotManager {
     }
 
     public void disband(final TeamGuild guild) {
-        System.out.println("disband:" + guild.getTeamLeader());
         guilds.remove(guild.getTeamLeader());
         final String display = guild.getDisplay();
-        System.out.println(display);
         teams.entrySet().removeIf(entry -> {
-            System.out.println(entry.getKey() + " - " + entry.getValue());
             if (guild.equals(entry.getValue())) {
                 Player player = Bukkit.getPlayer(entry.getKey());
-                System.out.println(player);
                 if (player != null) sendKey(player, "guild.disband", display);
                 return true;
             } else return false;
