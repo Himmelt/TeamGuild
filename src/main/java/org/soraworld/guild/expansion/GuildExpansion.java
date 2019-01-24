@@ -28,6 +28,6 @@ public class GuildExpansion extends PlaceholderExpansion {
     public String onPlaceholderRequest(Player player, String params) {
         TeamGuild guild = manager.fetchTeam(player);
         if (guild != null) return guild.getVariable(params);
-        else return "not join guild";
+        else return manager.getNoTeamDisplay();
     }
 }

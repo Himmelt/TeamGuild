@@ -46,6 +46,8 @@ public class TeamManager extends SpigotManager {
     public float residencePrice = 1.0F;
     @Setting(comment = "comment.textCommand")
     private String textCommand = "/team";
+    @Setting
+    private String noTeamDisplay = "Not In Any Team";
     @Setting(path = "dailyBonus", comment = "comment.dailyBonus")
     private HashMap<String, ArrayList<String>> dailyBonus2 = new HashMap<>();
     private HashMap<Integer, ArrayList<String>> dailyBonus = new HashMap<>();
@@ -450,6 +452,10 @@ public class TeamManager extends SpigotManager {
 
     public List<String> getDailyBonus(TeamGuild guild) {
         return dailyBonus.getOrDefault(getRank(guild), new ArrayList<>());
+    }
+
+    public String getNoTeamDisplay() {
+        return noTeamDisplay;
     }
 
     public void topkit(Player player) {
