@@ -21,8 +21,10 @@ TeamGuild
 /team reject invite <leader>      拒绝 <leader> 公会的邀请
 /team setman <member>             将成员<member>设为公会管理员
 /team unsetman <manager>          移除公会管理员<manager>的管理权限变为普通成员
-/team frame give <leader> <frame> 给与 <leader> 公会 <frame> 点 荣耀, 需要管理权限
-/team frame take <leader> <frame> 移除 <leader> 公会 <frame> 点 荣耀, 需要管理权限
+/team fame give <leader> <fame>   给与 <leader> 公会 <fame> 点 荣耀, 需要管理权限
+/team fame take <leader> <fame>   移除 <leader> 公会 <fame> 点 荣耀, 需要管理权限
+/team fame give <member> <fame>   给与 <member> 成员 <fame> 点 荣耀, 需要管理权限
+/team fame take <member> <fame>   移除 <member> 成员 <fame> 点 荣耀, 需要管理权限
 /team topjoin <true|false>        设置是否在排行榜显示 "点击加入" 的按钮，仅会长可设置
 /team home                        (未实现) 前往公会领地传送点
 /team sethome                     (未实现) 设置公会领地传送点(仅会长)
@@ -101,7 +103,7 @@ Himmelt {
   # 公会等级，和配置中的 levels 对应
   level = 0
   # 公会荣耀值
-  frame = 30
+  fame = 30
   # 公会资金(未实现)
   balance = 0
   # 公会显示名 
