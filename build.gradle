@@ -6,14 +6,6 @@ archivesBaseName = "TeamGuild"
 
 sourceCompatibility = targetCompatibility = 1.8
 
-repositories {
-    jcenter()
-    maven {
-        name = 'lss233'
-        url = 'https://www.lss233.com/artifactory/minecraft'
-    }
-}
-
 dependencies {
     compile 'org.soraworld:violet-spigot:2.3.8'
     compileOnly 'org.black_ixx:PlayerPoints:2.1.3'
